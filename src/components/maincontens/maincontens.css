@@ -17,6 +17,8 @@
 .contents7,
 .contents8,
 .contents9 {
+  width: 100%;
+  height: 100%;
   background-color: blue; /* 배경색 */
   border: 1px solid #ddd; /* 테두리 */
   color: black; /* 텍스트 색상 */
@@ -24,7 +26,7 @@
 }
 @media (min-width: 768px) {
   .mainContents {
-    width: 1000px;
+    width: 1500px;
     height: 1000px;
   }
 }
