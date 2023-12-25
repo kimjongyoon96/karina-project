@@ -1,18 +1,33 @@
 import React, { useState } from "react";
 import "./menubar.css";
-
+import { karinaData } from "../../types/contentType";
 // MenubarProps 타입 정의
 interface MenubarProps {
-  setCategory: (category: string) => void; // setCategory 함수의 타입 정의
+  setCategory: (category: string) => void;
+  replaceArray: (arrayToReset: any[]) => void;
+  redArray: any[];
+  blueArray: any[];
+  yellowArray: any[];
+  greenArray: any[];
 }
-// 부모 컴포넌트(최상위)에서 받은 MenubarProps는 menubarProps 타입의 prop를 받는다.
-// setCategory는, 구조분해 할당을 통하여, props 객체에서 setCategory 함수를 추출한다.
-const Menubar: React.FC<MenubarProps> = ({ setCategory }) => {
+// 메뉴바를 선언할꺼야! 메뉴바는 리액트의 함수형 컴포넌트이며, <MenubarProps>를 props를 통해 받았어!
+// 여기서, setCategory를 구조분해 할당을 통해 쓸수있게 되었어!
+const Menubar: React.FC<MenubarProps> = ({
+  setCategory,
+  replaceArray,
+  redArray,
+  blueArray,
+  yellowArray,
+  greenArray,
+}) => {
   return (
     <nav className="cute">
       <ul
         onClick={() => {
           setCategory("청순카리나");
+          replaceArray(redArray);
+          // console.log(redArray);
+          // console.log("redArray");
         }}
       >
         청순카리나
@@ -21,6 +36,9 @@ const Menubar: React.FC<MenubarProps> = ({ setCategory }) => {
       <ul
         onClick={() => {
           setCategory("큐트카리나");
+          replaceArray(blueArray);
+          console.log(blueArray);
+          console.log("여기블루");
         }}
       >
         큐트카리나
@@ -28,6 +46,7 @@ const Menubar: React.FC<MenubarProps> = ({ setCategory }) => {
       <ul
         onClick={() => {
           setCategory("섹시카리나");
+          replaceArray(yellowArray);
         }}
       >
         섹시카리나
@@ -35,6 +54,7 @@ const Menubar: React.FC<MenubarProps> = ({ setCategory }) => {
       <ul
         onClick={() => {
           setCategory("일상카리나");
+          replaceArray(greenArray);
         }}
       >
         일상카리나

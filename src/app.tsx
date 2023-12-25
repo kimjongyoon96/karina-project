@@ -1,11 +1,6 @@
 // src/App.tsx
 import React, { useState, useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  useLocation,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { karinaData } from "./types/contentType";
 import Header from "./components/header/header"; // Header 컴포넌트 임포트
 import Menubar from "./components/menubar/menubar";
@@ -16,43 +11,88 @@ import DetailPage from "./components/detailPage/detailPage";
 import WritePage from "./components/writePage/writePage";
 const App: React.FC = () => {
   const [category, setCategory] = useState("청순카리나");
-  const [myArray, setMyArray] = useState<karinaData[]>([]);
+  // console.log(category); // 청순카리나,큐트카리나 문자열
+  // const chungsoonKarina: karinaData = {
+  //   id: 1,
+  //   menubar: "청순카리나",
+  //   title: "카리나존예",
+  //   description: "카리나가짱",
+  //   photo: "https://cdn.mhnse.com/news/photo/202311/240620_252535_5240.jpg",
+  // };
+  const [myArray, setMyArray] = useState<karinaData[]>([]); //전시바구니
+  const [redArray, setMyRedArray] = useState<karinaData[]>([]); //빨강바구니
+  const [blueArray, setMyBlueArray] = useState<karinaData[]>([]); // 파란바구니
+  useEffect(() => {
+    console.log("Updated redArray:", blueArray);
+  }, [blueArray]);
+  const [yellowArray, setMyYellowArray] = useState<karinaData[]>([]); //노랑바구니
+  const [greenArray, setMyGreenArray] = useState<karinaData[]>([]); // 초록바구니
+  // console.log(myArray); // karinaData의 값들출력
+
   // 2. 배열을 만들 작동 함수
+  // 배열을 추가할때는 빨강 빨강 파랑 파랑 노랑 노랑
+  // setMyRedArray,setMyBuleArray
   const addToArray = (obj: karinaData) => {
-    setMyArray([...myArray, obj]);
-    console.log(myArray);
+    switch (category) {
+      case "청순카리나":
+        console.log("Before updating redArray:", redArray);
+        if (obj.menubar === category) setMyRedArray([...redArray, obj]);
+
+        break;
+      case "큐트카리나":
+        if (obj.menubar === category) setMyBlueArray([...blueArray, obj]);
+        // console.log(myArray);
+        // console.log("디버깅용");
+        break;
+      case "섹시카리나":
+        if (obj.menubar === category) setMyYellowArray([...yellowArray, obj]);
+
+        break;
+      case "일상카리나":
+        if (obj.menubar === category) setMyGreenArray([...greenArray, obj]);
+
+        break;
+      default:
+        console.log("없는 카테고리 입니다.");
+    }
   };
 
+  // 빨강=>파랑을 전시바구니로 옮기는 로직
+  // 옮기는 로직이니, 전시
+  const replaceArray = (arrayToReset: any[]) => {
+    setMyArray(arrayToReset);
+    // console.log(arrayToReset);
+    // console.log("여기는 바꾸는");
+  };
   return (
     <Router>
       <div>
         <Header />
-        <Menubar setCategory={setCategory} />
+        <Menubar
+          setCategory={setCategory}
+          replaceArray={replaceArray}
+          redArray={redArray}
+          blueArray={blueArray}
+          yellowArray={yellowArray}
+          greenArray={greenArray}
+        />
         <Routes>
           <Route
             path="/"
             element={<MainContens category={category} myarray={myArray} />}
           />
-          <Route path="/contact" element={<DetailPage />} />
           <Route
             path="/write"
-            element={
-              <WritePage
-                addToArray={addToArray}
-                // setCategory={setCategory}
-                // category={category}
-              />
-            }
+            element={<WritePage addToArray={addToArray} />}
+          />
+          <Route
+            path="/detail/:id"
+            element={<DetailPage myArray={myArray} />}
           />
         </Routes>
 
-        {/* /write 경로가 아닐 때만 SeachBar와 Number를 렌더링 */}
-        {location.pathname !== "/write" && (
-          <>
-            <SeachBar />
-            <Number />
-          </>
-        )}
+        <SeachBar />
+        <Number />
       </div>
     </Router>
   );

@@ -2,39 +2,56 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./maincontens.css";
 import { MainContentsProps } from "./maincomponent";
+import { karinaData } from "../../types/contentType";
 
 const MainContents: React.FC<MainContentsProps> = ({ category, myarray }) => {
   const navigate = useNavigate();
-
-  const goToSecondMain = (): void => {
-    navigate("/contact");
+  // console.log(category); // 청순카리나,섹시카리나 맞게 출력
+  // console.log(myarray); // 추가된 배열정보 즉, karinadata의 배열
+  // console.log("여기뭐가나오냐");
+  const goToSecondMain = (id: number): void => {
+    navigate(`/detail/${id}`);
   };
-
-  const renderContent = (): React.ReactNode => {
+  const renderContent = (item: karinaData): React.ReactNode => {
     switch (category) {
       case "청순카리나":
-        return <div>청순카리나 관련 컨텐츠</div>;
+        if (item.menubar === "청순카리나") {
+          return <div>청순카리나 관련 컨텐츠</div>;
+        }
+        break;
       case "큐트카리나":
-        return <div>큐트카리나 관련 컨텐츠</div>;
+        if (item.menubar === "큐트카리나") {
+          return <div>큐트카리나 관련 컨텐츠</div>;
+        }
+        break;
       case "섹시카리나":
-        return <div>섹시카리나 관련 컨텐츠</div>;
+        if (item.menubar === "섹시카리나") {
+          return <div>섹시카리나 관련 컨텐츠</div>;
+        }
+        break;
       case "일상카리나":
-        return <div>일상카리나 관련 컨텐츠</div>;
+        if (item.menubar === "일상카리나") {
+          return <div>일상카리나 관련 컨텐츠</div>;
+        }
+        break;
       default:
         return <div>기본 컨텐츠</div>;
     }
   };
-
+  // item => myarray의 각 객체, index=> 배열 내의 해당 객체의 인덱스값
   return (
     <main className="mainContents">
       {myarray.length > 0 &&
         myarray.map((item, index) => (
           <li
-            key={index}
+            key={item.id}
             className={`contents${index + 1}`}
-            onClick={goToSecondMain}
+            onClick={() => goToSecondMain(item.id)}
           >
-            {renderContent()}
+            <h1>{item.title}</h1>
+            <img src={item.photoSumnail} alt={item.title} />
+
+            {renderContent(item)}
           </li>
         ))}
     </main>

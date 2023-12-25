@@ -1,17 +1,35 @@
-import './detailPage.css';
-import React from 'react';
+import React from "react";
+import { useParams } from "react-router-dom";
+import { karinaData } from "../../types/contentType"; // 경로는 실제 파일 위치에 따라 다를 수 있음
 
-const DetailPage: React.FC = () => {
+interface DetailProps {
+  myArray: karinaData[]; // 전체 게시물 데이터
+}
+
+const DetailComponent: React.FC<DetailProps> = ({ myArray }) => {
+  // useParams를 사용하여 URL에서 id 값을 추출합니다. id는 문자열 타입입니다.
+  const { id } = useParams<{ id: string }>();
+
+  const itemId = id !== undefined ? parseInt(id) : null;
+
+  // 문자열 id를 숫자로 변환하고, 해당하는 게시물을 찾습니다.
+  const post = itemId !== null ? myArray.find((p) => p.id === itemId) : null;
+
   return (
-    <div className="detailPage">
-      <li className="detailContents1"></li>
-      <li className="detailContents3"></li>
-      <li className="detailContents4"></li>
-      <li className="detailContents5"></li>
-      <li className="detailContents2"></li>
-      <li className="detailContents6"></li>
+    <div>
+      {post ? (
+        <div>
+          <h1>{post.title}</h1>
+          {post.photos &&
+            post.photos.map((photo, index) => (
+              <img key={index} src={photo} alt={`Photo ${index}`} />
+            ))}
+        </div>
+      ) : (
+        <p>게시물을 찾을 수 없습니다.</p>
+      )}
     </div>
   );
 };
 
-export default DetailPage;
+export default DetailComponent;
