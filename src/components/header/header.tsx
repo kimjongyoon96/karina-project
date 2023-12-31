@@ -1,12 +1,21 @@
 // src/components/Header.tsx
-import React from 'react';
-import pageLogo from '../../assets/photo/pagelogo.png';
-import './header.css';
+import React from "react";
+import pageLogo from "../../assets/photo/pagelogo.png";
+import "./header.css";
+import { useNavigate } from "react-router-dom";
 
 const Header: React.FC = () => {
+  const Navigate = useNavigate();
   return (
     <header className="header">
-      <img className="logo" src={pageLogo} alt="Page Logo" />
+      <img
+        className="logo"
+        src={pageLogo}
+        alt="Page Logo"
+        onClick={() => {
+          Navigate("/");
+        }}
+      />
 
       <h1 className="title">카리나 갤러리</h1>
     </header>

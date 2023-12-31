@@ -9,6 +9,7 @@ import SeachBar from "./components/seachbar/seachbar";
 import Number from "./components/movepage/movepage";
 import DetailPage from "./components/detailPage/detailPage";
 import WritePage from "./components/writePage/writePage";
+import Cute from "./cute";
 const App: React.FC = () => {
   const [category, setCategory] = useState("청순카리나");
   // console.log(category); // 청순카리나,큐트카리나 문자열
@@ -22,9 +23,9 @@ const App: React.FC = () => {
   const [myArray, setMyArray] = useState<karinaData[]>([]); //전시바구니
   const [redArray, setMyRedArray] = useState<karinaData[]>([]); //빨강바구니
   const [blueArray, setMyBlueArray] = useState<karinaData[]>([]); // 파란바구니
-  useEffect(() => {
-    console.log("Updated redArray:", blueArray);
-  }, [blueArray]);
+  // useEffect(() => {
+  //   console.log("Updated redArray:", blueArray);
+  // }, [blueArray]);
   const [yellowArray, setMyYellowArray] = useState<karinaData[]>([]); //노랑바구니
   const [greenArray, setMyGreenArray] = useState<karinaData[]>([]); // 초록바구니
   // console.log(myArray); // karinaData의 값들출력
@@ -93,6 +94,7 @@ const App: React.FC = () => {
 
         <SeachBar />
         <Number />
+        <Cute />
       </div>
     </Router>
   );
