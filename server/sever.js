@@ -1,25 +1,61 @@
 const express = require("express");
-const bodyParser = require("body-parser");
-const cors = require("cors"); // CORS 미들웨어 가져오기
+const multer = require("multer");
+const cors = require("cors");
 const app = express();
-const PORT = 3000;
-// 다른 host 에서 요청이 왔을때 생기는 문제 해결
-// UI 서버=> 리액트의 웹팩 라이브 서버를 의미
-const corsOptions = {
-  origin: "http://localhost:3001", // 허용할 출처 지정
-  optionsSuccessStatus: 200, // 일부 레거시 브라우저의 경우 실패 상태 대신에 200을 반환
-};
-app.use(cors(corsOptions));
+const path = require("path");
+const aws = require("aws-sdk");
+const multerS3 = require("multer-s3");
+require("dotenv").config();
+app.use(cors()); // 모든 요청에 대해 CORS를 활성화합니다.
 
-app.use(bodyParser.json());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// "/cute" 경로로 들어오는 POST 요청 처리
-app.post("/api/test", (req, res) => {
-  console.log("Request received:", req.body);
-  res.status(200).json({ message: "Hello World" });
+const s3 = new aws.S3({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
 });
 
-// 3000번 포트에서 서버 시작
+const upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: "karinaphoto", // S3 버킷 이름
+    acl: "public-read", // 파일 접근 권한 설정
+    contentType: multerS3.AUTO_CONTENT_TYPE, // 파일 타입 자동 설정
+    key: function (req, file, cb) {
+      cb(null, `uploads/${Date.now().toString()}-${file.originalname}`);
+    },
+  }),
+});
+
+// 'api/test' 엔드포인트로 POST 요청을 처리
+app.post(
+  "/api/upload",
+  upload.fields([{ name: "photoSumnail" }, { name: "photos" }]),
+  (req, res) => {
+    try {
+      const id = req.body.id;
+      const menubar = req.body.menubar;
+      const title = req.body.title;
+      const photoSumnail = req.files["photoSumnail"]; // 'photoSumnail' 파일 데이터
+      const photos = req.files["photos"]; // 'photos' 필드로 여러 파일을 받음
+
+      console.log("Received ID:", id);
+      console.log("Received Menubar:", menubar);
+      console.log("Received Title:", title);
+      console.log("Received Photo Sumnail:", photoSumnail);
+      console.log("Received Photos:", photos);
+
+      res.status(200).json({ message: "Data received successfully!" });
+    } catch (error) {
+      console.error("Error:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  }
+);
+
+const PORT = 3000;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

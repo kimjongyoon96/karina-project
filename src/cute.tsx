@@ -6,7 +6,7 @@ const Cute = () => {
 
   const sendPostRequest = async () => {
     try {
-      const result = await fetch("http://localhost:3000/cute", {
+      const result = await fetch("http://localhost:3001/cute", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -21,33 +21,84 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray }) => {
   const [menubar, setMenubar] = useState("청순카리나"); // 기본값 설정
   const [photoSumnail, setPhotoSumnail] = useState(""); // 대표 이미지 URL 상태
   const [photos, setPhotos] = useState<string[]>([]); // <sting[]> 을 해줌으로서, 문자열배열 즉, photos가 문자열 배열을 상태로 관리할것을 명시한다.
-  console.log(photos);
-  console.log("photos");
-  const handlePhotoSumnailChange = (
-    event: React.ChangeEvent<HTMLInputElement> // event는 React.ChangeEvent<HTMLInputElement>타입이다. input요소의 변경 이벤트이며, 사용자가 파일을 업로드할때 발생하는 이벤트정보이다.
+  console.log(photos, "여기는 변경된 사진의 상태변경함수");
+  const [compressedFile, setCompressedPhotoSumnail] = useState<File | null>(
+    null
+  );
+  const [compressedImages, setCompressedImages] = useState<File[]>([]);
+  console.log(compressedImages, "여기에 blob 객체가 나와야돼!!");
+  //   const handlePhotoSumnailChange = (
+  //     event: React.ChangeEvent<HTMLInputElement> // event는 React.ChangeEvent<HTMLInputElement>타입이다. input요소의 변경 이벤트이며, 사용자가 파일을 업로드할때 발생하는 이벤트정보이다.
+  //   ) => {
+  //     if (event.target.files && event.target.files[0]) {
+
+  //       // envet는 객체, target은 발생한 DOM요소(<input>), files는 선택한 파일(여러개라 배열형태)
+  //       setPhotoSumnail(URL.createObjectURL(event.target.files[0])); // 객체의 DOM요소의 파일에 대한 URL을 생성한다. 브라우저 메모리에 있는 파일에 대한 URL이다.
+  //     }
+  //     // console.log(event.target.files)=> FileList {0: File, length: 1}
+  //   };
+  const handlePhotoSumnailChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
     if (event.target.files && event.target.files[0]) {
-      // envet는 객체, target은 발생한 DOM요소(<input>), files는 선택한 파일(여러개라 배열형태)
-      setPhotoSumnail(URL.createObjectURL(event.target.files[0])); // 객체의 DOM요소의 파일에 대한 URL을 생성한다. 브라우저 메모리에 있는 파일에 대한 URL이다.
+      const originalFile = event.target.files[0];
+
+      // 이미지 압축 옵션 설정
+      const options = {
+        maxSizeMB: 0.5, // 최대 파일 크기
+        maxWidthOrHeight: 1280, // 최대 너비 또는 높이
+        useWebWorker: true,
+      };
+
+      try {
+        // 이미지 압축
+        const compressedFile = await imageCompression(originalFile, options);
+
+        // 압축된 파일의 URL을 생성하고 상태 업데이트
+        setPhotoSumnail(URL.createObjectURL(compressedFile));
+        console.log("이미지 압축중!!");
+
+        // 압축된 파일을 나중에 서버로 전송할 수 있도록 저장
+        setCompressedPhotoSumnail(compressedFile);
+        console.log(compressedFile, "이게 압축된파일");
+      } catch (error) {
+        console.error("압축 중 에러 발생:", error);
+      }
     }
-    // console.log(event.target.files)=> FileList {0: File, length: 1}
   };
 
-  const handlePhotosChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotosChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     if (event.target.files) {
-      // 선택한 새 파일들의 URL 배열 생성
-      const newFileUrls = Array.from(event.target.files).map((file) =>
-        URL.createObjectURL(file)
-      );
-      //   console.log(newFileUrls);   // ['blob:http://localhost:3001/45aa4d37-490b-4a98-8d8d-5039d58943e2']
+      const files = Array.from(event.target.files);
+      const options = {
+        maxSizeMB: 0.5,
+        maxWidthOrHeight: 1280,
+        useWebWorker: true,
+      };
 
-      // 새 파일의 URL을 기존 photos 배열에 추가
-      setPhotos((prevPhotos) => [...prevPhotos, ...newFileUrls]); // newFileUrls의 값이 prevPhotos의 배열에 전달
-
-      // 선택한 파일이 총 6개를 초과하는 경우 경고하고 초과분을 제거
-      if (photos.length + newFileUrls.length > 6) {
-        alert("최대 6개의 사진만 선택할 수 있습니다.");
-        setPhotos((prevPhotos) => [...prevPhotos, ...newFileUrls].slice(0, 6));
+      try {
+        // 각 이미지 파일을 압축하고 Blob URL 생성
+        const compressedFiles = await Promise.all(
+          files.map((file) => imageCompression(file, options))
+        );
+        const newFileUrls = compressedFiles.map((file) =>
+          URL.createObjectURL(file)
+        );
+        setPhotos((prevPhotos) => [...prevPhotos, ...newFileUrls]);
+        setCompressedImages((prevCompressedImages) => [
+          ...prevCompressedImages,
+          ...compressedFiles,
+        ]);
+        if (photos.length + newFileUrls.length > 6) {
+          alert("최대 6개의 사진만 선택할 수 있습니다.");
+          setPhotos((prevPhotos) =>
+            [...prevPhotos, ...newFileUrls].slice(0, 6)
+          );
+        }
+      } catch (error) {
+        console.error("압축 중 에러 발생:", error);
       }
     }
   };
@@ -68,35 +119,44 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray }) => {
       photoSumnail: photoSumnail,
       photos: photos, // 이미지를 담을수 있는 방법 연구.
     };
-    const url = "http://localhost:3000/api/test";
+    console.log(newKarinaData);
+    const formData = new FormData();
+
+    if (compressedFile) {
+      formData.append("photoSumnail", compressedFile, compressedFile.name);
+    }
+    compressedImages.forEach((file, index) => {
+      formData.append(`photos[${index}]`, file, file.name);
+    });
+    formData.append("id", myUUID);
+    formData.append("menubar", menubar);
+    formData.append("title", title);
+    const object = {};
+    formData.forEach((value, key) => {
+      object[key] = value;
+    });
+    console.log(object, "여기가 폼데이터값입니다.");
+    // 서버의 엔드포인트 URL
+    const url = "http://localhost:3000/api/upload";
 
     try {
-      // Fetch API를 사용하여 서버로 POST 요청을 보냅니다.
+      // fetch API를 사용하여 서버로 POST 요청을 보냄
       const response = await fetch(url, {
-        method: "POST", // 요청 방식
-        headers: {
-          "Content-Type": "application/json", // 내용 형식 지정
-        },
-        body: JSON.stringify(newKarinaData), // JavaScript 객체를 JSON 문자열로 변환
+        method: "POST",
+        body: formData, // FormData 객체를 body로 설정
+        // 'Content-Type' 헤더를 명시적으로 설정하지 않습니다.
       });
 
-      if (!response.ok) {
-        // 서버로부터 응답이 정상이 아닌 경우 에러 처리
-        throw new Error(`Error: ${response.status}`);
-      }
-
-      // 응답 데이터를 JSON으로 변환
+      if (!response.ok) throw new Error(`Error: ${response.status}`);
       const responseData = await response.json();
       console.log("Server response:", responseData);
 
-      // 성공적인 응답 후 처리, 예를 들어 addToArray 함수 호출
-      addToArray(newKarinaData);
-
-      // 사용자를 다른 페이지로 이동시킵니다.
+      // 성공 처리 로직 (예: 상태 초기화, 사용자에게 알림 등)
+      addToArray(responseData); // 서버로부터 받은 응답을 사용하도록 변경
       navigate("/");
     } catch (error) {
-      // 에러 처리
       console.error("Error sending data to the server:", error);
+      // 에러 처리 로직
     }
   };
 

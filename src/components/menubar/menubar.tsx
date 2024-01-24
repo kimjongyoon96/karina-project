@@ -37,8 +37,8 @@ const Menubar: React.FC<MenubarProps> = ({
         onClick={() => {
           setCategory("큐트카리나");
           replaceArray(blueArray);
-          console.log(blueArray);
-          console.log("여기블루");
+          // console.log(blueArray);
+          // console.log("여기블루");
         }}
       >
         큐트카리나
