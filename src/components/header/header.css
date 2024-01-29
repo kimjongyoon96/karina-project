@@ -7,7 +7,7 @@
 }
 .logo {
   width: 80px; /* 원하는 너비 */
-  height: auoto; /* 높이는 자동으로 조절 */
+  height: auto; /* 높이는 자동으로 조절 */
 }
 
 .title {

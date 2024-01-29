@@ -125,8 +125,8 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray }) => {
     if (compressedFile) {
       formData.append("photoSumnail", compressedFile, compressedFile.name);
     }
-    compressedImages.forEach((file, index) => {
-      formData.append(`photos[${index}]`, file, file.name);
+    compressedImages.forEach((file) => {
+      formData.append("photos", file, file.name);
     });
     formData.append("id", myUUID);
     formData.append("menubar", menubar);
