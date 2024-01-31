@@ -9,7 +9,7 @@ const MainContents: React.FC<MainContentsProps> = ({ category, myarray }) => {
   // console.log(category); // 청순카리나,섹시카리나 맞게 출력
   // console.log(myarray); // 추가된 배열정보 즉, karinadata의 배열
   // console.log("여기뭐가나오냐");
-  const goToSecondMain = (id: number): void => {
+  const goToSecondMain = (id: string): void => {
     navigate(`/detail/${id}`);
   };
   const renderContent = (item: karinaData): React.ReactNode => {
@@ -44,12 +44,12 @@ const MainContents: React.FC<MainContentsProps> = ({ category, myarray }) => {
       {myarray.length > 0 &&
         myarray.map((item, index) => (
           <li
-            key={item.id}
+            key={item.uuid}
             className={`contents${index + 1}`}
-            onClick={() => goToSecondMain(item.id)}
+            onClick={() => goToSecondMain(item.uuid)}
           >
             <h1>{item.title}</h1>
-            <img src={item.photoSumnail} alt={item.title} />
+            <img src={item.photosumnail} alt={item.title} />
 
             {renderContent(item)}
           </li>

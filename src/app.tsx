@@ -20,7 +20,41 @@ const App: React.FC = () => {
   //   description: "카리나가짱",
   //   photo: "https://cdn.mhnse.com/news/photo/202311/240620_252535_5240.jpg",
   // };
-  const [myArray, setMyArray] = useState<karinaData[]>([]); //전시바구니
+  const [myArray, setMyArray] = useState<karinaData[]>([
+    // {
+    //   uuid: "8acd31b7-99ce-4d28-bdff-4ac75c0fbcb4",
+    //   menubar: "청순카리나",
+    //   title: "dd",
+    //   photosumnail:
+    //     "https://akarina.s3.ap-northeast-2.amazonaws.com/uploads/1706685139426-pagelogo.jpeg",
+    //   photo: [
+    //     "https://akarina.s3.ap-northeast-2.amazonaws.com/uploads/1706685139436-pagelogo.jpeg",
+    //     "https://akarina.s3.ap-northeast-2.amazonaws.com/uploads/1706685139496-cat.jpg",
+    //   ],
+    // },
+    // {
+    //   uuid: "dcdebdef-dcce-4fcf-b743-c2e3115f6dfd",
+    //   menubar: "청순카리나",
+    //   title: "dd",
+    //   photosumnail:
+    //     "https://akarina.s3.ap-northeast-2.amazonaws.com/uploads/1706685413248-pagelogo.png",
+    //   photo: [
+    //     "https://akarina.s3.ap-northeast-2.amazonaws.com/uploads/1706685413258-pagelogo.jpeg",
+    //     "https://akarina.s3.ap-northeast-2.amazonaws.com/uploads/1706685413317-cat.jpg",
+    //   ],
+    // },
+    // {
+    //   uuid: "66a27291-4681-419d-aaeb-0f4ca05c3113",
+    //   menubar: "청순카리나",
+    //   title: "세번째입니다.",
+    //   photosumnail:
+    //     "https://akarina.s3.ap-northeast-2.amazonaws.com/uploads/1706685466587-pagelogo.jpeg",
+    //   photo: [
+    //     "https://akarina.s3.ap-northeast-2.amazonaws.com/uploads/1706685466589-pagelogo.jpeg",
+    //     "https://akarina.s3.ap-northeast-2.amazonaws.com/uploads/1706685466598-cat.jpg",
+    //   ],
+    // },
+  ]); //전시바구니
   const [redArray, setMyRedArray] = useState<karinaData[]>([]); //빨강바구니
   const [blueArray, setMyBlueArray] = useState<karinaData[]>([]); // 파란바구니
   // useEffect(() => {
@@ -65,6 +99,15 @@ const App: React.FC = () => {
     // console.log(arrayToReset);
     // console.log("여기는 바꾸는");
   };
+
+  useEffect(() => {
+    fetch("http://localhost:4000/api/karina")
+      .then((response) => response.json())
+      .then((data) => setMyArray(data))
+      .catch((error) => console.error("Error fetching data:", error));
+    console.log("카리나 테스트입니다.");
+  }, []); // 빈 종속성 배열로 마운트 시에만 실행
+
   return (
     <Router>
       <div>

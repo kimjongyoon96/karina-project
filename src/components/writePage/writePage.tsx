@@ -66,7 +66,7 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray }) => {
       }
     }
   };
-
+  // 사진 파일 압축 함수
   const handlePhotosChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -113,11 +113,11 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray }) => {
 
   const handleSubmit = async () => {
     const newKarinaData: karinaData = {
-      id: myUUID,
+      uuid: myUUID,
       menubar: menubar,
       title: title,
-      photoSumnail: photoSumnail,
-      photos: photos, // 이미지를 담을수 있는 방법 연구.
+      photosumnail: photoSumnail,
+      photo: photos, // 이미지를 담을수 있는 방법 연구.
     };
     console.log(newKarinaData);
     const formData = new FormData();
@@ -137,7 +137,7 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray }) => {
     });
     console.log(object, "여기가 폼데이터값입니다.");
     // 서버의 엔드포인트 URL
-    const url = "http://localhost:3000/api/upload";
+    const url = "http://localhost:4000/api/upload";
 
     try {
       // fetch API를 사용하여 서버로 POST 요청을 보냄

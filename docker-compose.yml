@@ -1,13 +1,13 @@
-version: '3.8'
+version: "3.8"
 services:
   app:
     image: node
     ports:
-      - '3004:3004'
+      - "4000:4000"
     volumes:
       - .:/app
     working_dir: /app
-    command: node express.mjs
+    command: node ./server/sever.js
     depends_on:
       - db
 
@@ -16,4 +16,4 @@ services:
     environment:
       POSTGRES_PASSWORD: dkrlaos1
     ports:
-      - '5432:5432'
+      - "5432:5432"
