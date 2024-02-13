@@ -1,5 +1,5 @@
 // src/App.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createContext, useContext } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { karinaData } from "./types/contentType";
 import Header from "./components/header/header"; // Header 컴포넌트 임포트
@@ -10,10 +10,13 @@ import Number from "./components/movepage/movepage";
 import DetailPage from "./components/detailPage/detailPage";
 import WritePage from "./components/writePage/writePage";
 import SignUp from "./components/signUp/signUp";
+import { AuthProvider } from "../src/authContext";
+import { useAuth } from "../src/authContext";
 import { response } from "express";
 // import Cute from "./cute";
 
 const App: React.FC = () => {
+  const { setJwtToken } = useAuth();
   const [category, setCategory] = useState("청순카리나");
   // console.log(category); // 청순카리나,큐트카리나 문자열
   // const chungsoonKarina: karinaData = {
@@ -103,16 +106,18 @@ const App: React.FC = () => {
     // console.log("여기는 바꾸는");
   };
   // 메인페이지 용도
-  useEffect(() => {
-    fetch("http://localhost:4000/api/karina")
-      .then((response) => response.json())
-      .then((data) => setMyArray(data))
-      .catch((error) => console.error("Error fetching data:", error));
-    console.log("카리나 테스트입니다.");
-  }, []); // 빈 종속성 배열로 마운트 시에만 실행
+  // useEffect(() => {
+  //   fetch("http://localhost:4000/api/karina")
+  //     .then((response) => response.json())
+  //     .then((data) => setMyArray(data))
+  //     .catch((error) => console.error("Error fetching data:", error));
+  //   console.log("카리나 테스트입니다.");
+  // }, []); // 빈 종속성 배열로 마운트 시에만 실행
 
   // 상태 => 하위 컴포넌트로 뿌려주기
   // credential을 포함하여 쿠키 안에 있는 JWT에 접근하기
+  // const FetchJWT = () => {
+  //   const { setJwtToken } = useAuth();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -123,46 +128,51 @@ const App: React.FC = () => {
           throw new Error("서버가 이상해");
         }
         const data = await response.json();
+        setJwtToken(data.token);
         console.log(data, "내가받은 JWT 토큰입니다.");
       } catch (error) {
         console.error("잘못된 fetch 데이터", error);
       }
     };
     fetchData();
-  }, []);
+  }, [setJwtToken]);
   return (
-    <Router>
-      <div>
-        <Header />
-        <Menubar
-          setCategory={setCategory}
-          replaceArray={replaceArray}
-          redArray={redArray}
-          blueArray={blueArray}
-          yellowArray={yellowArray}
-          greenArray={greenArray}
-        />
-        <Routes>
-          <Route
-            path="/"
-            element={<MainContens category={category} myarray={myArray} />}
+    <AuthProvider>
+      <Router>
+        <div>
+          <Header />
+          <Menubar
+            setCategory={setCategory}
+            replaceArray={replaceArray}
+            redArray={redArray}
+            blueArray={blueArray}
+            yellowArray={yellowArray}
+            greenArray={greenArray}
           />
-          <Route
-            path="/write"
-            element={<WritePage addToArray={addToArray} />}
-          />
-          <Route
-            path="/detail/:uuid"
-            element={<DetailPage myArray={myArray} />}
-          />
-          <Route path="signUp" element={<SignUp />} />
-        </Routes>
 
-        <SeachBar />
-        <Number />
-        {/* <Cute /> */}
-      </div>
-    </Router>
+          <Routes>
+            <Route
+              path="/"
+              element={<MainContens category={category} myarray={myArray} />}
+            />
+            <Route
+              path="/write"
+              element={<WritePage addToArray={addToArray} />}
+            />
+            <Route
+              path="/detail/:uuid"
+              element={<DetailPage myArray={myArray} />}
+            />
+            <Route path="signUp" element={<SignUp />} />
+          </Routes>
+
+          <SeachBar />
+
+          <Number />
+          {/* <Cute /> */}
+        </div>
+      </Router>
+    </AuthProvider>
   );
 };
 

@@ -5,3 +5,8 @@ export interface karinaData {
   photosumnail: string;
   photo: string[];
 }
+
+export interface AuthContextType {
+  jwtToken: string | null;
+  setJwtToken: (token: string | null) => void;
+}

@@ -6,6 +6,7 @@ import { karinaData } from "../../types/contentType";
 
 const MainContents: React.FC<MainContentsProps> = ({ category, myarray }) => {
   const navigate = useNavigate();
+
   // console.log(category); // 청순카리나,섹시카리나 맞게 출력
   // console.log(myarray); // 추가된 배열정보 즉, karinadata의 배열
   // console.log("여기뭐가나오냐");

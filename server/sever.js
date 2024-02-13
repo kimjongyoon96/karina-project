@@ -12,6 +12,7 @@ const { exchangeCodeForAccessToken } = require("./oauth");
 const getUserInfo = require("./userinfo");
 const verifyUser = require("./jwt");
 const cookieParser = require("cookie-parser");
+// cors 에러 해결
 app.use(
   cors({
     origin: "http://localhost:3001",

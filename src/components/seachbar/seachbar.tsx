@@ -1,12 +1,17 @@
 import React from "react";
 import "./seach.css";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../authContext";
 
 const SeachBar: React.FC = () => {
   const navigate = useNavigate();
-
+  const { jwtToken } = useAuth();
   const goToSecondMain = (): void => {
-    navigate("/write");
+    if (jwtToken) {
+      navigate("/write");
+    } else {
+      alert("회원만 글쓰기가 가능합니다.");
+    }
   };
 
   return (
