@@ -9,7 +9,10 @@ import SeachBar from "./components/seachbar/seachbar";
 import Number from "./components/movepage/movepage";
 import DetailPage from "./components/detailPage/detailPage";
 import WritePage from "./components/writePage/writePage";
-import Cute from "./cute";
+import SignUp from "./components/signUp/signUp";
+import { response } from "express";
+// import Cute from "./cute";
+
 const App: React.FC = () => {
   const [category, setCategory] = useState("청순카리나");
   // console.log(category); // 청순카리나,큐트카리나 문자열
@@ -99,7 +102,7 @@ const App: React.FC = () => {
     // console.log(arrayToReset);
     // console.log("여기는 바꾸는");
   };
-
+  // 메인페이지 용도
   useEffect(() => {
     fetch("http://localhost:4000/api/karina")
       .then((response) => response.json())
@@ -108,6 +111,25 @@ const App: React.FC = () => {
     console.log("카리나 테스트입니다.");
   }, []); // 빈 종속성 배열로 마운트 시에만 실행
 
+  // 상태 => 하위 컴포넌트로 뿌려주기
+  // credential을 포함하여 쿠키 안에 있는 JWT에 접근하기
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:4000/auth/cookie", {
+          credentials: "include",
+        });
+        if (!response.ok) {
+          throw new Error("서버가 이상해");
+        }
+        const data = await response.json();
+        console.log(data, "내가받은 JWT 토큰입니다.");
+      } catch (error) {
+        console.error("잘못된 fetch 데이터", error);
+      }
+    };
+    fetchData();
+  }, []);
   return (
     <Router>
       <div>
@@ -130,14 +152,15 @@ const App: React.FC = () => {
             element={<WritePage addToArray={addToArray} />}
           />
           <Route
-            path="/detail/:id"
+            path="/detail/:uuid"
             element={<DetailPage myArray={myArray} />}
           />
+          <Route path="signUp" element={<SignUp />} />
         </Routes>
 
         <SeachBar />
         <Number />
-        <Cute />
+        {/* <Cute /> */}
       </div>
     </Router>
   );

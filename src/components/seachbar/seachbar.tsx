@@ -8,6 +8,7 @@ const SeachBar: React.FC = () => {
   const goToSecondMain = (): void => {
     navigate("/write");
   };
+
   return (
     <div className="searchwrap">
       <div

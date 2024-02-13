@@ -1,16 +1,35 @@
 .header {
   display: flex;
-  justify-content: center;
+  justify-content: space-between; /* 로고와 로그인 버튼 사이의 공간을 균등하게 분배 */
   align-items: center;
   background-color: white;
   padding: 10px;
 }
+
 .logo {
   width: 80px; /* 원하는 너비 */
   height: auto; /* 높이는 자동으로 조절 */
+  margin: 0 auto; /* 중앙 정렬 */
 }
 
 .title {
   color: black;
   cursor: pointer;
+  position: absolute; /* 절대 위치 */
+  left: 57%; /* 부모 요소의 중앙 */
+  transform: translateX(-50%); /* 자신의 너비의 절반만큼 왼쪽으로 이동 */
+}
+
+.loginButton {
+  background-color: #534983; /* Green background */
+  color: white; /* White text */
+  padding: 15px 30px; /* Top/bottom and left/right padding */
+  border: none; /* No border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Mouse pointer changes to hand symbol */
+  text-align: center; /* Center the text inside the button */
+}
+
+.loginButton:hover {
+  background-color: #45a049; /* Darker shade of green */
 }

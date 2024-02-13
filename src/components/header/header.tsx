@@ -16,6 +16,12 @@ const Header: React.FC = () => {
           Navigate("/");
         }}
       />
+      <button
+        className="loginButton"
+        onClick={() => {
+          Navigate("SignUp");
+        }}
+      />
 
       <h1 className="title">카리나 갤러리</h1>
     </header>

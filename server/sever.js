@@ -8,11 +8,21 @@ const multerS3 = require("multer-s3");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 const mysql = require("mysql");
 const { Pool } = require("pg");
-
-app.use(cors()); // 모든 요청에 대해 CORS를 활성화합니다.
+const { exchangeCodeForAccessToken } = require("./oauth");
+const getUserInfo = require("./userinfo");
+const verifyUser = require("./jwt");
+const cookieParser = require("cookie-parser");
+app.use(
+  cors({
+    origin: "http://localhost:3001",
+    credentials: true,
+  })
+); // 모든 요청에 대해 CORS를 활성화합니다.
+const jwt = require("jsonwebtoken");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 const s3 = new S3({
   credentials: {
@@ -42,53 +52,134 @@ const pool = new Pool({
   port: process.env.DB_PORT,
 });
 
-// 'api/test' 엔드포인트로 POST 요청을 처리
-app.post(
-  "/api/upload",
-  upload.fields([
-    { name: "photos", maxCount: 10 },
-    { name: "photoSumnail", maxCount: 1 },
-  ]),
-  async (req, res) => {
-    try {
-      const UUid = req.body.id;
-      const menubar = req.body.menubar;
-      const title = req.body.title;
-      const photoSumnail = req.files["photoSumnail"][0].location; // 'photoSumnail' 파일 데이터
-      const photos = req.files["photos"].map((photo) => photo.location); // 'photos' 필드로 여러 파일을 받음
+// // 'api/test' 엔드포인트로 POST 요청을 처리
+// app.post(
+//   "/api/upload",
+//   upload.fields([
+//     { name: "photos", maxCount: 10 },
+//     { name: "photoSumnail", maxCount: 1 },
+//   ]),
+//   async (req, res) => {
+//     try {
+//       const UUid = req.body.id;
+//       const menubar = req.body.menubar;
+//       const title = req.body.title;
+//       const photoSumnail = req.files["photoSumnail"][0].location; // 'photoSumnail' 파일 데이터
+//       const photos = req.files["photos"].map((photo) => photo.location); // 'photos' 필드로 여러 파일을 받음
 
-      console.log("Received ID:", UUid);
-      console.log("Received Menubar:", menubar);
-      console.log("Received Title:", title);
-      console.log(photoSumnail, "섬네일");
-      console.log(photos, "사진들");
+//       console.log("Received ID:", UUid);
+//       console.log("Received Menubar:", menubar);
+//       console.log("Received Title:", title);
+//       console.log(photoSumnail, "섬네일");
+//       console.log(photos, "사진들");
 
-      const insertQuery = `INSERT INTO karina(uuid, menubar, title, photosumnail, photo) VALUES ($1,$2,$3,$4,$5)`;
+//       const insertQuery = `INSERT INTO karina(uuid, menubar, title, photosumnail, photo) VALUES ($1,$2,$3,$4,$5)`;
 
-      await pool.query(insertQuery, [
-        UUid,
-        menubar,
-        title,
-        photoSumnail,
-        photos,
-      ]);
+//       await pool.query(insertQuery, [
+//         UUid,
+//         menubar,
+//         title,
+//         photoSumnail,
+//         photos,
+//       ]);
 
-      res.status(200).json({ message: "데이터 성공적으로 받음!" });
-    } catch (error) {
-      console.error("Error:", error);
-      res.status(500).json({ message: "서버 에러 떳따!" });
-    }
-  }
-);
-app.get("/api/karina", async (req, res) => {
+//       res.status(200).json({ message: "데이터 성공적으로 받음!" });
+//     } catch (error) {
+//       console.error("Error:", error);
+//       res.status(500).json({ message: "서버 에러 떳따!" });
+//     }
+//   }
+// );
+// app.get("/api/karina", async (req, res) => {
+//   try {
+//     // 동적으로 바뀌게 구현, 프론트의 get 요청의 쿼리스트링에 따라서.. where 절을 추가하여 동적으로 구현되게.
+
+//     console.log(req.query, "쿼리입니다.");
+//     if (req.query["menubar"] === "cute") {
+//       console.log(req.query["cute"], "큐트값나오라");
+//       const { rows } = await pool.query(
+//         "SELECT * FROM karina WHERE menubar='큐트카리나'  "
+//       );
+//       res.json(rows);
+//     }
+//     const { rows } = await pool.query("SELECT * FROM karina");
+//     res.json(rows);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send("Server error");
+//   }
+// });
+// 사용자를 Google 로그인 페이지로 리디렉션하는 경로
+app.get("/auth/google", (req, res) => {
+  const oauth2Endpoint = "https://accounts.google.com/o/oauth2/v2/auth";
+  const params = {
+    client_id: process.env.CLIENT_ID,
+    redirect_uri: "http://localhost:4000/auth/google/redirect",
+    response_type: "code",
+    scope:
+      "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
+    access_type: "offline",
+    prompt: "consent",
+  };
+
+  const queryString = new URLSearchParams(params).toString();
+  // console.log(queryString, "여기 쿼리스트링");
+  const authUrl = `${oauth2Endpoint}?${queryString}`;
+  // console.log(authUrl, "여기가 합쳐진 URL");
+  res.redirect(authUrl);
+});
+
+// Google로부터 리디렉션된 후 `authorization code`를 받아 처리하는 경로
+app.get("/auth/google/redirect", async (req, res) => {
+  const { code } = req.query;
+  console.log(code, "여기가 코드입니다.");
+
   try {
-    const { rows } = await pool.query("SELECT * FROM karina");
-    res.json(rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server error");
+    const { access_token, refresh_token } =
+      await exchangeCodeForAccessToken(code);
+    console.log("Access Token:", access_token);
+    console.log("Refresh Token:", refresh_token);
+
+    const userInfo = await getUserInfo(access_token);
+    console.log(userInfo, "유저인포 나와라!");
+
+    const userName = userInfo.names[0].displayName; // 추출한 유저 이름
+    const userEmail = userInfo.emailAddresses[0].value; // 추출한 유저 이메일
+
+    const insertQuery = `INSERT INTO userInfo(userId, userEmail) VALUES ($1, $2)`;
+    await pool.query(insertQuery, [userName, userEmail]);
+    const secretKey = process.env.JWT_SECRET_KEY;
+    const user = await verifyUser(pool, userEmail);
+    // JWT 토큰 생성
+    const token = jwt.sign(
+      { userName: user.userName, userEmail: user.userEmail }, // JWT 페이로드에 사용자 정보 포함
+      secretKey, // 비밀키
+      { expiresIn: "1h" } // 토큰 유효기간 설정
+    );
+    console.log(token, "내가 발행한 유저의 토큰입니다.");
+
+    res.cookie("token", token, { httpOnly: true, secure: false }); // 보안을 위해 HTTP-only, Secure 쿠키 옵션 사용
+    res.redirect("http://localhost:3001"); // 클라이언트 페이지로 리디렉션
+  } catch (error) {
+    console.error("Error handling OAuth callback:", error);
+    res.status(500).send("Authentication failed");
   }
 });
+app.get("/auth/cookie", (req, res) => {
+  const token = req.cookies.token; // 쿠키에서 토큰 읽기
+  if (token) {
+    console.log(token, "이 엔드포인트에서 받은 토큰입니다.");
+    res.json({ token });
+    console.log("여기는 쿠키값을 피상하는 로직입니다.");
+  } else {
+    res.status(401).send("Unauthorized: No token provided");
+  }
+});
+// // 서버에서 JWT 생성하는 로직
+// app.get("/auth/jwt", async (req, res) => {
+//   const user = verifyUser(email);
+//   const token = jwt.sign({ userName, userEmail }, secretkey); // => 김종윤,kimsilveryoon에 맞는 종윤토큰 생성?
+// });
 
 const PORT = 4000;
 app.listen(PORT, () => {

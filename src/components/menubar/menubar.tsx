@@ -24,8 +24,13 @@ const Menubar: React.FC<MenubarProps> = ({
     <nav className="cute">
       <ul
         onClick={() => {
-          setCategory("청순카리나");
-          replaceArray(redArray);
+          fetch("http://localhost:4000/api/karina?menubar=cute")
+            .then((response) => response.json())
+            .then((data) => replaceArray(data))
+            .catch((error) => console.error("Error fetching data:", error));
+          // 여기서 get요청을 api/page="cute"/page=2
+          // setCategory("청순카리나");
+          // replaceArray(redArray);
           // console.log(redArray);
           // console.log("redArray");
         }}

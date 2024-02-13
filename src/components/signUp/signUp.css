@@ -1,0 +1,21 @@
+.signup-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.google-login-btn {
+  background-color: #db4437; /* 구글 레드 색상 */
+  color: white;
+  padding: 50px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 30px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.google-login-btn:hover {
+  background-color: #e57373; /* 호버 시 색상 변경 */
+}
