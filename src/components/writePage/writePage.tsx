@@ -117,7 +117,7 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray }) => {
       menubar: menubar,
       title: title,
       photosumnail: photoSumnail,
-      photo: photos, // 이미지를 담을수 있는 방법 연구.
+      photos: photos, // 이미지를 담을수 있는 방법 연구.
     };
     console.log(newKarinaData);
     const formData = new FormData();
@@ -175,10 +175,10 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray }) => {
         value={menubar}
         onChange={(e) => setMenubar(e.target.value)}
       >
-        <option value="청순카리나">청순카리나</option>
-        <option value="큐트카리나">큐트카리나</option>
-        <option value="섹시카리나">섹시카리나</option>
-        <option value="일상카리나">일상카리나</option>
+        <option value="innocence">청순카리나</option>
+        <option value="cute">큐트카리나</option>
+        <option value="sexy">섹시카리나</option>
+        <option value="daily">일상카리나</option>
       </select>
 
       <input

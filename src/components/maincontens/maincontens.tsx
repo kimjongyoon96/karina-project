@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./maincontens.css";
 import { MainContentsProps } from "./maincomponent";
 import { karinaData } from "../../types/contentType";
+import { useAuth } from "../../authContext";
 
 const MainContents: React.FC<MainContentsProps> = ({ category, myarray }) => {
   const navigate = useNavigate();
@@ -14,24 +15,25 @@ const MainContents: React.FC<MainContentsProps> = ({ category, myarray }) => {
     navigate(`/detail/${uuid}`);
   };
   const renderContent = (item: karinaData): React.ReactNode => {
+    console.log(item, "메인컨텐츠에서 아이템의값입니다.");
     switch (category) {
       case "청순카리나":
-        if (item.menubar === "청순카리나") {
+        if (item.menubar === "innocence") {
           return <div>청순카리나 관련 컨텐츠</div>;
         }
         break;
       case "큐트카리나":
-        if (item.menubar === "큐트카리나") {
+        if (item.menubar === "cute") {
           return <div>큐트카리나 관련 컨텐츠</div>;
         }
         break;
       case "섹시카리나":
-        if (item.menubar === "섹시카리나") {
+        if (item.menubar === "sexy") {
           return <div>섹시카리나 관련 컨텐츠</div>;
         }
         break;
       case "일상카리나":
-        if (item.menubar === "일상카리나") {
+        if (item.menubar === "daily") {
           return <div>일상카리나 관련 컨텐츠</div>;
         }
         break;

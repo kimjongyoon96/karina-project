@@ -24,15 +24,11 @@ const Menubar: React.FC<MenubarProps> = ({
     <nav className="cute">
       <ul
         onClick={() => {
-          fetch("http://localhost:4000/api/karina?menubar=cute")
+          fetch("http://localhost:4000/api/karina?menubar=innocence")
             .then((response) => response.json())
             .then((data) => replaceArray(data))
             .catch((error) => console.error("Error fetching data:", error));
           // 여기서 get요청을 api/page="cute"/page=2
-          // setCategory("청순카리나");
-          // replaceArray(redArray);
-          // console.log(redArray);
-          // console.log("redArray");
         }}
       >
         청순카리나
@@ -40,8 +36,10 @@ const Menubar: React.FC<MenubarProps> = ({
 
       <ul
         onClick={() => {
-          setCategory("큐트카리나");
-          replaceArray(blueArray);
+          fetch("http://localhost:4000/api/karina?menubar=cute")
+            .then((response) => response.json())
+            .then((data) => replaceArray(data))
+            .catch((error) => console.error("Error fetching data:", error));
           // console.log(blueArray);
           // console.log("여기블루");
         }}
@@ -50,16 +48,20 @@ const Menubar: React.FC<MenubarProps> = ({
       </ul>
       <ul
         onClick={() => {
-          setCategory("섹시카리나");
-          replaceArray(yellowArray);
+          fetch("http://localhost:4000/api/karina?menubar=sexy")
+            .then((response) => response.json())
+            .then((data) => replaceArray(data))
+            .catch((error) => console.error("Error fetching data:", error));
         }}
       >
         섹시카리나
       </ul>
       <ul
         onClick={() => {
-          setCategory("일상카리나");
-          replaceArray(greenArray);
+          fetch("http://localhost:4000/api/karina?menubar=daily")
+            .then((response) => response.json())
+            .then((data) => replaceArray(data))
+            .catch((error) => console.error("Error fetching data:", error));
         }}
       >
         일상카리나

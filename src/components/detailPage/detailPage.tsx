@@ -10,21 +10,21 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray }) => {
   // useParams를 사용하여 URL에서 id 값을 추출합니다. id는 문자열 타입입니다.
   const { uuid } = useParams<{ uuid: string }>();
 
-  console.log(uuid, "여기가 유유아이디입니다.");
+  console.log(uuid, "uuid값입니다.");
 
   const itemId = uuid !== undefined ? uuid : null;
 
   // 문자열 id를 숫자로 변환하고, 해당하는 게시물을 찾습니다.
   const post = itemId !== null ? myArray.find((p) => p.uuid === itemId) : null;
-
+  console.log(post, "포스트오피스");
   return (
     <div>
       {post ? (
         <div>
           <h1>{post.title}</h1>
-          {post.photo &&
-            post.photo.map((photo, index) => (
-              <img key={index} src={photo} alt={`Photo ${index}`} />
+          {post.photos &&
+            post.photos.map((photos, index) => (
+              <img key={index} src={photos} alt={`Photo ${index}`} />
             ))}
         </div>
       ) : (
