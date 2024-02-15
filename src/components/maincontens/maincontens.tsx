@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import "./maincontens.css";
 import { MainContentsProps } from "./maincomponent";
 import { karinaData } from "../../types/contentType";
-import { useAuth } from "../../authContext";
 
 const MainContents: React.FC<MainContentsProps> = ({ category, myarray }) => {
   const navigate = useNavigate();

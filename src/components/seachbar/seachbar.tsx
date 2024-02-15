@@ -25,7 +25,6 @@ const SeachBar: React.FC<AuthContextType> = ({ jwtToken, setJwtToken }) => {
       </div> */}
       {/* <input className="seachbox"></input> */}
 
-      <div className="spacer"></div>
       <button className="writebox" onClick={goToSecondMain}>
         글쓰기
       </button>
