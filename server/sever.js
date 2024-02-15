@@ -15,7 +15,7 @@ const cookieParser = require("cookie-parser");
 // cors 에러 해결
 app.use(
   cors({
-    origin: "http://localhost:3001",
+    origin: "http://123.45.67.89:3001",
     credentials: true,
   })
 ); // 모든 요청에 대해 CORS를 활성화합니다.
@@ -118,7 +118,7 @@ app.get("/auth/google", (req, res) => {
   const oauth2Endpoint = "https://accounts.google.com/o/oauth2/v2/auth";
   const params = {
     client_id: process.env.CLIENT_ID,
-    redirect_uri: "http://localhost:4000/auth/google/redirect",
+    redirect_uri: "http://123.45.67.89/auth/google/redirect",
     response_type: "code",
     scope:
       "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
@@ -173,7 +173,7 @@ app.get("/auth/google/redirect", async (req, res) => {
     console.log(token, "내가 발행한 유저의 토큰입니다.");
 
     res.cookie("token", token, { httpOnly: true, secure: false });
-    res.redirect("http://localhost:3001"); // 클라이언트 페이지로 리디렉션
+    res.redirect("http://123.45.67.89:3001"); // 클라이언트 페이지로 리디렉션
   } catch (error) {
     console.error("Error handling OAuth callback:", error);
     res.status(500).send("Authentication failed");

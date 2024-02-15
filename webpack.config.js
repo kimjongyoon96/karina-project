@@ -41,9 +41,9 @@ module.exports = {
       fix: true,
       extensions: ["ts", "js"],
     }),
-    new webpack.DefinePlugin({
-      "process.env": JSON.stringify(dotenv.parsed),
-    }),
+    // new webpack.DefinePlugin({
+    //   "process.env": JSON.stringify(dotenv.parsed),
+    // }),
   ],
   performance: {
     hints: false,
@@ -52,15 +52,15 @@ module.exports = {
     filename: "index.bundle.js",
     path: path.resolve(__dirname, "dist"),
   },
-  devServer: {
-    hot: true,
-    static: {
-      directory: path.join(__dirname, "src", "public"),
-    },
-    compress: true,
-    port: 3001,
-    devMiddleware: {
-      publicPath: "/",
-    },
-  },
+  // devServer: {
+  //   hot: true,
+  //   static: {
+  //     directory: path.join(__dirname, "src", "public"),
+  //   },
+  //   compress: true,
+  //   port: 3001,
+  //   devMiddleware: {
+  //     publicPath: "/",
+  //   },
+  // },
 };
