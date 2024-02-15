@@ -1,6 +1,6 @@
 .header {
   display: flex;
-  justify-content: space-between; /* 로고와 로그인 버튼 사이의 공간을 균등하게 분배 */
+  justify-content: center; /* 로고와 로그인 버튼 사이의 공간을 균등하게 분배 */
   align-items: center;
   background-color: white;
   padding: 10px;
@@ -10,26 +10,74 @@
   width: 80px; /* 원하는 너비 */
   height: auto; /* 높이는 자동으로 조절 */
   margin: 0 auto; /* 중앙 정렬 */
+  border-radius: 50px;
 }
 
 .title {
   color: black;
   cursor: pointer;
   position: absolute; /* 절대 위치 */
-  left: 57%; /* 부모 요소의 중앙 */
+  left: 60%; /* 부모 요소의 중앙 */
   transform: translateX(-50%); /* 자신의 너비의 절반만큼 왼쪽으로 이동 */
 }
-
 .loginButton {
-  background-color: #534983; /* Green background */
-  color: white; /* White text */
-  padding: 15px 30px; /* Top/bottom and left/right padding */
-  border: none; /* No border */
-  border-radius: 5px; /* Rounded corners */
-  cursor: pointer; /* Mouse pointer changes to hand symbol */
-  text-align: center; /* Center the text inside the button */
+  background-color: #534983; /* 기본 배경색 */
+  color: white; /* 텍스트 색상 */
+  padding: 15px 30px; /* 상하, 좌우 패딩 */
+  border: none; /* 테두리 없음 */
+  border-radius: 5px; /* 모서리 둥글게 */
+  cursor: pointer; /* 마우스 포인터를 손 모양으로 변경 */
+  text-align: center; /* 텍스트 중앙 정렬 */
+  transition: background 0.5s ease; /* 배경색 변화 애니메이션 */
 }
 
 .loginButton:hover {
-  background-color: #45a049; /* Darker shade of green */
+  background: linear-gradient(
+    270deg,
+    #ff0000,
+    #ff7f00,
+    #ffff00,
+    #00ff00,
+    #0000ff,
+    #4b0082,
+    #9400d3
+  );
+  background-size: 1400% 1400%;
+  -webkit-animation: RainbowAnimation 3s ease infinite;
+  -moz-animation: RainbowAnimation 3s ease infinite;
+  animation: RainbowAnimation 3s ease infinite;
+}
+
+@-webkit-keyframes RainbowAnimation {
+  0% {
+    background-position: 0% 82%;
+  }
+  50% {
+    background-position: 100% 19%;
+  }
+  100% {
+    background-position: 0% 82%;
+  }
+}
+@-moz-keyframes RainbowAnimation {
+  0% {
+    background-position: 0% 82%;
+  }
+  50% {
+    background-position: 100% 19%;
+  }
+  100% {
+    background-position: 0% 82%;
+  }
+}
+@keyframes RainbowAnimation {
+  0% {
+    background-position: 0% 82%;
+  }
+  50% {
+    background-position: 100% 19%;
+  }
+  100% {
+    background-position: 0% 82%;
+  }
 }

@@ -18,7 +18,7 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray }) => {
   const navigate = useNavigate();
   const myUUID = uuidv4();
   const [title, setTitle] = useState("");
-  const [menubar, setMenubar] = useState("청순카리나"); // 기본값 설정
+  const [menubar, setMenubar] = useState(""); // 기본값 설정
   const [photoSumnail, setPhotoSumnail] = useState(""); // 대표 이미지 URL 상태
   const [photos, setPhotos] = useState<string[]>([]); // <sting[]> 을 해줌으로서, 문자열배열 즉, photos가 문자열 배열을 상태로 관리할것을 명시한다.
   console.log(photos, "여기는 변경된 사진의 상태변경함수");
@@ -137,14 +137,13 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray }) => {
     });
     console.log(object, "여기가 폼데이터값입니다.");
     // 서버의 엔드포인트 URL
-    const url = "http://localhost:4000/api/upload";
+    const url = `${process.env.REACT_APP_API_URL}/api/upload`;
 
     try {
       // fetch API를 사용하여 서버로 POST 요청을 보냄
       const response = await fetch(url, {
         method: "POST",
         body: formData, // FormData 객체를 body로 설정
-        // 'Content-Type' 헤더를 명시적으로 설정하지 않습니다.
       });
 
       if (!response.ok) throw new Error(`Error: ${response.status}`);
@@ -175,6 +174,9 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray }) => {
         value={menubar}
         onChange={(e) => setMenubar(e.target.value)}
       >
+        <option value="" disabled selected>
+          메뉴바를 선택하세요
+        </option>
         <option value="innocence">청순카리나</option>
         <option value="cute">큐트카리나</option>
         <option value="sexy">섹시카리나</option>

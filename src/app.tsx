@@ -1,6 +1,11 @@
 // src/App.tsx
 import React, { useState, useEffect, createContext, useContext } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  useLocation,
+} from "react-router-dom";
 import { karinaData, AuthContextType } from "./types/contentType";
 import Header from "./components/header/header"; // Header 컴포넌트 임포트
 import Menubar from "./components/menubar/menubar";
@@ -10,27 +15,31 @@ import Number from "./components/movepage/movepage";
 import DetailPage from "./components/detailPage/detailPage";
 import WritePage from "./components/writePage/writePage";
 import SignUp from "./components/signUp/signUp";
-import { AuthProvider } from "../src/authContext";
-// import { useAuth } from "../src/authContext";
-import { response } from "express";
-import SimpleInputComponent from "./components/Test";
-// import Cute from "./cute";
 
 const App: React.FC = () => {
-  // const { setJwtToken } = useAuth();
   const [category, setCategory] = useState("청순카리나");
   // console.log(category); // 청순카리나,큐트카리나 문자열
   const [jwtToken, setJwtToken] = useState<string | null>(null);
-  const authContextValue: AuthContextType = { jwtToken, setJwtToken };
   const [myArray, setMyArray] = useState<karinaData[]>([]); //전시바구니
   const [redArray, setMyRedArray] = useState<karinaData[]>([]); //빨강바구니
   const [blueArray, setMyBlueArray] = useState<karinaData[]>([]); // 파란바구니
-  // useEffect(() => {
-  //   console.log("Updated redArray:", blueArray);
-  // }, [blueArray]);
   const [yellowArray, setMyYellowArray] = useState<karinaData[]>([]); //노랑바구니
   const [greenArray, setMyGreenArray] = useState<karinaData[]>([]); // 초록바구니
-  // console.log(myArray); // karinaData의 값들출력
+  // 글쓰기 특정 컴포넌트에서 숨기기
+  const authContextValue: AuthContextType = { jwtToken, setJwtToken };
+  const ShowSeachbar = () => {
+    const location = useLocation();
+
+    if (
+      location.pathname !== "/write" &&
+      !location.pathname.startsWith("/detail") &&
+      !location.pathname.startsWith("/SignUp")
+    ) {
+      return <SeachBar {...authContextValue} />;
+    }
+
+    return null;
+  };
 
   // 2. 배열을 만들 작동 함수
   // 배열을 추가할때는 빨강 빨강 파랑 파랑 노랑 노랑
@@ -66,24 +75,26 @@ const App: React.FC = () => {
     setMyArray(arrayToReset);
     // console.log(arrayToReset);
   };
+
+  // http://localhost:4000/api/karina
   // 메인페이지 용도
   useEffect(() => {
-    fetch("http://localhost:4000/api/karina")
+    fetch(`${process.env.REACT_APP_API_URL}/api/karina`)
       .then((response) => response.json())
       .then((data) => setMyArray(data))
       .catch((error) => console.error("Error fetching data:", error));
     console.log("카리나 테스트입니다.");
   }, []); // 빈 종속성 배열로 마운트 시에만 실행
 
-  // 상태 => 하위 컴포넌트로 뿌려주기
-  // credential을 포함하여 쿠키 안에 있는 JWT에 접근하기
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:4000/auth/cookie", {
-          credentials: "include",
-        });
+        const response = await fetch(
+          `${process.env.REACT_APP_API_URL}/auth/cookie`,
+          {
+            credentials: "include",
+          }
+        );
         if (!response.ok) {
           throw new Error("서버가 이상해");
         }
@@ -97,11 +108,15 @@ const App: React.FC = () => {
     };
     fetchData();
   }, []);
+  // const isSignUpPage = location.pathname === "/signUp";
+
+  // if (isSignUpPage) {
+  //   return <SignUp />;
+  // }
   return (
-    // <AuthProvider>
     <Router>
       <div>
-        <Header />
+        <Header {...authContextValue} />
         <Menubar
           setCategory={setCategory}
           replaceArray={replaceArray}
@@ -125,16 +140,13 @@ const App: React.FC = () => {
             element={<DetailPage myArray={myArray} />}
           />
           <Route path="signUp" element={<SignUp />} />
-          <Route path="/testyong" element={<SimpleInputComponent />} />
         </Routes>
-
-        <SeachBar {...authContextValue} />
+        <ShowSeachbar />
+        {/* <SeachBar {...authContextValue} /> */}
 
         <Number />
-        {/* <Cute /> */}
       </div>
     </Router>
-    // </AuthProvider>
   );
 };
 

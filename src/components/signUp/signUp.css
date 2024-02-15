@@ -3,19 +3,53 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
+  background-image: linear-gradient(
+    45deg,
+    #ff0047,
+    #2c34c7,
+    #00d4ff,
+    #ffef00,
+    #ff0047
+  );
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+}
+
+.login-box {
+  padding: 50px;
+  background: white;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  margin-bottom: 20px;
+  color: #333;
 }
 
 .google-login-btn {
-  background-color: #db4437; /* 구글 레드 색상 */
+  padding: 10px 15px;
+  background-color: #dd4b39;
   color: white;
-  padding: 50px 15px;
   border: none;
-  border-radius: 5px;
-  font-size: 30px;
+  border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
 .google-login-btn:hover {
-  background-color: #e57373; /* 호버 시 색상 변경 */
+  background-color: #e74b37;
+}
+
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }

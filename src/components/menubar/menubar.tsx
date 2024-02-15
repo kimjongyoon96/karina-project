@@ -24,7 +24,7 @@ const Menubar: React.FC<MenubarProps> = ({
     <nav className="cute">
       <ul
         onClick={() => {
-          fetch("http://localhost:4000/api/karina?menubar=innocence")
+          fetch(`${process.env.REACT_APP_API_URL}/api/karina?menubar=innocence`)
             .then((response) => response.json())
             .then((data) => replaceArray(data))
             .catch((error) => console.error("Error fetching data:", error));
@@ -36,7 +36,7 @@ const Menubar: React.FC<MenubarProps> = ({
 
       <ul
         onClick={() => {
-          fetch("http://localhost:4000/api/karina?menubar=cute")
+          fetch(`${process.env.REACT_APP_API_URL}/api/karina?menubar=cute`)
             .then((response) => response.json())
             .then((data) => replaceArray(data))
             .catch((error) => console.error("Error fetching data:", error));
@@ -48,7 +48,7 @@ const Menubar: React.FC<MenubarProps> = ({
       </ul>
       <ul
         onClick={() => {
-          fetch("http://localhost:4000/api/karina?menubar=sexy")
+          fetch(`${process.env.REACT_APP_API_URL}/api/karina?menubar=sexy`)
             .then((response) => response.json())
             .then((data) => replaceArray(data))
             .catch((error) => console.error("Error fetching data:", error));
@@ -58,7 +58,7 @@ const Menubar: React.FC<MenubarProps> = ({
       </ul>
       <ul
         onClick={() => {
-          fetch("http://localhost:4000/api/karina?menubar=daily")
+          fetch(`${process.env.REACT_APP_API_URL}/api/karina?menubar=daily`)
             .then((response) => response.json())
             .then((data) => replaceArray(data))
             .catch((error) => console.error("Error fetching data:", error));

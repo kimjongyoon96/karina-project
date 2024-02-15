@@ -45,14 +45,14 @@ const MainContents: React.FC<MainContentsProps> = ({ category, myarray }) => {
   return (
     <main className="mainContents">
       {myarray.length > 0 &&
-        myarray.map((item, index) => (
+        myarray.slice(0, 12).map((item, index) => (
           <li
             key={item.uuid}
             className={`contents${index + 1}`}
             onClick={() => goToSecondMain(item.uuid)}
           >
+            <img className="mainThumbNail" src={item.photosumnail} />
             <h1>{item.title}</h1>
-            <img src={item.photosumnail} alt={item.title} />
 
             {renderContent(item)}
           </li>

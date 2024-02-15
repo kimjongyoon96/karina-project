@@ -3,27 +3,29 @@ import React from "react";
 import pageLogo from "../../assets/photo/pagelogo.png";
 import "./header.css";
 import { useNavigate } from "react-router-dom";
-
-const Header: React.FC = () => {
+import { AuthContextType } from "../../types/contentType";
+const Header: React.FC<AuthContextType> = ({ jwtToken, setJwtToken }) => {
   const Navigate = useNavigate();
   return (
     <header className="header">
       <img
         className="logo"
-        src={pageLogo}
-        alt="Page Logo"
         onClick={() => {
           Navigate("/");
         }}
+        src={pageLogo}
+        alt="Page Logo"
       />
-      <button
-        className="loginButton"
-        onClick={() => {
-          Navigate("SignUp");
-        }}
-      />
+      {!jwtToken && (
+        <button
+          className="loginButton"
+          onClick={() => {
+            Navigate("SignUp");
+          }}
+        />
+      )}
 
-      <h1 className="title">카리나 갤러리</h1>
+      <h1 className="title">카리나갤러리</h1>
     </header>
   );
 };

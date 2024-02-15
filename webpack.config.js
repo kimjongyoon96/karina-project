@@ -35,6 +35,7 @@ module.exports = {
   resolve: {
     extensions: [".tsx", ".ts", ".js", ".jsx"], // .tsx와 .jsx 확장자를 처리합니다.
   },
+  devtool: "source-map",
   plugins: [
     new ESLintPlugin({
       fix: true,

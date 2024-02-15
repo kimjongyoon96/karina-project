@@ -149,20 +149,30 @@ app.get("/auth/google/redirect", async (req, res) => {
 
     const userName = userInfo.names[0].displayName; // 추출한 유저 이름
     const userEmail = userInfo.emailAddresses[0].value; // 추출한 유저 이메일
+    // 여기까지는 동일한 적용(회원유무 상관없이)0
 
-    const insertQuery = `INSERT INTO userinfo(username, useremail) VALUES ($1, $2)`;
-    await pool.query(insertQuery, [userName, userEmail]);
+    // 로그인 하는 인간이 DB에 있는지 확인 로직
+    const checkUserQuery = `SELECT * FROM userinfo WHERE useremail = $1`;
+    const { rows } = await pool.query(checkUserQuery, [userEmail]);
+    let user = rows.length > 0 ? rows[0] : null;
+
+    if (!user) {
+      // DB에 사용자가 없으면 새로 추가
+      const insertQuery = `INSERT INTO userinfo(username, useremail) VALUES ($1, $2)`;
+      await pool.query(insertQuery, [userName, userEmail]);
+      // 새로 추가된 사용자 정보를 가져옴
+      user = await verifyUser(pool, userEmail);
+    }
     const secretKey = process.env.JWT_SECRET_KEY;
-    const user = await verifyUser(pool, userEmail);
     // JWT 토큰 생성
     const token = jwt.sign(
-      { userName: user.userName, userEmail: user.userEmail }, // JWT 페이로드에 사용자 정보 포함
+      { userName: user.userName, userEmail: user.userEmail },
       secretKey, // 비밀키
       { expiresIn: "1h" } // 토큰 유효기간 설정
     );
     console.log(token, "내가 발행한 유저의 토큰입니다.");
 
-    res.cookie("token", token, { httpOnly: true, secure: false }); // 보안을 위해 HTTP-only, Secure 쿠키 옵션 사용
+    res.cookie("token", token, { httpOnly: true, secure: false });
     res.redirect("http://localhost:3001"); // 클라이언트 페이지로 리디렉션
   } catch (error) {
     console.error("Error handling OAuth callback:", error);
