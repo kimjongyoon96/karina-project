@@ -1,6 +1,6 @@
 # 프로젝트 최적화 전략
 
-이 프로젝트는 다양한 사진과 애니메이션이 렌더링되는 환경을 상정하고 있습니다. 이러한 환경에서 최적의 사용자 경험을 제공하기 위해, 다음과 같은 최적화 전략을 모색합니다.
+카리나를 기본으로, 여러 아이돌들의 사진과 영상을 최적화 합니다.(mp4,webp)
 
 ## 목표
 
@@ -30,33 +30,3 @@
 ### 5. DOM 최적화
 
 - **불필요한 DOM 조작 최소화**: DOM 조작을 최소화하여 렌더링 성능을 향상시킵니다.
-- **가상 DOM 사용 (예: React, Vue.js)**: 불필요한 렌더링을 줄이고 성능을 개선합니다.
-  const replaceArray = () => {
-  switch (category) {
-  case "청순카리나":
-  setRedArray([]);
-  break;
-  case "큐트카리나":
-  setBlueArray([]);
-  break;
-  case "섹시카리나":
-  setYellowArray([]);
-  break;
-  case "일상카리나":
-  setGreenArray([]);
-  break;
-  default:
-  console.log("없는 카테고리 입니다.");
-  }
-  };
-
-  <button
-  className="test"
-  onClick={() => {
-  addToArray(newKarinaData);
-
-          navigate("/");
-        }}
-      >
-        등록
-      </button>
