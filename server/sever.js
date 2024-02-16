@@ -190,6 +190,9 @@ app.get("/auth/cookie", (req, res) => {
   }
 });
 
+app.get("/api/health", (req, res) => {
+  res.json({ message: "제발 와라!!!!!" });
+});
 const PORT = 4000;
 app.listen(PORT, () => {
   console.log(`여기서 실행중: ${PORT}`);
