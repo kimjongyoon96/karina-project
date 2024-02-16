@@ -48,7 +48,7 @@ async function exchangeCodeForAccessToken(code) {
     client_id: process.env.CLIENT_ID,
     client_secret: process.env.CLIENT_SECRET,
     code,
-    redirect_uri: "http:///123.45.67.89:4000/auth/google/redirect",
+    redirect_uri: "http:///13.125.249.85:4000/auth/google/redirect",
     grant_type: "authorization_code",
   }).toString();
 
