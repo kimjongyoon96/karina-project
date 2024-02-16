@@ -174,7 +174,7 @@ app.get("/auth/google/redirect", async (req, res) => {
     console.log(token, "내가 발행한 유저의 토큰입니다.");
 
     res.cookie("token", token, { httpOnly: true, secure: false });
-    res.redirect(`${CLIENT_API_URL}`); // 클라이언트 페이지로 리디렉션
+    res.redirect(`${process.env.CLIENT_API_URL}`); // 클라이언트 페이지로 리디렉션
   } catch (error) {
     console.error("Error handling OAuth callback:", error);
     res.status(500).send("Authentication failed");
