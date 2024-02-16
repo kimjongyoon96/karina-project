@@ -16,10 +16,10 @@ const cookieParser = require("cookie-parser");
 
 app.use(
   cors({
-    origin: "http://13.125.249.85:3001",
+    origin: `${process.env.CLIENT_API_URL}`,
     credentials: true,
   })
-); // 모든 요청에 대해 CORS를 활성화합니다.
+);
 const jwt = require("jsonwebtoken");
 
 app.use(express.json());
@@ -119,7 +119,7 @@ app.get("/auth/google", (req, res) => {
   const oauth2Endpoint = "https://accounts.google.com/o/oauth2/v2/auth";
   const params = {
     client_id: process.env.CLIENT_ID,
-    redirect_uri: "http://13.125.249.85/auth/google/redirect",
+    redirect_uri: `${process.env.REACT_APP_API_URL}/auth/google/redirect`,
     response_type: "code",
     scope:
       "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
@@ -174,7 +174,7 @@ app.get("/auth/google/redirect", async (req, res) => {
     console.log(token, "내가 발행한 유저의 토큰입니다.");
 
     res.cookie("token", token, { httpOnly: true, secure: false });
-    res.redirect("http://13.125.249.85:3001"); // 클라이언트 페이지로 리디렉션
+    res.redirect(`${CLIENT_API_URL}`); // 클라이언트 페이지로 리디렉션
   } catch (error) {
     console.error("Error handling OAuth callback:", error);
     res.status(500).send("Authentication failed");
