@@ -37,9 +37,9 @@ const s3 = new S3({
 const upload = multer({
   storage: multerS3({
     s3: s3,
-    bucket: "akarina", // S3 버킷 이름
-    acl: "public-read", // 파일 접근 권한 설정
-    contentType: multerS3.AUTO_CONTENT_TYPE, // 파일 타입 자동 설정
+    bucket: "akarina",
+    acl: "public-read",
+    contentType: multerS3.AUTO_CONTENT_TYPE,
     key: function (req, file, cb) {
       cb(null, `uploads/${Date.now().toString()}-${file.originalname}`);
     },
@@ -66,8 +66,8 @@ app.post(
       const UUid = req.body.id;
       const menubar = req.body.menubar;
       const title = req.body.title;
-      const photoSumnail = req.files["photoSumnail"][0].location; // 'photoSumnail' 파일 데이터
-      const photos = req.files["photos"].map((photo) => photo.location); // 'photos' 필드로 여러 파일을 받음
+      const photoSumnail = req.files["photoSumnail"][0].location;
+      const photos = req.files["photos"].map((photo) => photo.location);
 
       console.log("Received ID:", UUid);
       console.log("Received Menubar:", menubar);
@@ -94,7 +94,7 @@ app.post(
 );
 app.get("/api/karina", async (req, res) => {
   try {
-    // 동적으로 바뀌게 구현, 프론트의 get 요청의 쿼리스트링에 따라서.. where 절을 추가하여 동적으로 구현되게... -스승님
+    // 동적으로 바뀌게 구현, 프론트의 get 요청의 쿼리스트링에 따라서
     console.log(req.query.menubar, "쿼리입니다.");
     let query = "SELECT * FROM karina";
     let arrayForMenubar = [];
@@ -128,9 +128,7 @@ app.get("/auth/google", (req, res) => {
   };
 
   const queryString = new URLSearchParams(params).toString();
-  // console.log(queryString, "여기 쿼리스트링");
   const authUrl = `${oauth2Endpoint}?${queryString}`;
-  // console.log(authUrl, "여기가 합쳐진 URL");
   res.redirect(authUrl);
 });
 
@@ -148,8 +146,8 @@ app.get("/auth/google/redirect", async (req, res) => {
     const userInfo = await getUserInfo(access_token);
     console.log(userInfo, "유저인포 나와라!");
 
-    const userName = userInfo.names[0].displayName; // 추출한 유저 이름
-    const userEmail = userInfo.emailAddresses[0].value; // 추출한 유저 이메일
+    const userName = userInfo.names[0].displayName;
+    const userEmail = userInfo.emailAddresses[0].value;
     // 여기까지는 동일한 적용(회원유무 상관없이)0
 
     // 로그인 하는 인간이 DB에 있는지 확인 로직
@@ -168,8 +166,8 @@ app.get("/auth/google/redirect", async (req, res) => {
     // JWT 토큰 생성
     const token = jwt.sign(
       { userName: user.userName, userEmail: user.userEmail },
-      secretKey, // 비밀키
-      { expiresIn: "1h" } // 토큰 유효기간 설정
+      secretKey,
+      { expiresIn: "1h" }
     );
     console.log(token, "내가 발행한 유저의 토큰입니다.");
 

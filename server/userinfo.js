@@ -1,4 +1,4 @@
-const axios = require("axios"); // 상단에 axios 모듈을 포함시켜주세요.
+const axios = require("axios");
 
 // 사용자 정보를 가져오는 함수를 별도로 정의
 async function getUserInfo(accessToken) {
@@ -7,10 +7,10 @@ async function getUserInfo(accessToken) {
   try {
     const response = await axios.get(url, {
       headers: {
-        Authorization: `Bearer ${accessToken}`, // 매개변수 이름을 일관되게 사용
+        Authorization: `Bearer ${accessToken}`,
       },
     });
-    return response.data; // 사용자의 이름과 이메일 주소가 여기에 포함될 것입니다.
+    return response.data;
   } catch (error) {
     console.error("Failed to fetch user info:", error);
     throw error;
