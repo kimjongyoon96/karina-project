@@ -27,7 +27,8 @@ const Menubar: React.FC<MenubarProps> = ({
           fetch(`${process.env.REACT_APP_API_URL}/api/karina?menubar=innocence`)
             .then((response) => response.json())
             .then((data) => replaceArray(data))
-            .catch((error) => console.error("Error fetching data:", error));
+            .catch((error) => console.error("Error fetching data:", error))
+            .finally(() => console.log("마침내, 큐트가 눌러졌군.. 큭큭"));
           // 여기서 get요청을 api/page="cute"/page=2
         }}
       >
