@@ -35,7 +35,13 @@ const App: React.FC = () => {
       !location.pathname.startsWith("/detail") &&
       !location.pathname.startsWith("/SignUp")
     ) {
-      return <SeachBar {...authContextValue} />;
+      return (
+        <SeachBar
+          jwtToken={jwtToken}
+          setJwtToken={setJwtToken}
+          myArray={myArray}
+        />
+      );
     }
 
     return null;
