@@ -15,6 +15,7 @@ import Number from "./components/movepage/movepage";
 import DetailPage from "./components/detailPage/detailPage";
 import WritePage from "./components/writePage/writePage";
 import SignUp from "./components/signUp/signUp";
+import { match } from "assert";
 
 const App: React.FC = () => {
   const [category, setCategory] = useState("청순카리나");
@@ -25,8 +26,11 @@ const App: React.FC = () => {
   const [blueArray, setMyBlueArray] = useState<karinaData[]>([]); // 파란바구니
   const [yellowArray, setMyYellowArray] = useState<karinaData[]>([]); //노랑바구니
   const [greenArray, setMyGreenArray] = useState<karinaData[]>([]); // 초록바구니
+  const [matchedItems, setMatchedItems] = useState<karinaData[]>([]);
+  console.log(matchedItems, "최상위 컴포넌트에서 나왔다리기");
   // 글쓰기 특정 컴포넌트에서 숨기기
   const authContextValue: AuthContextType = { jwtToken, setJwtToken };
+
   const ShowSeachbar = () => {
     const location = useLocation();
 
@@ -40,6 +44,8 @@ const App: React.FC = () => {
           jwtToken={jwtToken}
           setJwtToken={setJwtToken}
           myArray={myArray}
+          matchedItems={matchedItems}
+          setMatchedItems={setMatchedItems}
         />
       );
     }
