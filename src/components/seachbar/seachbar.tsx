@@ -21,12 +21,15 @@ const SeachBar: React.FC<SearchBarProps> = ({
       alert("로그인 하셔야 글쓰기가 가능합니다.");
     }
   };
+  //* 사용자 입력 받는 함수
   const handleChange = (event) => {
     // 현재 입력 필드의 값을 상태로 설정
     setMyInputData(event.target.value);
   };
+  //* 검색결과 반환하는 함수 => 검색결과에 대한 배열 생성
   const whatIsArray = () => {
     const foundItems = myArray.filter((item) => item.title === myInputData);
+    console.log(foundItems, "검색결과는 무엇입니까?");
 
     if (foundItems.length > 1) {
       console.log("매치되는 검색결과가 있습니다.");
