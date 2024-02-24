@@ -41,7 +41,7 @@ const SeachBar: React.FC<SearchBarProps> = ({
       setMatchedItems(foundItems);
     } else {
       console.log("데이터가 없는데요?");
-      alert("데이터가 없습니다.");
+      alert("검색 결과가 없습니다.");
     }
   };
   return (

@@ -12,7 +12,7 @@ const MainContents: React.FC<MainContentsProps> = ({
   const navigate = useNavigate();
   console.log(matchedItems, "음하하하!!!");
   // console.log(category); // 청순카리나,섹시카리나 맞게 출력
-  // console.log(myarray); // 추가된 배열정보 즉, karinadata의 배열
+  console.log(myarray); // 추가된 배열정보 즉, karinadata의 배열
   // console.log("여기뭐가나오냐");
   const goToSecondMain = (uuid: string): void => {
     navigate(`/detail/${uuid}`);
