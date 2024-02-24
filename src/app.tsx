@@ -141,7 +141,13 @@ const App: React.FC = () => {
         <Routes>
           <Route
             path="/"
-            element={<MainContens category={category} myarray={myArray} />}
+            element={
+              <MainContens
+                category={category}
+                myarray={myArray}
+                matchedItems={matchedItems}
+              />
+            }
           />
           <Route
             path="/write"
