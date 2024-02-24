@@ -12,7 +12,7 @@ const MainContents: React.FC<MainContentsProps> = ({
   const navigate = useNavigate();
   console.log(matchedItems, "음하하하!!!");
   // console.log(category); // 청순카리나,섹시카리나 맞게 출력
-  console.log(myarray); // 추가된 배열정보 즉, karinadata의 배열
+  // console.log(myarray); // 추가된 배열정보 즉, karinadata의 배열
   // console.log("여기뭐가나오냐");
   const goToSecondMain = (uuid: string): void => {
     navigate(`/detail/${uuid}`);
@@ -44,11 +44,14 @@ const MainContents: React.FC<MainContentsProps> = ({
         return <div>기본 컨텐츠</div>;
     }
   };
+
+  const itemsToRender =
+    matchedItems && matchedItems.length > 0 ? matchedItems : myarray;
   // item => myarray의 각 객체, index=> 배열 내의 해당 객체의 인덱스값
   return (
     <main className="mainContents">
-      {myarray.length > 0 &&
-        myarray.slice(0, 12).map((item, index) => (
+      {itemsToRender.length > 0 &&
+        itemsToRender.slice(0, 12).map((item, index) => (
           <li
             key={item.uuid}
             className={`contents${index + 1}`}
