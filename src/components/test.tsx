@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent } from "react";
-import { useAuth } from "../authContext";
+import { useAuth } from "./context/authContext";
 
 const SimpleInputComponent: React.FC = () => {
   // useState에 타입을 명시하여 입력값의 상태를 관리합니다.
