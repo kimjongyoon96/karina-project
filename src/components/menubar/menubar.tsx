@@ -12,14 +12,7 @@ interface MenubarProps {
 }
 // 메뉴바를 선언할꺼야! 메뉴바는 리액트의 함수형 컴포넌트이며, <MenubarProps>를 props를 통해 받았어!
 // 여기서, setCategory를 구조분해 할당을 통해 쓸수있게 되었어!
-const Menubar: React.FC<MenubarProps> = ({
-  setCategory,
-  replaceArray,
-  redArray,
-  blueArray,
-  yellowArray,
-  greenArray,
-}) => {
+const Menubar: React.FC<MenubarProps> = ({ replaceArray }) => {
   return (
     <nav className="cute">
       <ul
@@ -27,6 +20,7 @@ const Menubar: React.FC<MenubarProps> = ({
           fetch(`${process.env.REACT_APP_API_URL}/api/karina?menubar=innocence`)
             .then((response) => response.json())
             .then((data) => replaceArray(data))
+
             .catch((error) => console.error("Error fetching data:", error))
             .finally(() => console.log("마침내, 큐트가 눌러졌군.. 큭큭"));
           // 여기서 get요청을 api/page="cute"/page=2

@@ -85,16 +85,21 @@ app.post(
         photos,
       ]);
 
-      res.status(200).json({ message: "데이터 성공적으로 받음!" });
+      res
+        .status(200)
+        .json({
+          message: "데이터 성공적으로 받음!",
+          data: { UUid, menubar, title, photoSumnail, photos },
+        });
     } catch (error) {
       console.error("Error:", error);
       res.status(500).json({ message: "서버 에러 떳따!" });
     }
   }
 );
+//*동적으로 바뀌게 구현, 프론트의 get 요청의 쿼리스트링에 따라서
 app.get("/api/karina", async (req, res) => {
   try {
-    // 동적으로 바뀌게 구현, 프론트의 get 요청의 쿼리스트링에 따라서
     console.log(req.query.menubar, "쿼리입니다.");
     let query = "SELECT * FROM karina";
     let arrayForMenubar = [];

@@ -15,20 +15,24 @@ import Number from "./components/movepage/movepage";
 import DetailPage from "./components/detailPage/detailPage";
 import WritePage from "./components/writePage/writePage";
 import SignUp from "./components/signUp/signUp";
-import { match } from "assert";
+import { response } from "express";
 
 const App: React.FC = () => {
-  const [category, setCategory] = useState("청순카리나");
+  const [category, setCategory] = useState("");
+  console.log(category, "카테로기입니다.");
   // console.log(category); // 청순카리나,큐트카리나 문자열
   const [jwtToken, setJwtToken] = useState<string | null>(null);
   const [myArray, setMyArray] = useState<karinaData[]>([]); //전시바구니
   const [redArray, setMyRedArray] = useState<karinaData[]>([]); //빨강바구니
   const [blueArray, setMyBlueArray] = useState<karinaData[]>([]); // 파란바구니
-  const [yellowArray, setMyYellowArray] = useState<karinaData[]>([]); //노랑바구니
+  const [yellowArray, setMyYellowArray] = useState<karinaData[]>([]);
   const [greenArray, setMyGreenArray] = useState<karinaData[]>([]); // 초록바구니
+  console.log(myArray, redArray, blueArray, yellowArray, greenArray);
   const [matchedItems, setMatchedItems] = useState<karinaData[]>([]);
+  console.log(yellowArray, greenArray, redArray, blueArray);
   console.log(matchedItems, "최상위 컴포넌트에서 나왔다리기");
   // 글쓰기 특정 컴포넌트에서 숨기기
+  console.log(redArray, blueArray, greenArray, yellowArray);
   const authContextValue: AuthContextType = { jwtToken, setJwtToken };
 
   const ShowSeachbar = () => {
@@ -53,26 +57,23 @@ const App: React.FC = () => {
     return null;
   };
 
-  // 2. 배열을 만들 작동 함수
-  // 배열을 추가할때는 빨강 빨강 파랑 파랑 노랑 노랑
-  // setMyRedArray,setMyBuleArray
+  //* 배열추가 함수, write 컴포넌트에서 사용
   const addToArray = (obj: karinaData) => {
     switch (category) {
-      case "청순카리나":
-        console.log("Before updating redArray:", redArray);
+      case "innocence":
         if (obj.menubar === category) setMyRedArray([...redArray, obj]);
 
         break;
-      case "큐트카리나":
+      case "cute":
         if (obj.menubar === category) setMyBlueArray([...blueArray, obj]);
         // console.log(myArray);
         // console.log("디버깅용");
         break;
-      case "섹시카리나":
+      case "sexy":
         if (obj.menubar === category) setMyYellowArray([...yellowArray, obj]);
 
         break;
-      case "일상카리나":
+      case "daily":
         if (obj.menubar === category) setMyGreenArray([...greenArray, obj]);
 
         break;
@@ -91,12 +92,21 @@ const App: React.FC = () => {
   // http://localhost:4000/api/karina
   // 메인페이지 용도
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/karina`)
+    fetch(`${process.env.REACT_APP_API_URL}/api/karina/`)
       .then((response) => response.json())
       .then((data) => setMyArray(data))
       .catch((error) => console.error("Error fetching data:", error));
-    console.log("카리나 테스트입니다.");
-  }, []); // 빈 종속성 배열로 마운트 시에만 실행
+    console.log("최상위 컴포넌트의 UseEffect,언제실행되는가?");
+  }, []);
+
+  // useEffect(() => {
+  //   fetch(`${process.env.REACT_APP_API_URL}/api/karina?menubar=innocence`)
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       replaceArray(data);
+  //     })
+  //     .catch((error) => console.error("Error fetching data:", error));
+  // }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -151,7 +161,9 @@ const App: React.FC = () => {
           />
           <Route
             path="/write"
-            element={<WritePage addToArray={addToArray} />}
+            element={
+              <WritePage addToArray={addToArray} setCategory={setCategory} />
+            }
           />
           <Route
             path="/detail/:uuid"

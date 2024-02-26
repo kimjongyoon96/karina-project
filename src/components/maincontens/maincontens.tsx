@@ -10,32 +10,52 @@ const MainContents: React.FC<MainContentsProps> = ({
   matchedItems,
 }) => {
   const navigate = useNavigate();
+  const [data, setData] = useState([]);
   console.log(matchedItems, "음하하하!!!");
   // console.log(category); // 청순카리나,섹시카리나 맞게 출력
-  console.log(myarray); // 추가된 배열정보 즉, karinadata의 배열
-  // console.log("여기뭐가나오냐");
+  console.log(myarray, "메인컨텐츠의 유동적으로 바뀌어야하는것.");
+  //* 바로 특정 메뉴바 메인페이지 마운트
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_API_URL}/api/karina?menubar=innocence`
+        );
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status}`);
+        }
+        const data = await response.json();
+        setData(data); // 로드된 데이터를 상태에 저장
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData(); // useEffect 내에서 fetchData 함수 호출
+  }, []); // 빈 의존성 배열을 전달하여 컴포넌트 마운트 시에만 실행되도록 함
+
   const goToSecondMain = (uuid: string): void => {
     navigate(`/detail/${uuid}`);
   };
   const renderContent = (item: karinaData): React.ReactNode => {
     // console.log(item, "메인컨텐츠에서 아이템의값입니다.");
     switch (category) {
-      case "청순카리나":
-        if (item.menubar === "innocence") {
+      case "innocence":
+        if (item.menubar === category) {
           return <div>청순카리나 관련 컨텐츠</div>;
         }
         break;
-      case "큐트카리나":
+      case "cute":
         if (item.menubar === "cute") {
           return <div>큐트카리나 관련 컨텐츠</div>;
         }
         break;
-      case "섹시카리나":
+      case "sexy":
         if (item.menubar === "sexy") {
           return <div>섹시카리나 관련 컨텐츠</div>;
         }
         break;
-      case "일상카리나":
+      case "daily":
         if (item.menubar === "daily") {
           return <div>일상카리나 관련 컨텐츠</div>;
         }
@@ -45,8 +65,9 @@ const MainContents: React.FC<MainContentsProps> = ({
     }
   };
 
+  //* 검색결과가 있으면 검색결과 상태 렌더링 아니면, 원래 배열 렌더링
   const itemsToRender =
-    matchedItems && matchedItems.length > 0 ? matchedItems : myarray;
+    matchedItems && matchedItems.length > 0 ? matchedItems : data;
   // item => myarray의 각 객체, index=> 배열 내의 해당 객체의 인덱스값
   return (
     <main className="mainContents">

@@ -12,6 +12,7 @@ const Header: React.FC<AuthContextType> = ({ jwtToken, setJwtToken }) => {
         className="logo"
         onClick={() => {
           Navigate("/");
+          console.log("메인페이지로이동");
         }}
         src={pageLogo}
         alt="Page Logo"

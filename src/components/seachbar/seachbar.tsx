@@ -31,6 +31,11 @@ const SeachBar: React.FC<SearchBarProps> = ({
     // 현재 입력 필드의 값을 상태로 설정
     setMyInputData(event.target.value);
   };
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      whatIsArray();
+    }
+  };
   //* 검색결과 반환하는 함수 => 검색결과에 대한 배열 생성
   const whatIsArray = () => {
     const foundItems = myArray.filter((item) => item.title === myInputData);
@@ -51,6 +56,7 @@ const SeachBar: React.FC<SearchBarProps> = ({
         className="seachbox"
         value={myInputData} // input 태그의 value를 상태와 연결
         onChange={handleChange} // 입력 시 handleChange 함수 호출
+        onKeyPress={handleKeyPress}
       ></input>
       <button onClick={whatIsArray}></button>
 
