@@ -67,8 +67,11 @@ const MainContents: React.FC<MainContentsProps> = ({
 
   //* 검색결과가 있으면 검색결과 상태 렌더링 아니면, 원래 배열 렌더링
   const itemsToRender =
-    matchedItems && matchedItems.length > 0 ? matchedItems : data;
-  // item => myarray의 각 객체, index=> 배열 내의 해당 객체의 인덱스값
+    matchedItems.length > 0
+      ? matchedItems
+      : myarray.length < data.length
+        ? myarray
+        : data;
   return (
     <main className="mainContents">
       {itemsToRender.length > 0 &&

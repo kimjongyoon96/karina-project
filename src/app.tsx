@@ -23,16 +23,14 @@ const App: React.FC = () => {
   // console.log(category); // 청순카리나,큐트카리나 문자열
   const [jwtToken, setJwtToken] = useState<string | null>(null);
   const [myArray, setMyArray] = useState<karinaData[]>([]); //전시바구니
-  const [redArray, setMyRedArray] = useState<karinaData[]>([]); //빨강바구니
-  const [blueArray, setMyBlueArray] = useState<karinaData[]>([]); // 파란바구니
-  const [yellowArray, setMyYellowArray] = useState<karinaData[]>([]);
-  const [greenArray, setMyGreenArray] = useState<karinaData[]>([]); // 초록바구니
-  console.log(myArray, redArray, blueArray, yellowArray, greenArray);
+  const [innocenceArray, setMyInnocenceArray] = useState<karinaData[]>([]); //빨강바구니
+  const [cuteArray, setMyCuteArray] = useState<karinaData[]>([]); // 파란바구니
+  const [sexyArray, setMySexyArray] = useState<karinaData[]>([]);
+  const [dailyArray, setMyDailyArray] = useState<karinaData[]>([]); // 초록바구니
   const [matchedItems, setMatchedItems] = useState<karinaData[]>([]);
-  console.log(yellowArray, greenArray, redArray, blueArray);
-  console.log(matchedItems, "최상위 컴포넌트에서 나왔다리기");
+  console.log(matchedItems, "최상위 컴포넌트에서 나왔다");
   // 글쓰기 특정 컴포넌트에서 숨기기
-  console.log(redArray, blueArray, greenArray, yellowArray);
+  console.log(cuteArray, sexyArray, innocenceArray, dailyArray);
   const authContextValue: AuthContextType = { jwtToken, setJwtToken };
 
   const ShowSeachbar = () => {
@@ -61,20 +59,21 @@ const App: React.FC = () => {
   const addToArray = (obj: karinaData) => {
     switch (category) {
       case "innocence":
-        if (obj.menubar === category) setMyRedArray([...redArray, obj]);
+        if (obj.menubar === category)
+          setMyInnocenceArray([...innocenceArray, obj]);
 
         break;
       case "cute":
-        if (obj.menubar === category) setMyBlueArray([...blueArray, obj]);
+        if (obj.menubar === category) setMyCuteArray([...cuteArray, obj]);
         // console.log(myArray);
         // console.log("디버깅용");
         break;
       case "sexy":
-        if (obj.menubar === category) setMyYellowArray([...yellowArray, obj]);
+        if (obj.menubar === category) setMySexyArray([...cuteArray, obj]);
 
         break;
       case "daily":
-        if (obj.menubar === category) setMyGreenArray([...greenArray, obj]);
+        if (obj.menubar === category) setMyDailyArray([...dailyArray, obj]);
 
         break;
       default:
@@ -91,12 +90,34 @@ const App: React.FC = () => {
 
   // http://localhost:4000/api/karina
   // 메인페이지 용도
+  // useEffect(() => {
+  //   fetch(`${process.env.REACT_APP_API_URL}/api/karina/`)
+  //     .then((response) => response.json())
+  //     .then((data) => setMyArray(data))
+  //     .catch((error) => console.error("Error fetching data:", error));
+  //   console.log("최상위 컴포넌트의 UseEffect,언제실행되는가?");
+  // }, []);
+
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/karina/`)
-      .then((response) => response.json())
-      .then((data) => setMyArray(data))
-      .catch((error) => console.error("Error fetching data:", error));
-    console.log("최상위 컴포넌트의 UseEffect,언제실행되는가?");
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_API_URL}/api/karina/`
+        );
+        const data = await response.json();
+        setMyArray(data);
+
+        setMyInnocenceArray(
+          data.filter((item) => item.menubar === "innocence")
+        );
+        setMyCuteArray(data.filter((item) => item.menubar === "cute"));
+        setMyDailyArray(data.filter((item) => item.menubar === "daily"));
+        setMySexyArray(data.filter((item) => item.menubar === "sexy"));
+      } catch (error) {
+        console.error("뭔가 잘못되었다", error);
+      }
+    };
+    fetchData();
   }, []);
 
   // useEffect(() => {
@@ -139,14 +160,7 @@ const App: React.FC = () => {
     <Router>
       <div>
         <Header {...authContextValue} />
-        <Menubar
-          setCategory={setCategory}
-          replaceArray={replaceArray}
-          redArray={redArray}
-          blueArray={blueArray}
-          yellowArray={yellowArray}
-          greenArray={greenArray}
-        />
+        <Menubar setCategory={setCategory} replaceArray={replaceArray} />
 
         <Routes>
           <Route

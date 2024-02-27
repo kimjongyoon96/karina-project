@@ -85,12 +85,10 @@ app.post(
         photos,
       ]);
 
-      res
-        .status(200)
-        .json({
-          message: "데이터 성공적으로 받음!",
-          data: { UUid, menubar, title, photoSumnail, photos },
-        });
+      res.status(200).json({
+        message: "제출햇을때 주는 서버의 은총",
+        data: { UUid, menubar, title, photoSumnail, photos },
+      });
     } catch (error) {
       console.error("Error:", error);
       res.status(500).json({ message: "서버 에러 떳따!" });
