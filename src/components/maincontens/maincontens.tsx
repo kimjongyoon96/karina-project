@@ -35,34 +35,35 @@ const MainContents: React.FC<MainContentsProps> = ({
   const goToSecondMain = (uuid: string): void => {
     navigate(`/detail/${uuid}`);
   };
-  // const renderContent = (item: karinaData): React.ReactNode => {
-  //   switch (category) {
-  //     case "innocence":
-  //       if (item.menubar === category) {
-  //         return <div>청순카리나 관련 컨텐츠</div>;
-  //       }
-  //       break;
-  //     case "cute":
-  //       if (item.menubar === "cute") {
-  //         return <div>큐트카리나 관련 컨텐츠</div>;
-  //       }
-  //       break;
-  //     case "sexy":
-  //       if (item.menubar === "sexy") {
-  //         return <div>섹시카리나 관련 컨텐츠</div>;
-  //       }
-  //       break;
-  //     case "daily":
-  //       if (item.menubar === "daily") {
-  //         return <div>일상카리나 관련 컨텐츠</div>;
-  //       }
-  //       break;
-  //     default:
-  //       return <div>기본 컨텐츠</div>;
-  //   }
-  // };
+  const renderContent = (item: karinaData): React.ReactNode => {
+    switch (category) {
+      case "innocence":
+        if (item.menubar === category) {
+          return <div>청순카리나 관련 컨텐츠</div>;
+        }
+        break;
+      case "cute":
+        if (item.menubar === "cute") {
+          return <div>큐트카리나 관련 컨텐츠</div>;
+        }
+        break;
+      case "sexy":
+        if (item.menubar === "sexy") {
+          return <div>섹시카리나 관련 컨텐츠</div>;
+        }
+        break;
+      case "daily":
+        if (item.menubar === "daily") {
+          return <div>일상카리나 관련 컨텐츠</div>;
+        }
+        break;
+      default:
+        return <div>기본 컨텐츠</div>;
+    }
+  };
 
   //* 검색결과가 있으면 검색결과 상태 렌더링 아니면, 원래 배열 렌더링
+  //* myarray =변화하는값  data =초기
   const itemsToRender =
     matchedItems.length > 0
       ? matchedItems
@@ -81,7 +82,7 @@ const MainContents: React.FC<MainContentsProps> = ({
             <img className="mainThumbNail" src={item.photosumnail} />
             <h1>{item.title}</h1>
 
-            {/* {renderContent(item)} */}
+            {renderContent(item)}
           </li>
         ))}
     </main>

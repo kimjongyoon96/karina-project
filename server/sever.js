@@ -124,6 +124,10 @@ app.get("/api/karina", async (req, res) => {
   }
 });
 
+app.get("/api/comments", async (req, res) => {
+  res.json("안녕이다 이거야");
+});
+
 // 사용자를 Google 로그인 페이지로 리디렉션하는 경로
 app.get("/auth/google", (req, res) => {
   const oauth2Endpoint = "https://accounts.google.com/o/oauth2/v2/auth";
