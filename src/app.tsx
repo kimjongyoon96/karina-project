@@ -186,7 +186,13 @@ const App: React.FC = () => {
           />
           <Route
             path="/detail/:uuid"
-            element={<DetailPage myArray={myArray} />}
+            element={
+              <DetailPage
+                myArray={myArray}
+                jwtToken={jwtToken}
+                setJwtToken={setJwtToken}
+              />
+            }
           />
           <Route path="signUp" element={<SignUp />} />
         </Routes>
