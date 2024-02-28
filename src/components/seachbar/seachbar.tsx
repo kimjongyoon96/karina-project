@@ -9,7 +9,6 @@ interface SearchBarProps extends AuthContextType {
 }
 const SeachBar: React.FC<SearchBarProps> = ({
   jwtToken,
-  setJwtToken,
   myArray,
   matchedItems,
   setMatchedItems,

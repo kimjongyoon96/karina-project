@@ -19,8 +19,9 @@ import { response } from "express";
 
 const App: React.FC = () => {
   const [category, setCategory] = useState("");
-  console.log(category, "카테로기입니다.");
-  // console.log(category); // 청순카리나,큐트카리나 문자열
+  const [currentMenubar, setCurrentMenubar] = useState("");
+  const [currentPage, setCurrentPage] = useState("");
+  console.log(currentPage, "클릭한페이지의값");
   const [jwtToken, setJwtToken] = useState<string | null>(null);
   const [myArray, setMyArray] = useState<karinaData[]>([]); //전시바구니
   const [innocenceArray, setMyInnocenceArray] = useState<karinaData[]>([]); //빨강바구니
@@ -105,6 +106,7 @@ const App: React.FC = () => {
           `${process.env.REACT_APP_API_URL}/api/karina/`
         );
         const data = await response.json();
+        console.log(data);
         setMyArray(data);
 
         setMyInnocenceArray(
@@ -160,7 +162,10 @@ const App: React.FC = () => {
     <Router>
       <div>
         <Header {...authContextValue} />
-        <Menubar setCategory={setCategory} replaceArray={replaceArray} />
+        <Menubar
+          replaceArray={replaceArray}
+          setCurrentMenubar={setCurrentMenubar}
+        />
 
         <Routes>
           <Route
@@ -188,7 +193,12 @@ const App: React.FC = () => {
         <ShowSeachbar />
         {/* <SeachBar {...authContextValue} /> */}
 
-        <Number />
+        <Number
+          replaceArray={replaceArray}
+          setCurrentPage={setCurrentPage}
+          currentMenubar={currentMenubar}
+          currentPage={currentPage}
+        />
       </div>
     </Router>
   );

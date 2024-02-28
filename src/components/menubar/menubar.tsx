@@ -3,67 +3,30 @@ import "./menubar.css";
 import { karinaData } from "../../types/contentType";
 // MenubarProps 타입 정의
 interface MenubarProps {
-  setCategory: (category: string) => void;
   replaceArray: (arrayToReset: any[]) => void;
-  redArray: any[];
-  blueArray: any[];
-  yellowArray: any[];
-  greenArray: any[];
+  setCurrentMenubar: (currentMenubar: string) => void;
 }
-// 메뉴바를 선언할꺼야! 메뉴바는 리액트의 함수형 컴포넌트이며, <MenubarProps>를 props를 통해 받았어!
-// 여기서, setCategory를 구조분해 할당을 통해 쓸수있게 되었어!
-const Menubar: React.FC<MenubarProps> = ({ replaceArray }) => {
+
+function Menubar({ replaceArray, setCurrentMenubar }) {
+  const handleMenubar = (menubar) => {
+    setCurrentMenubar(menubar);
+
+    fetch(`${process.env.REACT_APP_API_URL}/api/karina?menubar=${menubar}`)
+      .then((response) => response.json())
+      .then((data) => replaceArray(data))
+      .catch((error) => console.error("Error fetching data:", error))
+      .finally(() => console.log(`${menubar}가 눌러졌군..`));
+  };
   return (
     <nav className="cute">
-      <ul
-        onClick={() => {
-          fetch(`${process.env.REACT_APP_API_URL}/api/karina?menubar=innocence`)
-            .then((response) => response.json())
-            .then((data) => replaceArray(data))
+      <ul onClick={() => handleMenubar("innocence")}>청순카리나</ul>
 
-            .catch((error) => console.error("Error fetching data:", error))
-            .finally(() => console.log("마침내, 큐트가 눌러졌군.. 큭큭"));
-          // 여기서 get요청을 api/page="cute"/page=2
-        }}
-      >
-        청순카리나
-      </ul>
-
-      <ul
-        onClick={() => {
-          fetch(`${process.env.REACT_APP_API_URL}/api/karina?menubar=cute`)
-            .then((response) => response.json())
-            .then((data) => replaceArray(data))
-            .catch((error) => console.error("Error fetching data:", error));
-          // console.log(blueArray);
-          // console.log("여기블루");
-        }}
-      >
-        큐트카리나
-      </ul>
-      <ul
-        onClick={() => {
-          fetch(`${process.env.REACT_APP_API_URL}/api/karina?menubar=sexy`)
-            .then((response) => response.json())
-            .then((data) => replaceArray(data))
-            .catch((error) => console.error("Error fetching data:", error));
-        }}
-      >
-        섹시카리나
-      </ul>
-      <ul
-        onClick={() => {
-          fetch(`${process.env.REACT_APP_API_URL}/api/karina?menubar=daily`)
-            .then((response) => response.json())
-            .then((data) => replaceArray(data))
-            .catch((error) => console.error("Error fetching data:", error));
-        }}
-      >
-        일상카리나
-      </ul>
+      <ul onClick={() => handleMenubar("cute")}>큐트카리나</ul>
+      <ul onClick={() => handleMenubar("sexy")}>섹시카리나</ul>
+      <ul onClick={() => handleMenubar("daily")}>일상카리나</ul>
     </nav>
   );
-};
+}
 
 export default Menubar;
 

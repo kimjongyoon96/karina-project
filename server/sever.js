@@ -69,11 +69,11 @@ app.post(
       const photoSumnail = req.files["photoSumnail"][0].location;
       const photos = req.files["photos"].map((photo) => photo.location);
 
-      console.log("Received ID:", UUid);
-      console.log("Received Menubar:", menubar);
-      console.log("Received Title:", title);
-      console.log(photoSumnail, "섬네일");
-      console.log(photos, "사진들");
+      // console.log("Received ID:", UUid);
+      // console.log("Received Menubar:", menubar);
+      // console.log("Received Title:", title);
+      // console.log(photoSumnail, "섬네일");
+      // console.log(photos, "사진들");
 
       const insertQuery = `INSERT INTO karina(uuid, menubar, title, photosumnail, photos) VALUES ($1,$2,$3,$4,$5)`;
 
@@ -95,28 +95,35 @@ app.post(
     }
   }
 );
-//*동적으로 바뀌게 구현, 프론트의 get 요청의 쿼리스트링에 따라서
+//*
 app.get("/api/karina", async (req, res) => {
   try {
-    console.log(req.query.menubar, "쿼리입니다.");
-    let query = "SELECT * FROM karina";
-    let arrayForMenubar = [];
+    console.log(req.query, "쿼리입니다.");
+    let baseQuery = "SELECT * FROM karina";
+    let conditions = [];
 
     if (req.query.menubar) {
-      arrayForMenubar.push(`menubar = '${req.query.menubar}'`);
+      conditions.push(`menubar = '${req.query.menubar}'`);
     }
 
-    if (arrayForMenubar.length > 0) {
-      query += " WHERE " + arrayForMenubar.join(" AND ");
+    if (conditions.length > 0) {
+      baseQuery += " WHERE " + conditions.join(" AND ");
     }
-    const { rows } = await pool.query(query);
+    if (req.query.page || req.query.limit) {
+      let page = parseInt(req.query.page, 12) || 1;
+      let limit = parseInt(req.query.limit, 12) || 10;
+      let offset = (page - 1) * limit;
+      baseQuery += ` LIMIT ${limit} OFFSET ${offset}`;
+    }
+
+    const { rows } = await pool.query(baseQuery);
     res.json(rows);
-    console.log(arrayForMenubar, "어레이메뉴바");
   } catch (err) {
     console.error(err);
     res.status(500).send("Server error");
   }
 });
+
 // 사용자를 Google 로그인 페이지로 리디렉션하는 경로
 app.get("/auth/google", (req, res) => {
   const oauth2Endpoint = "https://accounts.google.com/o/oauth2/v2/auth";

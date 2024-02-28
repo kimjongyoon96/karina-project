@@ -100,15 +100,8 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray, setCategory }) => {
       }
     }
   };
-  // 폼 제출 시 실행될 함수
-  // 백엔드 로 객체(키,값) 그대로 보내기
-  // 백엔드에서 정보 받고, 버킷으로 보낸다.
-  // 보낸다음에 버킷에서 생성된 url을 서버에서 다시 받는다.
-  // 받은 정보를, DB에 저장한다.
-  // DB에 저장된 객체의 정보들을 다시 프론트로 쏴준다. 쏴주는 이유는 한번더 필터링(지시사항)
-  // fetch로 Post 요청 어렵다.
-  // fetch 요청시 이미지는 몸체를 한번에 보내야 한다 .
 
+  //* 핸들함수 작동 => addToArray 함수 작동 => 카테고리에 맞는
   const handleSubmit = async () => {
     const newKarinaData: karinaData = {
       uuid: myUUID,
@@ -146,11 +139,10 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray, setCategory }) => {
 
       if (!response.ok) throw new Error(`Error: ${response.status}`);
       const responseData = await response.json();
-      console.log(responseData.message, "메시지는 뭐가나오는가");
       console.log(responseData.data.menubar);
 
       // 성공 처리 로직 (예: 상태 초기화, 사용자에게 알림 등)
-      addToArray(responseData.data); // 서버로부터 받은 응답을 사용하도록 변경
+      addToArray(responseData.data);
       navigate("/");
     } catch (error) {
       console.error("Error sending data to the server:", error);
