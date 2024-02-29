@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { karinaData } from "../../types/contentType";
+import { karinaData, AuthContextType } from "../../types/contentType";
 import "./detailPage.css";
 
-interface DetailProps {
+interface DetailProps extends AuthContextType {
   myArray: karinaData[];
 }
 
-const DetailComponent: React.FC<DetailProps> = ({ myArray }) => {
+const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
   const { uuid } = useParams<{ uuid: string }>();
 
   const itemId = uuid !== undefined ? uuid : null;
@@ -15,31 +15,49 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray }) => {
   // 문자열 id를 숫자로 변환하고, 해당하는 게시물을 찾습니다.
   const post = itemId !== null ? myArray.find((p) => p.uuid === itemId) : null;
 
-  const [comments, setComments] = useState([]); // 서버에서 가져온 댓글 목록
-  const [commentText, setCommentText] = useState(""); // 댓글 입력 상태
-  const [commentLoading, setCommentLoading] = useState(false); // 로딩 상태 정의 (데이터)
-
-  const fetchComments = async () => {
+  const [comments, setComments] = useState([""]);
+  const [allComments, setAllComments] = useState([""]);
+  const [commentText, setCommentText] = useState("");
+  const [commentLoading, setCommentLoading] = useState(false);
+  /**
+   * @fetchAllCommentView => 상세페이지 마운트 되었을때 작동할 함수
+   * @setCommentLoading =>로딩이 완료 유무 상태변경함수
+   */
+  const fetchAllCommentView = async () => {
     setCommentLoading(true);
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/comments`
+        `${process.env.REACT_APP_API_URL}/api/comments`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+            "Content-Type": "application/json",
+          },
+        }
       );
       const data = await response.json();
-      console.log(data);
+      setAllComments(data);
     } catch (error) {
       console.log("댓글 불러오기 실패");
     }
   };
+  const handleCommentSubmit = (e) => {
+    e.preventDefault();
 
+    setComments([...comments, commentText]);
+    setCommentText("");
+  };
+  /**
+   * @useEffect => 마운트 되었을때 @fetchComments 실행
+   */
   useEffect(() => {
-    fetchComments();
+    fetchAllCommentView();
   }, []);
 
   return (
     <div className="detailPage">
       {post ? (
-        <div>
+        <div className="detailPageContents">
           <h1>{post.title}</h1>
           {post.photos.map((photo, index) => (
             <img key={index} src={photo} alt={`Photo ${index}`} />
@@ -48,6 +66,22 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray }) => {
       ) : (
         <p>게시물을 찾을 수 없습니다.</p>
       )}
+      <div className="commentBox">
+        <ul>
+          {comments.map((comment, index) => (
+            <li key={index}>{comment}</li>
+          ))}
+        </ul>
+        <form onSubmit={handleCommentSubmit}>
+          <input
+            type="text"
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
+            placeholder="댓글을 작성 하세요.."
+          ></input>
+          <button type="submit">제출</button>
+        </form>
+      </div>
     </div>
   );
 };
