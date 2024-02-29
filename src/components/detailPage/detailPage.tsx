@@ -16,11 +16,10 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
   const post = itemId !== null ? myArray.find((p) => p.uuid === itemId) : null;
 
   const [comments, setComments] = useState([""]);
-  const [allComments, setAllComments] = useState([""]);
   const [commentText, setCommentText] = useState("");
   const [commentLoading, setCommentLoading] = useState(false);
   /**
-   * @fetchAllCommentView => 상세페이지 마운트 되었을때 작동할 함수
+   * @fetchAllCommentView => 상세페이지 마운트 되었을때 작동할 함수 모든 댓글을 보여줌.
    * @setCommentLoading =>로딩이 완료 유무 상태변경함수
    */
   const fetchAllCommentView = async () => {
@@ -36,17 +35,38 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
         }
       );
       const data = await response.json();
-      setAllComments(data);
+      setComments(data);
     } catch (error) {
       console.log("댓글 불러오기 실패");
     }
   };
-  const handleCommentSubmit = (e) => {
-    e.preventDefault();
 
-    setComments([...comments, commentText]);
-    setCommentText("");
+  //* 제출시 실행될 함수
+  const handleCommentSubmit = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_URL}/api/comments`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${jwtToken}`,
+          },
+          body: JSON.stringify({ text: commentText }), // `newComment` 대신 `commentText` 사용
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok.");
+      }
+
+      // 여기서 응답 데이터를 처리하거나, 새로운 댓글을 UI에 추가하는 로직을 구현할 수 있습니다.
+      // 예: setComments(prevComments => [...prevComments, newCommentData]);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
+
   /**
    * @useEffect => 마운트 되었을때 @fetchComments 실행
    */
