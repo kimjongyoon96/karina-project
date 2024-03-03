@@ -55,27 +55,34 @@ const pool = new Pool({
   port: process.env.DB_PORT,
 });
 //* JWT - Header, Payload,Signature
+//* exp , iat , sub 통해 검증
 const verifyToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
-  console.log(authHeader.split(" ")[1], "이게무엇인고");
   if (authHeader) {
     const token = authHeader.split(" ")[1];
-    const newToken = token.split(".");
-    console.log(newToken, "토큰입니다,");
-    jwt.verify(newToken, secretKey, (err, user) => {
+    jwt.verify(token, secretKey, (err, decoded) => {
       if (err) {
         return res.sendStatus(403);
       }
-      req.user = user;
+      console.log(decoded, "디코딩된데이터");
+      const { id, email } = decoded;
+
+      if (!id || !email) {
+        return res.status(400).send("페이로드에 Id 혹은 email이 없음.");
+      }
+      req.user = decoded;
       next();
     });
   } else {
-    res.sendStatus(401);
+    return res.sendStatus(401);
   }
 };
 
 // 'api/test' 엔드포인트로 POST 요청을 처리
 app.post("/api/addcomment", verifyToken, async (req, res) => {
+  if (res.headersSent) {
+    return;
+  }
   try {
     const { text } = req.body;
 
@@ -83,7 +90,9 @@ app.post("/api/addcomment", verifyToken, async (req, res) => {
     res.status(200).json({ message: "Comment added successfully" });
   } catch (error) {
     console.error("Error while adding comment:", error);
-    res.status(500).send("전송 실패");
+    if (!res.headersSent) {
+      res.status(500).send("전송 실패");
+    }
   }
 });
 app.post(
