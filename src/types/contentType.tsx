@@ -7,8 +7,8 @@ export interface karinaData {
 }
 
 export interface AuthContextType {
-  jwtToken: string | null;
-  setJwtToken: (token: string | null) => void;
+  jwtToken: string | null | object;
+  setJwtToken: (token: string | null | object) => void;
   // isLoading: boolean;
   // setIsLoading: (loading: boolean) => void;
 }

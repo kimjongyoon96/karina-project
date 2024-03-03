@@ -12,7 +12,7 @@ const { exchangeCodeForAccessToken } = require("./oauth");
 const getUserInfo = require("./userinfo");
 const verifyUser = require("./jwt");
 const cookieParser = require("cookie-parser");
-// cors 에러 해결
+// cors 에러 해결src/public/index.html
 
 app.use(
   cors({
@@ -20,8 +20,9 @@ app.use(
     credentials: true,
   })
 );
-const jwt = require("jsonwebtoken");
 
+const jwt = require("jsonwebtoken");
+const secretKey = process.env.JWT_SECRET_KEY;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -53,8 +54,38 @@ const pool = new Pool({
   database: process.env.DB_DATABASE,
   port: process.env.DB_PORT,
 });
+//* JWT - Header, Payload,Signature
+const verifyToken = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  console.log(authHeader.split(" ")[1], "이게무엇인고");
+  if (authHeader) {
+    const token = authHeader.split(" ")[1];
+    const newToken = token.split(".");
+    console.log(newToken, "토큰입니다,");
+    jwt.verify(newToken, secretKey, (err, user) => {
+      if (err) {
+        return res.sendStatus(403);
+      }
+      req.user = user;
+      next();
+    });
+  } else {
+    res.sendStatus(401);
+  }
+};
 
 // 'api/test' 엔드포인트로 POST 요청을 처리
+app.post("/api/addcomment", verifyToken, async (req, res) => {
+  try {
+    const { text } = req.body;
+
+    console.log("Received comment:", text);
+    res.status(200).json({ message: "Comment added successfully" });
+  } catch (error) {
+    console.error("Error while adding comment:", error);
+    res.status(500).send("전송 실패");
+  }
+});
 app.post(
   "/api/upload",
   upload.fields([
@@ -124,9 +155,9 @@ app.get("/api/karina", async (req, res) => {
   }
 });
 
-app.get("/api/comments", async (req, res) => {
-  res.json("안녕이다 이거야");
-});
+// app.get("/api/comments", async (req, res) => {
+//   res.json("안녕이다 이거야");
+// });
 
 // 사용자를 Google 로그인 페이지로 리디렉션하는 경로
 app.get("/auth/google", (req, res) => {
@@ -176,10 +207,10 @@ app.get("/auth/google/redirect", async (req, res) => {
       // 새로 추가된 사용자 정보를 가져옴
       user = await verifyUser(pool, userEmail);
     }
-    const secretKey = process.env.JWT_SECRET_KEY;
+
     // JWT 토큰 생성
     const token = jwt.sign(
-      { userName: user.userName, userEmail: user.userEmail },
+      { userName: userName, userEmail: userEmail },
       secretKey,
       { expiresIn: "1h" }
     );
@@ -201,9 +232,10 @@ app.get("/auth/cookie", (req, res) => {
     res.status(401).send("Unauthorized: No token provided");
   }
 });
-
-app.get("/api/health", (req, res) => {
-  res.json({ message: "제발 와라!!!!!" });
+//* 모든 요청에 대한 HTML 반환
+app.use(express.static(path.join(__dirname, "..", "dist")));
+app.get("/*", function (req, res) {
+  res.sendFile(path.join(__dirname, "..", "dist", "index.html"));
 });
 const PORT = 4000;
 app.listen(PORT, () => {

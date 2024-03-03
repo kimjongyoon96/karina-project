@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { karinaData, AuthContextType } from "../../types/contentType";
 import "./detailPage.css";
+import { type } from "os";
 
 interface DetailProps extends AuthContextType {
   myArray: karinaData[];
@@ -22,37 +23,40 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
    * @fetchAllCommentView => 상세페이지 마운트 되었을때 작동할 함수 모든 댓글을 보여줌.
    * @setCommentLoading =>로딩이 완료 유무 상태변경함수
    */
-  const fetchAllCommentView = async () => {
-    setCommentLoading(true);
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/comments`,
-        {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const data = await response.json();
-      setComments(data);
-    } catch (error) {
-      console.log("댓글 불러오기 실패");
-    }
-  };
-
+  // const fetchAllCommentView = async () => {
+  //   setCommentLoading(true);
+  //   try {
+  //     const response = await fetch(
+  //       `${process.env.REACT_APP_API_URL}/api/comments`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${jwtToken}`,
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
+  //     const data = await response.json();
+  //     setComments(data);
+  //   } catch (error) {
+  //     console.log("댓글 불러오기 실패");
+  //   }
+  // };
+  console.log(jwtToken?.["token"]);
   //* 제출시 실행될 함수
   const handleCommentSubmit = async () => {
+    if (event != undefined) {
+      event.preventDefault();
+    }
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_URL}/api/comments`,
+        `${process.env.REACT_APP_API_URL}/api/addcomment`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${jwtToken}`,
+            Authorization: `Bearer ${jwtToken?.["token"]}`,
           },
-          body: JSON.stringify({ text: commentText }), // `newComment` 대신 `commentText` 사용
+          body: JSON.stringify({ text: commentText }),
         }
       );
 
@@ -60,8 +64,8 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
         throw new Error("Network response was not ok.");
       }
 
-      // 여기서 응답 데이터를 처리하거나, 새로운 댓글을 UI에 추가하는 로직을 구현할 수 있습니다.
-      // 예: setComments(prevComments => [...prevComments, newCommentData]);
+      setComments((prevComments) => [...prevComments, commentText]);
+      setCommentText("");
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -70,9 +74,17 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
   /**
    * @useEffect => 마운트 되었을때 @fetchComments 실행
    */
-  useEffect(() => {
-    fetchAllCommentView();
-  }, []);
+  // useEffect(() => {
+  //   if (
+  //     typeof jwtToken === "object" &&
+  //     jwtToken !== null &&
+  //     "token" in jwtToken
+  //   ) {
+  //     console.log(jwtToken.token);
+  //   } else {
+  //     // 'data'가 올바른 형태가 아닐 때의 처리 로직
+  //   }
+  // }, []);
 
   return (
     <div className="detailPage">
