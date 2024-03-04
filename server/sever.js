@@ -86,19 +86,33 @@ const verifyToken = (req, res, next) => {
 // 'api/test' 엔드포인트로 POST 요청을 처리
 app.post("/api/addcomment", verifyToken, async (req, res) => {
   try {
-    const { text } = req.body;
-    const { postuuid } = req.body;
+    const { text, postuuid } = req.body;
     const userInfo = req.user.userName;
 
-    console.log("Received comment:", text);
-    console.log("받은 uuid", postuuid);
-    console.log("검증된 아이디", userInfo);
+    console.log("Received comment:", text); // 받은 텍스트
+    console.log("받은 uuid", postuuid); // 받은 게시물 Uuid
+    console.log("검증된 아이디", userInfo); // 쓴놈의 이름
+
+    const insertQuery = `INSERT INTO Comments(username, postuuid, text) VALUES ($1,$2,$3)`;
+
+    await pool.query(insertQuery, [userInfo, postuuid, text]);
     res.status(200).json({ message: "Comment added successfully" });
   } catch (error) {
     console.error("Error while adding comment:", error);
     if (!res.headersSent) {
       res.status(500).send("전송 실패");
     }
+  }
+});
+app.get("/api/viewcomments/:postuuid", async (req, res) => {
+  try {
+    const { postuuid } = req.params;
+    console.log(postuuid, "파라미터에서 추출한 UUID");
+    const queryText = "SELECT username , text FROM Comments WHERE postuuid =$1";
+    const comments = await pool.query(queryText, [postuuid]);
+    res.json(comments.rows);
+  } catch (error) {
+    console.error("댓글 불러오는데 에러났다", error);
   }
 });
 app.post(

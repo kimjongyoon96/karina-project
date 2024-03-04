@@ -7,7 +7,10 @@ import { type } from "os";
 interface DetailProps extends AuthContextType {
   myArray: karinaData[];
 }
-
+type Comment = {
+  username: string;
+  text: string;
+};
 const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
   const { uuid } = useParams<{ uuid: string }>();
 
@@ -17,31 +20,26 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
   // 문자열 id를 숫자로 변환하고, 해당하는 게시물을 찾습니다.
   const post = itemId !== null ? myArray.find((p) => p.uuid === itemId) : null;
 
-  const [comments, setComments] = useState([""]);
+  const [comments, setComments] = useState<Comment[]>([]);
   const [commentText, setCommentText] = useState("");
   const [commentLoading, setCommentLoading] = useState(false);
   /**
    * @fetchAllCommentView => 상세페이지 마운트 되었을때 작동할 함수 모든 댓글을 보여줌.
    * @setCommentLoading =>로딩이 완료 유무 상태변경함수
    */
-  // const fetchAllCommentView = async () => {
-  //   setCommentLoading(true);
-  //   try {
-  //     const response = await fetch(
-  //       `${process.env.REACT_APP_API_URL}/api/comments`,
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${jwtToken}`,
-  //           "Content-Type": "application/json",
-  //         },
-  //       }
-  //     );
-  //     const data = await response.json();
-  //     setComments(data);
-  //   } catch (error) {
-  //     console.log("댓글 불러오기 실패");
-  //   }
-  // };
+  const fetchAllCommentView = async () => {
+    setCommentLoading(true);
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/viewcomments/${itemId}`
+      );
+      const data = await response.json();
+      console.log(data);
+      setComments(data);
+    } catch (error) {
+      console.log("댓글 불러오기 실패");
+    }
+  };
   console.log(jwtToken?.["token"]);
   //* 제출시 실행될 함수
   const handleCommentSubmit = async (event) => {
@@ -66,14 +64,15 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
         throw new Error("Network response was not ok.");
       }
 
-      // setComments((prevComments) => [...prevComments, commentText]);
-      // setCommentText(" ");
+      setCommentText("");
     } catch (error) {
       console.log(error);
       console.error("Error fetching data:", error);
     }
   };
-
+  useEffect(() => {
+    fetchAllCommentView();
+  }, []);
   /**
    * @useEffect => 마운트 되었을때 @fetchComments 실행
    */
@@ -104,7 +103,9 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
       <div className="commentBox">
         <ul>
           {comments.map((comment, index) => (
-            <li key={index}>{comment}</li>
+            <li key={index}>
+              <strong>{comment.username}:</strong> {comment.text}
+            </li>
           ))}
         </ul>
         <form onSubmit={handleCommentSubmit}>
