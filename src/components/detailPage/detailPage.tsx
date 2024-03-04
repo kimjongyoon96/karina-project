@@ -12,6 +12,7 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
   const { uuid } = useParams<{ uuid: string }>();
 
   const itemId = uuid !== undefined ? uuid : null;
+  console.log(itemId);
 
   // 문자열 id를 숫자로 변환하고, 해당하는 게시물을 찾습니다.
   const post = itemId !== null ? myArray.find((p) => p.uuid === itemId) : null;
@@ -43,10 +44,11 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
   // };
   console.log(jwtToken?.["token"]);
   //* 제출시 실행될 함수
-  const handleCommentSubmit = async () => {
+  const handleCommentSubmit = async (event) => {
     if (event != undefined) {
       event.preventDefault();
     }
+
     try {
       const response = await fetch(
         `${process.env.REACT_APP_API_URL}/api/addcomment`,
@@ -56,7 +58,7 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${jwtToken?.["token"]}`,
           },
-          body: JSON.stringify({ text: commentText }),
+          body: JSON.stringify({ text: commentText, postuuid: itemId }),
         }
       );
 
@@ -64,9 +66,10 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
         throw new Error("Network response was not ok.");
       }
 
-      setComments((prevComments) => [...prevComments, commentText]);
-      setCommentText("");
+      // setComments((prevComments) => [...prevComments, commentText]);
+      // setCommentText(" ");
     } catch (error) {
+      console.log(error);
       console.error("Error fetching data:", error);
     }
   };
