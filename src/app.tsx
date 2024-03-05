@@ -15,6 +15,7 @@ import Number from "./components/movepage/movepage";
 import DetailPage from "./components/detailPage/detailPage";
 import WritePage from "./components/writePage/writePage";
 import SignUp from "./components/signUp/signUp";
+import SerachRender from "./components/searchRendering/searchRendering";
 import { response } from "express";
 
 const App: React.FC = () => {
@@ -183,6 +184,10 @@ const App: React.FC = () => {
             element={
               <WritePage addToArray={addToArray} setCategory={setCategory} />
             }
+          />
+          <Route
+            path="/searchRender"
+            element={<SerachRender matchedItems={matchedItems} />}
           />
           <Route
             path="/detail/:uuid"

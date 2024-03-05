@@ -73,7 +73,7 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
       setComments((prevComments) => [
         ...prevComments,
         { username: data.userInfo, text: commentText },
-      ]);
+      ]); //* prevComments는 현재 댓글 , ...prevCommnets는 현재댓글을 그대로 복사, 오른쪽 객체는 복사한 댓글에 추가하고 싶은 값
     } catch (error) {
       console.log(error);
       console.error("Error fetching data:", error);

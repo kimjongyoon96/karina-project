@@ -43,10 +43,16 @@ const SeachBar: React.FC<SearchBarProps> = ({
     if (foundItems.length > 0) {
       console.log("매치되는 검색결과가 있습니다.");
       setMatchedItems(foundItems);
+      goToSearchRendering();
     } else {
       console.log("데이터가 없는데요?");
       alert("검색 결과가 없습니다.");
     }
+  };
+
+  //* 검색결과 렌더링 Usenavigate
+  const goToSearchRendering = (): void => {
+    navigate(`/searchRender`);
   };
   return (
     <div className="searchwrap">
