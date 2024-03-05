@@ -6,19 +6,59 @@ import "./searchRenderring.css";
 
 interface searchProps {
   matchedItems: karinaData[]; // 상태 올려치기로 얻은 상태값(검색결과)
+  myInputData: string;
 }
-const SearchRendering: React.FC<searchProps> = ({ matchedItems }) => {
+const SearchRendering: React.FC<searchProps> = ({
+  matchedItems,
+  myInputData,
+}) => {
   const navigate = useNavigate();
+  const limit = 8;
+  const [items, setItems] = useState<karinaData[]>([]);
+  const [page, setPage] = useState(1); // 페이지 번호 상태
 
-  const searchItems = matchedItems;
   const goToSecondMain = (uuid: string): void => {
     navigate(`/detail/${uuid}`);
   };
-  //   console.log(matchedItems, "새로운 페이지에서 메치값 테스트"); => 정상적인 검색 배열 탄생, 아주 좋음
+  //* 스크롤링 했을때 생겨야할 추가적인 데이터
+  const fetchItems = async (page) => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/research?search=${myInputData}&page=${page}&limit=${limit}`
+      );
+      if (!response.ok) {
+        throw new Error(`Http 에러났다. status ${response.status}`);
+      }
+      const data = await response.json();
+      setItems((prevItems) => [...prevItems, ...data]);
+    } catch (error) {
+      console.error("스크롤링 요청 에러", error);
+    }
+  };
+  //* 스크롤 이벤트 핸들러
+  const handleScroll = () => {
+    if (
+      window.innerHeight + document.documentElement.scrollTop !==
+      document.documentElement.offsetHeight
+    )
+      setPage((prePage) => prePage + 1);
+    return;
+  };
+  //* 스크롤 이벤트 useEffect
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  //* 데이터 요청 useEffect
+  useEffect(() => {
+    fetchItems(page);
+  }, []);
+
   return (
     <main className="mainContents">
-      {searchItems.length > 0 &&
-        searchItems.slice(0, 12).map((item, index) => (
+      {items.length > 0 &&
+        items.slice(0, 12).map((item, index) => (
           <li
             key={item.uuid}
             className={`contents${index + 1}`}

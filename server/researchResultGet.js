@@ -12,7 +12,12 @@ router.get("/api/research", async (req, res) => {
       baseQuery += " WHERE title LIKE $1";
       conditions.push(`%${req.query.search}%`);
     }
-
+    if (req.query.page || req.query.limit) {
+      let page = parseInt(req.query.page, 10) || 1;
+      let limit = parseInt(req.query.limit, 10) || 8;
+      let offset = (page - 1) * limit;
+      baseQuery += ` LIMIT ${limit} OFFSET ${offset}`;
+    }
     const { rows } = await pool.query(baseQuery, conditions);
     console.log(rows, "검색결과 로우스");
     res.json(rows);

@@ -30,9 +30,8 @@ const App: React.FC = () => {
   const [sexyArray, setMySexyArray] = useState<karinaData[]>([]);
   const [dailyArray, setMyDailyArray] = useState<karinaData[]>([]); // 초록바구니
   const [matchedItems, setMatchedItems] = useState<karinaData[]>([]);
-  console.log(matchedItems, "최상위 컴포넌트에서 나왔다");
-  // 글쓰기 특정 컴포넌트에서 숨기기
-  console.log(cuteArray, sexyArray, innocenceArray, dailyArray);
+  const [myInputData, setMyInputData] = useState("");
+  console.log(myInputData, "실시간업데이트되스난되는");
   const authContextValue: AuthContextType = { jwtToken, setJwtToken };
 
   const ShowSeachbar = () => {
@@ -50,6 +49,8 @@ const App: React.FC = () => {
           myArray={myArray}
           matchedItems={matchedItems}
           setMatchedItems={setMatchedItems}
+          setMyInputData={setMyInputData}
+          myInputData={myInputData}
         />
       );
     }
@@ -187,7 +188,12 @@ const App: React.FC = () => {
           />
           <Route
             path="/searchRender"
-            element={<SerachRender matchedItems={matchedItems} />}
+            element={
+              <SerachRender
+                matchedItems={matchedItems}
+                myInputData={myInputData}
+              />
+            }
           />
           <Route
             path="/detail/:uuid"
