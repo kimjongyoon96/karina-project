@@ -96,9 +96,30 @@ app.post("/api/addcomment", verifyToken, async (req, res) => {
     const insertQuery = `INSERT INTO Comments(username, postuuid, text) VALUES ($1,$2,$3)`;
 
     await pool.query(insertQuery, [userInfo, postuuid, text]);
-    res.status(200).json({ message: "Comment added successfully" });
+    res.status(200).json({
+      message: "Comment added successfully",
+      userInfo: userInfo, // 여기서 userInfo는 전송하고자 하는 사용자 정보 객체입니다.
+    });
   } catch (error) {
     console.error("Error while adding comment:", error);
+    if (!res.headersSent) {
+      res.status(500).send("전송 실패");
+    }
+  }
+});
+app.post("/api/like", verifyToken, async (req, res) => {
+  try {
+    const { postuuid } = req.body;
+    const userinfo = req.user.userName;
+
+    console.log(postuuid, "포스트유유아이디");
+    console.log(userinfo, "받은 유저의이름");
+
+    const insertQuery = `INSERT INTO Likes(UserName, postID) VALUES ($1,$2)`;
+    await pool.query(insertQuery, [userinfo, postuuid]);
+    res.status(200).json({ message: "Like added successfully" });
+  } catch (error) {
+    console.error("에러가 발생, 좋아요 로직 이상 서버", error);
     if (!res.headersSent) {
       res.status(500).send("전송 실패");
     }
@@ -113,6 +134,28 @@ app.get("/api/viewcomments/:postuuid", async (req, res) => {
     res.json(comments.rows);
   } catch (error) {
     console.error("댓글 불러오는데 에러났다", error);
+  }
+});
+//* 좋아요 숫자 마운트 로직
+app.get("/api/viewLikes/:postuuid", verifyToken, async (req, res) => {
+  try {
+    const { postuuid } = req.params;
+    const userid = req.user.userName;
+    console.log(postuuid, userid);
+    /** $1은 [postuuid]로 대체된다. */
+    const likeQuery = "SELECT COUNT(*) FROM Likes WHERE postid = $1";
+    const likesResult = await pool.query(likeQuery, [postuuid]);
+    // res.json(likesResult.rows[0]); // {count :4 }
+    const totalLikes = likesResult.rows[0];
+
+    const userLikeQuery =
+      "SELECT COUNT(*) FROM Likes WHERE postid = $1 AND username = $2";
+    const userLikeResult = await pool.query(userLikeQuery, [postuuid, userid]);
+    // res.json(userLikeResult.rows[0]); // {count :4}
+    const userLiked = userLikeResult.rows[0];
+    res.json({ totalLikes: totalLikes, userLiked: userLiked });
+  } catch (error) {
+    console.error(" 댓글 서버 에러 확인 하라", error);
   }
 });
 app.post(
@@ -241,7 +284,7 @@ app.get("/auth/google/redirect", async (req, res) => {
     const token = jwt.sign(
       { userName: userName, userEmail: userEmail },
       secretKey,
-      { expiresIn: "1h" }
+      { expiresIn: "2h" }
     );
     console.log(token, "내가 발행한 유저의 토큰입니다.");
 
