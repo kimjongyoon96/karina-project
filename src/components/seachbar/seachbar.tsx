@@ -2,6 +2,7 @@ import React, { useEffect, useState, Dispatch, SetStateAction } from "react";
 import "./seach.css";
 import { useNavigate } from "react-router-dom";
 import { AuthContextType, karinaData } from "../../types/contentType";
+import { response } from "express";
 interface SearchBarProps extends AuthContextType {
   myArray: karinaData[];
   matchedItems: karinaData[]; // 선택적 속성으로 추가
@@ -32,21 +33,42 @@ const SeachBar: React.FC<SearchBarProps> = ({
   };
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
-      whatIsArray();
+      whatIsArraye();
     }
   };
   //* 검색결과 반환하는 함수 => 검색결과에 대한 배열 생성
-  const whatIsArray = () => {
-    const foundItems = myArray.filter((item) => item.title === myInputData);
-    console.log(foundItems, "검색결과는 무엇입니까?");
+  // const whatIsArray = () => {
+  //   const foundItems = myArray.filter((item) => item.title === myInputData);
+  //   console.log(foundItems, "검색결과는 무엇입니까?");
 
-    if (foundItems.length > 0) {
-      console.log("매치되는 검색결과가 있습니다.");
-      setMatchedItems(foundItems);
+  //   if (foundItems.length > 0) {
+  //     console.log("매치되는 검색결과가 있습니다.");
+  //     setMatchedItems(foundItems);
+  //     goToSearchRendering();
+  //   } else {
+  //     console.log("데이터가 없는데요?");
+  //     alert("검색 결과가 없습니다.");
+  //   }
+  // };
+  //* myArray 대신 동적인 요청을 위한 새로운 함수
+  const whatIsArraye = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/research?search=${myInputData}`
+      );
+      const data = await response.json();
+      if (data.length > 0) {
+        console.log("매치되는 검색어가 있습니다");
+      } else {
+        alert("검색결과 없다");
+      }
+      setMatchedItems(data);
       goToSearchRendering();
-    } else {
-      console.log("데이터가 없는데요?");
-      alert("검색 결과가 없습니다.");
+      if (!response.ok) {
+        throw new Error(`error :${response.status}`);
+      }
+    } catch (error) {
+      console.error(error, "검색 결과 로직에서 에러가 났다.");
     }
   };
 
@@ -63,7 +85,7 @@ const SeachBar: React.FC<SearchBarProps> = ({
         onChange={handleChange} // 입력 시 handleChange 함수 호출
         onKeyPress={handleKeyPress}
       ></input>
-      <button onClick={whatIsArray}></button>
+      <button onClick={whatIsArraye}></button>
 
       <button className="writebox" onClick={goToSecondMain}>
         글쓰기

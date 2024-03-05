@@ -6,14 +6,14 @@ const path = require("path");
 const { S3 } = require("@aws-sdk/client-s3");
 const multerS3 = require("multer-s3");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
-const mysql = require("mysql");
-const { Pool } = require("pg");
 const { exchangeCodeForAccessToken } = require("./oauth");
 const getUserInfo = require("./userinfo");
 const verifyUser = require("./jwt");
 const cookieParser = require("cookie-parser");
-// cors 에러 해결src/public/index.html
+const pool = require("./db");
+const researchResultRouter = require("./researchResultGet");
 
+//* cors 에러방지 미들웨어
 app.use(
   cors({
     origin: `${process.env.CLIENT_API_URL}`,
@@ -26,7 +26,6 @@ const secretKey = process.env.JWT_SECRET_KEY;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
 const s3 = new S3({
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -47,13 +46,13 @@ const upload = multer({
   }),
 });
 // postgreSQL 연결
-const pool = new Pool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
-  port: process.env.DB_PORT,
-});
+// const pool = new Pool({
+//   host: process.env.DB_HOST,
+//   user: process.env.DB_USER,
+//   password: process.env.DB_PASSWORD,
+//   database: process.env.DB_DATABASE,
+//   port: process.env.DB_PORT,
+// });
 //* JWT 토큰 미들웨어
 //* JWT - Header, Payload,Signature
 //* exp , iat , sub 통해 검증
@@ -82,7 +81,7 @@ const verifyToken = (req, res, next) => {
     return res.sendStatus(401);
   }
 };
-
+app.use("/", researchResultRouter);
 // 'api/test' 엔드포인트로 POST 요청을 처리
 app.post("/api/addcomment", verifyToken, async (req, res) => {
   try {
