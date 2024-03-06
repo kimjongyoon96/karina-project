@@ -9,12 +9,10 @@ import imageCompression from "browser-image-compression";
 // addToArray라는 함수는, obj라는 인자를 받고, obj는 karinadata이다.
 interface MaintentsProps {
   addToArray: (obj: karinaData) => void;
+  setCategory: (category: string) => void;
 }
 
-// writePage 라는 함수형 컴포넌트 선언
-// 리액트 함수형 컴포넌트이며, MaintentsProps 인터페이스에 정의된 props를 받아들이겠다.
-// 구조분해할당을 통해, addToArray를 인터페이스에서 뽑아서 쓰겠다.
-const WritePage: React.FC<MaintentsProps> = ({ addToArray }) => {
+const WritePage: React.FC<MaintentsProps> = ({ addToArray, setCategory }) => {
   const navigate = useNavigate();
   const myUUID = uuidv4();
   const [title, setTitle] = useState("");
@@ -102,15 +100,8 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray }) => {
       }
     }
   };
-  // 폼 제출 시 실행될 함수
-  // 백엔드 로 객체(키,값) 그대로 보내기
-  // 백엔드에서 정보 받고, 버킷으로 보낸다.
-  // 보낸다음에 버킷에서 생성된 url을 서버에서 다시 받는다.
-  // 받은 정보를, DB에 저장한다.
-  // DB에 저장된 객체의 정보들을 다시 프론트로 쏴준다. 쏴주는 이유는 한번더 필터링(지시사항)
-  // fetch로 Post 요청 어렵다.
-  // fetch 요청시 이미지는 몸체를 한번에 보내야 한다 .
 
+  //* 핸들함수 작동 => addToArray 함수 작동 => 카테고리에 맞는
   const handleSubmit = async () => {
     const newKarinaData: karinaData = {
       uuid: myUUID,
@@ -148,10 +139,10 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray }) => {
 
       if (!response.ok) throw new Error(`Error: ${response.status}`);
       const responseData = await response.json();
-      console.log("Server response:", responseData);
+      console.log(responseData.data.menubar);
 
       // 성공 처리 로직 (예: 상태 초기화, 사용자에게 알림 등)
-      addToArray(responseData); // 서버로부터 받은 응답을 사용하도록 변경
+      addToArray(responseData.data);
       navigate("/");
     } catch (error) {
       console.error("Error sending data to the server:", error);
@@ -172,7 +163,11 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray }) => {
       <select
         className="menubar-select"
         value={menubar}
-        onChange={(e) => setMenubar(e.target.value)}
+        onChange={(e) => {
+          const newMenubar = e.target.value;
+          setMenubar(newMenubar);
+          setCategory(newMenubar); // 추가된 부분
+        }}
       >
         <option value="" disabled selected>
           메뉴바를 선택하세요
@@ -214,5 +209,3 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray }) => {
 };
 
 export default WritePage;
-
-// https://i.pinimg.com/originals/6d/39/3a/6d393a3ba393c8306b8f5fdd79756cc0.gif
