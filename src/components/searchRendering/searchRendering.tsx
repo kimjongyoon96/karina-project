@@ -20,6 +20,19 @@ const SearchRendering: React.FC<searchProps> = ({
   const goToSecondMain = (uuid: string): void => {
     navigate(`/detail/${uuid}`);
   };
+  //* throttling 함수 테스트
+  const throttle = (func: () => void, limit: number) => {
+    let inThrottle: boolean;
+    return () => {
+      if (!inThrottle) {
+        func();
+        inThrottle = true;
+        setTimeout(() => {
+          inThrottle = false;
+        }, limit);
+      }
+    };
+  };
   //* 스크롤링 했을때 생겨야할 추가적인 데이터
   const fetchItems = async (page) => {
     try {
@@ -44,16 +57,18 @@ const SearchRendering: React.FC<searchProps> = ({
       setPage((prePage) => prePage + 1);
     return;
   };
+  //* throttle 적용
+  const throttledHandleScroll = throttle(handleScroll, 500);
   //* 스크롤 이벤트 useEffect
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", throttledHandleScroll);
+    return () => window.removeEventListener("scroll", throttledHandleScroll);
   }, []);
 
   //* 데이터 요청 useEffect
   useEffect(() => {
     fetchItems(page);
-  }, []);
+  }, [page]);
 
   return (
     <main className="mainContents">
