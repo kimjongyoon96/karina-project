@@ -96,7 +96,7 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
       if (response.ok) {
         setTotalLikes(totalLikes + 1);
       } else {
-        throw new Error("서버가 이상하다. 추천 로직을 검사하라");
+        // throw new Error("서버가 이상하다. 추천 로직을 검사하라");
       }
     } catch (error) {
       console.error("추천 에러가 발생했따리", "error");
