@@ -129,7 +129,7 @@ const App: React.FC = () => {
         const response = await fetch(
           `${process.env.REACT_APP_API_URL}/auth/cookie`,
           {
-            credentials: "include",
+            credentials: "same-origin",
           }
         );
         if (!response.ok) {
