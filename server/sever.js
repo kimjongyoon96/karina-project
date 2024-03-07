@@ -16,7 +16,7 @@ const researchResultRouter = require("./researchResultGet");
 //* cors 에러방지 미들웨어
 app.use(
   cors({
-    origin: `${process.env.CLIENT_API_URL}`,
+    origin: `*`,
     credentials: true,
   })
 );
