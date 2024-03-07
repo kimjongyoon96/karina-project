@@ -300,7 +300,7 @@ app.get("/auth/cookie", (req, res) => {
     console.log(token, "/auth/cookie에 대한 응답");
     res.json({ token });
   } else {
-    res.status(200).send("Unauthorized: No token provided");
+    res.status(401).send("Unauthorized: No token provided");
   }
 });
 //* 모든 요청에 대한 HTML 반환

@@ -17555,7 +17555,8 @@
                               e.next = 6;
                               break;
                             }
-                            throw new Error("서버가 이상해");
+                            // throw new Error
+                            console.log("에러가 발생");
                           case 6:
                             return (e.next = 8), t.json();
                           case 8:

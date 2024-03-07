@@ -133,7 +133,7 @@ const App: React.FC = () => {
           }
         );
         if (!response.ok) {
-          throw new Error("서버가 이상해");
+          // throw new Error("서버가 이상해");
         }
         const data = await response.json();
         setJwtToken(data);
