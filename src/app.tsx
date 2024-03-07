@@ -91,16 +91,6 @@ const App: React.FC = () => {
     // console.log(arrayToReset);
   };
 
-  // http://localhost:4000/api/karina
-  // 메인페이지 용도
-  // useEffect(() => {
-  //   fetch(`${process.env.REACT_APP_API_URL}/api/karina/`)
-  //     .then((response) => response.json())
-  //     .then((data) => setMyArray(data))
-  //     .catch((error) => console.error("Error fetching data:", error));
-  //   console.log("최상위 컴포넌트의 UseEffect,언제실행되는가?");
-  // }, []);
-
   useEffect(() => {
     const fetchData = async () => {
       try {
