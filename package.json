@@ -71,6 +71,7 @@
     "react-cookie": "^7.0.2",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.20.1",
+    "sequelize": "^6.37.1",
     "uuid": "^9.0.1"
   }
 }
