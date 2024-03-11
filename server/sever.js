@@ -288,16 +288,15 @@ app.get("/auth/google/redirect", async (req, res) => {
     console.log(token, "내가 발행한 유저의 토큰입니다.");
 
     res.cookie("token", token, { httpOnly: true, secure: false });
-    res.redirect(`${process.env.CLIENT_API_URL}`); // 클라이언트 페이지로 리디렉션
+    res.redirect(`${process.env.REACT_APP_API_URL}`); // 클라이언트 페이지로 리디렉션
   } catch (error) {
     console.error("Error handling OAuth callback:", error);
     res.status(500).send("Authentication failed");
   }
 });
-//* EC2 수정한 사항
 app.get("/auth/cookie", (req, res) => {
-  const token = req.cookies.token; // 쿠키에서 토큰 읽기
-
+  // const token = req.cookies.token; // 쿠키에서 토큰 읽기
+  const token = jwt.sign({ hi: "bye" }, secretKey, { expiresIn: "2h" });
   if (token) {
     console.log(token, "/auth/cookie에 대한 응답");
     res.json({ token });
