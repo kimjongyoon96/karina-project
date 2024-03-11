@@ -1,5 +1,15 @@
 version: "3.8"
 services:
+  app:
+    image: node
+    ports:
+      - "4000:4000"
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: npx nodemon ./server/sever.js
+    depends_on:
+      - db
   nginx:
     image: nginx:latest
     ports:
@@ -9,3 +19,13 @@ services:
       - ./dist:/usr/share/nginx/html
     depends_on:
       - app
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: dkrlaos1
+      POSTGRES_USER: kimjongyoon
+      POSTGRES_DB: karina
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./backup.sql:/docker-entrypoint-initdb.d/backup.sql
