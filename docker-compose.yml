@@ -10,7 +10,7 @@ services:
     command: npx nodemon ./server/sever.js
     depends_on:
       - db
-
+  
   webpack-dev-server:
     image: node
     ports:
