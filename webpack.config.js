@@ -45,10 +45,11 @@ module.exports = {
     new webpack.DefinePlugin({
       "process.env": JSON.stringify(dotenv.parsed),
     }),
-    // new HtmlWebpackPlugin({
-    //   template: path.join(__dirname, "src", "public", "index.html"), // 템플릿 파일 위치
-    //   filename: "index.html", // dist 폴더 내에서 생성될 파일 이름
-    // }),
+    //* 번들링된 html 태그 중복생성 방지
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, "src", "public", "index.html"),
+      filename: "index.html",
+    }),
   ],
   performance: {
     hints: false,

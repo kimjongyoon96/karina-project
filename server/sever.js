@@ -295,8 +295,8 @@ app.get("/auth/google/redirect", async (req, res) => {
   }
 });
 app.get("/auth/cookie", (req, res) => {
-  // const token = req.cookies.token; // 쿠키에서 토큰 읽기
-  const token = jwt.sign({ hi: "bye" }, secretKey, { expiresIn: "2h" });
+  const token = req.cookies.token; // 쿠키에서 토큰 읽기
+  // const token = jwt.sign({ hi: "bye" }, secretKey, { expiresIn: "2h" });
   if (token) {
     console.log(token, "/auth/cookie에 대한 응답");
     res.json({ token });
