@@ -5,9 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --config webpack.config.js",
+    "build": "webpack --config webpack.config.js &&tsc",
     "start": "webpack-dev-server",
-    "server": "nodemon sever.js"
+    "server": "nodemon --watch server --exec ts-node server/server.ts",
+    "compile": "tsc"
   },
   "repository": {
     "type": "git",
@@ -72,7 +73,9 @@
     "react-cookie": "^7.0.2",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.20.1",
+    "reflect-metadata": "^0.2.1",
     "sequelize": "^6.37.1",
+    "typeorm": "^0.3.20",
     "uuid": "^9.0.1"
   }
 }

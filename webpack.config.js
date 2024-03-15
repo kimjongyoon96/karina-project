@@ -46,10 +46,10 @@ module.exports = {
       "process.env": JSON.stringify(dotenv.parsed),
     }),
     //* 번들링된 html 태그 중복생성 방지
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, "src", "public", "index.html"),
-      filename: "index.html",
-    }),
+    // new HtmlWebpackPlugin({
+    //   template: path.join(__dirname, "src", "public", "index.html"),
+    //   filename: "index.html",
+    // }),
   ],
   performance: {
     hints: false,

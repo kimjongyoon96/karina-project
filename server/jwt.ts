@@ -1,6 +1,6 @@
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
 
-async function verifyUser(pool, email) {
+export async function verifyUser(pool, email) {
   try {
     // 사용자 이메일로 데이터베이스 조회
     const result = await pool.query(
@@ -21,4 +21,4 @@ async function verifyUser(pool, email) {
   }
 }
 
-module.exports = verifyUser;
+export default verifyUser;

@@ -1,14 +1,21 @@
-// // oauth.js
-const path = require("path");
-require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
+import path from "path";
+import dotenv from "dotenv";
+import axios from "axios";
 
-const axios = require("axios");
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
-async function exchangeCodeForAccessToken(code) {
+interface AccessTokenResponse {
+  access_token: string;
+  refresh_token: string;
+}
+
+export async function exchangeCodeForAccessToken(
+  code: string
+): Promise<AccessTokenResponse> {
   const tokenUrl = "https://oauth2.googleapis.com/token";
   const data = new URLSearchParams({
-    client_id: process.env.CLIENT_ID,
-    client_secret: process.env.CLIENT_SECRET,
+    client_id: process.env.CLIENT_ID || "",
+    client_secret: process.env.CLIENT_SECRET || "",
     code,
     redirect_uri: `${process.env.REACT_APP_API_URL}/auth/google/redirect`,
     grant_type: "authorization_code",
@@ -29,4 +36,4 @@ async function exchangeCodeForAccessToken(code) {
   }
 }
 
-module.exports = { exchangeCodeForAccessToken };
+export default exchangeCodeForAccessToken;

@@ -7,10 +7,12 @@ services:
     volumes:
       - .:/app
     working_dir: /app
-    command: npx nodemon ./server/sever.js
+    command: npx nodemon --exec ts-node ./server/server.ts
     depends_on:
       - db
-  
+    environment:
+      - NODE_ENV=development
+
   webpack-dev-server:
     image: node
     ports:

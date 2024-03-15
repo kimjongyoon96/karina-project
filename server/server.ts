@@ -1,18 +1,21 @@
-const express = require("express");
-const multer = require("multer");
-const cors = require("cors");
-const app = express();
-const path = require("path");
-const { S3 } = require("@aws-sdk/client-s3");
-const multerS3 = require("multer-s3");
-require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
-const { exchangeCodeForAccessToken } = require("./oauth");
-const getUserInfo = require("./userinfo");
-const verifyUser = require("./jwt");
-const cookieParser = require("cookie-parser");
-const pool = require("./db");
-const researchResultRouter = require("./researchResultGet");
+import express, { Request } from "express";
+import multer from "multer";
+import cors from "cors";
+import path from "path";
+import { S3 } from "@aws-sdk/client-s3";
+import multerS3 from "multer-s3";
+import dotenv from "dotenv";
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
+import jwt from "jsonwebtoken";
+import exchangeCodeForAccessToken from "./oauth";
+import getUserInfo from "./userinfo";
+import verifyUser from "./jwt";
+import cookieParser from "cookie-parser";
+import pool from "./db";
+import researchResultRouter from "./researchResultGet";
+import { requestValueList } from "aws-sdk/clients/customerprofiles";
 
+const app = express();
 //* cors 에러방지 미들웨어
 app.use(
   cors({
@@ -20,18 +23,23 @@ app.use(
     credentials: true,
   })
 );
-
-const jwt = require("jsonwebtoken");
 const secretKey = process.env.JWT_SECRET_KEY;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
+const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+const region = process.env.AWS_REGION;
+if (!accessKeyId || !secretAccessKey || !region) {
+  throw new Error("키값이 존재하지 않습니다.");
+}
 const s3 = new S3({
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    accessKeyId,
+    secretAccessKey,
   },
-  region: process.env.AWS_REGION,
+  region,
 });
 
 const upload = multer({
@@ -45,17 +53,7 @@ const upload = multer({
     },
   }),
 });
-// postgreSQL 연결
-// const pool = new Pool({
-//   host: process.env.DB_HOST,
-//   user: process.env.DB_USER,
-//   password: process.env.DB_PASSWORD,
-//   database: process.env.DB_DATABASE,
-//   port: process.env.DB_PORT,
-// });
-//* JWT 토큰 미들웨어
-//* JWT - Header, Payload,Signature
-//* exp , iat , sub 통해 검증
+//* 토크 검증 함수
 const verifyToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (authHeader) {
@@ -81,9 +79,11 @@ const verifyToken = (req, res, next) => {
     return res.sendStatus(401);
   }
 };
+
 app.use("/", researchResultRouter);
-// 'api/test' 엔드포인트로 POST 요청을 처리
-app.post("/api/addcomment", verifyToken, async (req, res) => {
+
+//* 모듈화 후보 1 -> 댓글 추가 로직
+app.post("/api/addcomment", verifyToken, async (req: any, res) => {
   try {
     const { text, postuuid } = req.body;
     const userInfo = req.user.userName;
@@ -106,7 +106,9 @@ app.post("/api/addcomment", verifyToken, async (req, res) => {
     }
   }
 });
-app.post("/api/like", verifyToken, async (req, res) => {
+
+//* 모듈화 후보 2 -> 좋아요 로직
+app.post("/api/like", verifyToken, async (req: any, res) => {
   try {
     const { postuuid } = req.body;
     const userinfo = req.user.userName;
@@ -124,6 +126,7 @@ app.post("/api/like", verifyToken, async (req, res) => {
     }
   }
 });
+//* 모듈화 후보 3 -> 댓글 보기 로직
 app.get("/api/viewcomments/:postuuid", async (req, res) => {
   try {
     const { postuuid } = req.params;
@@ -135,8 +138,8 @@ app.get("/api/viewcomments/:postuuid", async (req, res) => {
     console.error("댓글 불러오는데 에러났다", error);
   }
 });
-//* 좋아요 숫자 마운트 로직
-app.get("/api/viewLikes/:postuuid", verifyToken, async (req, res) => {
+//* 모듈화 후보 4 -> 좋아요 보기 로직
+app.get("/api/viewLikes/:postuuid", verifyToken, async (req: any, res) => {
   try {
     const { postuuid } = req.params;
     const userid = req.user.userName;
@@ -157,13 +160,15 @@ app.get("/api/viewLikes/:postuuid", verifyToken, async (req, res) => {
     console.error(" 댓글 서버 에러 확인 하라", error);
   }
 });
+
+//* 모듈화 후보 5 -> 게시물 업로드 로직
 app.post(
   "/api/upload",
   upload.fields([
     { name: "photos", maxCount: 10 },
     { name: "photoSumnail", maxCount: 1 },
   ]),
-  async (req, res) => {
+  async (req: any, res) => {
     try {
       const UUid = req.body.id;
       const menubar = req.body.menubar;
@@ -197,12 +202,13 @@ app.post(
     }
   }
 );
-//*
-app.get("/api/karina", async (req, res) => {
+
+//* 모듈화 후보 6 -> 게시물 렌더링 로직
+app.get("/api/karina", async (req: any, res) => {
   try {
     console.log(req.query, "쿼리입니다.");
     let baseQuery = "SELECT * FROM karina";
-    let conditions = [];
+    let conditions: string[] = [];
 
     if (req.query.menubar) {
       conditions.push(`menubar = '${req.query.menubar}'`);
@@ -226,30 +232,41 @@ app.get("/api/karina", async (req, res) => {
   }
 });
 
-// app.get("/api/comments", async (req, res) => {
-//   res.json("안녕이다 이거야");
-// });
-
 // 사용자를 Google 로그인 페이지로 리디렉션하는 경로
+const client_id = process.env.CLIENT_ID;
+const redirect_uri = `${process.env.REACT_APP_API_URL}/auth/google/redirect`;
+const response_type = "code";
+const scope =
+  "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email";
+const access_type = "offline";
+const prompt = "consent";
+if (
+  !client_id ||
+  !redirect_uri ||
+  !response_type ||
+  !scope ||
+  !access_type ||
+  !prompt
+) {
+  throw new Error("google 로그인 parmas 에서 뭔가 잘못되었어.");
+}
 app.get("/auth/google", (req, res) => {
   const oauth2Endpoint = "https://accounts.google.com/o/oauth2/v2/auth";
   const params = {
-    client_id: process.env.CLIENT_ID,
-    redirect_uri: `${process.env.REACT_APP_API_URL}/auth/google/redirect`,
-    response_type: "code",
-    scope:
-      "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
-    access_type: "offline",
-    prompt: "consent",
+    client_id,
+    redirect_uri,
+    response_type,
+    scope,
+    access_type,
+    prompt,
   };
-
   const queryString = new URLSearchParams(params).toString();
   const authUrl = `${oauth2Endpoint}?${queryString}`;
   res.redirect(authUrl);
 });
 
 // Google로부터 리디렉션된 후 `authorization code`를 받아 처리하는 경로
-app.get("/auth/google/redirect", async (req, res) => {
+app.get("/auth/google/redirect", async (req: any, res) => {
   const { code } = req.query;
   console.log(code, "여기가 코드입니다.");
 
@@ -294,6 +311,8 @@ app.get("/auth/google/redirect", async (req, res) => {
     res.status(500).send("Authentication failed");
   }
 });
+
+//* 모듈화 후보 7 => 쿠키 로직
 app.get("/auth/cookie", (req, res) => {
   const token = req.cookies.token; // 쿠키에서 토큰 읽기
   // const token = jwt.sign({ hi: "bye" }, secretKey, { expiresIn: "2h" });
@@ -304,6 +323,7 @@ app.get("/auth/cookie", (req, res) => {
     res.status(200).send(token);
   }
 });
+
 //* 모든 요청에 대한 HTML 반환
 app.use(express.static(path.join(__dirname, "..", "dist")));
 app.get("/*", function (req, res) {

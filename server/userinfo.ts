@@ -1,7 +1,6 @@
-const axios = require("axios");
-
+import axios from "axios";
 // 사용자 정보를 가져오는 함수를 별도로 정의
-async function getUserInfo(accessToken) {
+export async function getUserInfo(accessToken) {
   const url =
     "https://people.googleapis.com/v1/people/me?personFields=names,emailAddresses";
   try {
@@ -17,4 +16,4 @@ async function getUserInfo(accessToken) {
   }
 }
 
-module.exports = getUserInfo;
+export default getUserInfo;
