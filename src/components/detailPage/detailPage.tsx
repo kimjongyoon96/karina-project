@@ -36,7 +36,7 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
     setCommentLoading(true);
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/viewcomments/${itemId}`
+        `${process.env.CLIENT_API_URL}/api/viewcomments/${itemId}`
       );
       const data = await response.json();
       console.log(data);
@@ -54,7 +54,7 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
 
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/addcomment`,
+        `${process.env.CLIENT_API_URL}/api/addcomment`,
         {
           method: "POST",
           headers: {
@@ -82,17 +82,14 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
   //* 추천을 눌렀을때 실행되는 함수
   const handleLike = async () => {
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/like`,
-        {
-          method: "POST",
-          headers: {
-            "content-Type": "application/json",
-            Authorization: `Bearer ${jwtToken?.["token"]}`,
-          },
-          body: JSON.stringify({ postuuid: itemId }),
-        }
-      );
+      const response = await fetch(`${process.env.CLIENT_API_URL}/api/like`, {
+        method: "POST",
+        headers: {
+          "content-Type": "application/json",
+          Authorization: `Bearer ${jwtToken?.["token"]}`,
+        },
+        body: JSON.stringify({ postuuid: itemId }),
+      });
       if (response.ok) {
         setTotalLikes(totalLikes + 1);
       } else {
@@ -106,7 +103,7 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
   const bringdLikes = async () => {
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/viewLikes/${itemId}`,
+        `${process.env.CLIENT_API_URL}/api/viewLikes/${itemId}`,
         {
           method: "GET",
           headers: {
@@ -119,9 +116,10 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
         throw new Error("추천수 조회 잘못 보냈다!");
       }
       const data = await response.json();
-      console.log(data); // total 값, user값 같이 온다.
-      setTotalLikes(data.totalLikes.count);
-      setHasLiked(data.userLiked.count > 0);
+      // console.log(data); // total 값, user값 같이 온다.
+      console.log(data.totalLikes, data.userLiked);
+      setTotalLikes(data.totalLikes);
+      setHasLiked(data.userLiked > 0);
     } catch (error) {
       console.log("좋아요 불러오기 실패");
     }

@@ -28,8 +28,6 @@ services:
     environment:
       POSTGRES_PASSWORD: dkrlaos1
       POSTGRES_USER: kimjongyoon
-      POSTGRES_DB: karina
+      POSTGRES_DB: postgres
     ports:
       - "5432:5432"
-    volumes:
-      - ./backup.sql:/docker-entrypoint-initdb.d/backup.sql

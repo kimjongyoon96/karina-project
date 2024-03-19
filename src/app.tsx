@@ -95,7 +95,7 @@ const App: React.FC = () => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/karina/`
+          `${process.env.CLIENT_API_URL}/api/karina/`
         );
         const data = await response.json();
         console.log(data);
@@ -127,7 +127,7 @@ const App: React.FC = () => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/auth/cookie`,
+          `${process.env.CLIENT_API_URL}/auth/cookie`,
           {
             credentials: "same-origin",
           }
@@ -144,6 +144,14 @@ const App: React.FC = () => {
       }
     };
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    // 서버로 요청 보내기
+    fetch(`${process.env.CLIENT_API_URL}/api/test`)
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.error("에러 발생:", error));
   }, []);
   // const isSignUpPage = location.pathname === "/signUp";
 

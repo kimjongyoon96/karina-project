@@ -18,7 +18,7 @@ const Number: React.FC<movementProps> = ({
   };
   useEffect(() => {
     const fetchData = fetch(
-      `${process.env.REACT_APP_API_URL}/api/karina?menubar=${currentMenubar}&page=${currentPage}`
+      `${process.env.CLIENT_API_URL}/api/karina?menubar=${currentMenubar}&page=${currentPage}`
     )
       .then((response) => response.json())
       .then((data) => replaceArray(data))

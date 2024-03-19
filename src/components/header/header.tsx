@@ -27,7 +27,7 @@ const Header: React.FC<AuthContextType> = ({ jwtToken, setJwtToken }) => {
         />
       )}
 
-      <h1 className="title">카리나갤러리</h1>
+      <h1 className="title">정카설유</h1>
     </header>
   );
 };
