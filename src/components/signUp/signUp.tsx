@@ -4,7 +4,7 @@ import { AuthContextType } from "../../types/contentType";
 
 const SignUp = () => {
   const handleGoogleLogin = () => {
-    window.location.href = `${process.env.CLIENT_API_URL}/auth/google`;
+    window.location.href = `${process.env.REACT_APP_API_URL}/auth/google`;
   };
 
   return (
