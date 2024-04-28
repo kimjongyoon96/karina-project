@@ -65,9 +65,7 @@ module.exports = {
     static: {
       directory: path.join(__dirname, "src", "public"),
     },
-    proxy: {
-      "/api": "http://localhost:4000",
-    },
+
     compress: true,
     port: 3001,
     host: "0.0.0.0",

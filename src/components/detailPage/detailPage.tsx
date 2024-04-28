@@ -15,10 +15,11 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
   const { uuid } = useParams<{ uuid: string }>();
 
   const itemId = uuid !== undefined ? uuid : null;
-  // console.log(itemId);
+  console.log(itemId);
 
   // 문자열 id를 숫자로 변환하고, 해당하는 게시물을 찾습니다.
   const post = itemId !== null ? myArray.find((p) => p.uuid === itemId) : null;
+  console.log(post, "디테일페이지의 값인데 뭐가나올지 궁금하군..큭큭");
 
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentText, setCommentText] = useState("");
@@ -33,15 +34,22 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
    * @setCommentLoading =>로딩이 완료 유무 상태변경함수
    */
   const fetchAllCommentView = async () => {
-    setCommentLoading(true);
+    // setCommentLoading(true);
     try {
       const response = await fetch(
-        `${process.env.CLIENT_API_URL}/api/viewcomments/${itemId}`
+        `${process.env.REACT_APP_API_URL}/api/viewComments/${itemId}`,
+        {
+          method: "GET",
+          headers: {
+            "content-Type": "application/json",
+          },
+        }
       );
       const data = await response.json();
       console.log(data);
       setComments(data);
     } catch (error) {
+      console.error(error);
       console.log("댓글 불러오기 실패");
     }
   };
@@ -54,7 +62,7 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
 
     try {
       const response = await fetch(
-        `${process.env.CLIENT_API_URL}/api/addcomment`,
+        `${process.env.REACT_APP_API_URL}/api/addcomment`,
         {
           method: "POST",
           headers: {
@@ -82,14 +90,17 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
   //* 추천을 눌렀을때 실행되는 함수
   const handleLike = async () => {
     try {
-      const response = await fetch(`${process.env.CLIENT_API_URL}/api/like`, {
-        method: "POST",
-        headers: {
-          "content-Type": "application/json",
-          Authorization: `Bearer ${jwtToken?.["token"]}`,
-        },
-        body: JSON.stringify({ postuuid: itemId }),
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/like`,
+        {
+          method: "POST",
+          headers: {
+            "content-Type": "application/json",
+            Authorization: `Bearer ${jwtToken?.["token"]}`,
+          },
+          body: JSON.stringify({ postuuid: itemId }),
+        }
+      );
       if (response.ok) {
         setTotalLikes(totalLikes + 1);
       } else {
@@ -100,10 +111,10 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
     }
   };
   //* 마운트시 가져올 추천수 함수
-  const bringdLikes = async () => {
+  const fetchBringdLikes = async () => {
     try {
       const response = await fetch(
-        `${process.env.CLIENT_API_URL}/api/viewLikes/${itemId}`,
+        `${process.env.REACT_APP_API_URL}/api/viewLikes/${itemId}`,
         {
           method: "GET",
           headers: {
@@ -127,7 +138,7 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
   //* detail 페이지 진입시 실행
   useEffect(() => {
     fetchAllCommentView();
-    bringdLikes();
+    fetchBringdLikes();
   }, []);
 
   return (

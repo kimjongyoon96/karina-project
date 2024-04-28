@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
 import { userInfoData } from "./userInfoEntity"; // User 엔티티를 불러오는 가정입니다.
-
+import { nonSocialUserInfoData } from "./nonSocialUserInfoEntity";
 //* @primaryGeneratoedColumn => 프라이머리 키
 @Entity()
 export class userPost {
@@ -21,8 +21,10 @@ export class userPost {
 
   @Column("text", { array: true, default: "{}" })
   photos: string[];
+  @ManyToOne(() => userInfoData, (user) => user.socialPosts)
+  socialUser: userInfoData;
 
-  @ManyToOne(() => userInfoData, (user) => user.karinas)
-  @Column({ nullable: true })
-  user_id: number;
+  // 비소셜 로그인 사용자와의 관계 설정
+  @ManyToOne(() => nonSocialUserInfoData, (user) => user.nonSocialPosts)
+  nonSocialUser: nonSocialUserInfoData;
 }

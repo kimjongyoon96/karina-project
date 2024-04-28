@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthContextType } from "../../types/contentType";
 const Header: React.FC<AuthContextType> = ({ jwtToken, setJwtToken }) => {
   const Navigate = useNavigate();
+  console.log("전역변수로 선언된 JWT", jwtToken);
   return (
     <header className="header">
       <img

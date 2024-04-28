@@ -16,6 +16,9 @@ import DetailPage from "./components/detailPage/detailPage";
 import WritePage from "./components/writePage/writePage";
 import SignUp from "./components/signUp/signUp";
 import SerachRender from "./components/searchRendering/searchRendering";
+import Nickname from "./components/soical-nickName/nickName";
+import NonSocialLogin from "./nonSocialLogin/nonSocialLogin";
+import RecoverUserInfo from "./components/recoverUserInfo/recoverUserInfo";
 import { response } from "express";
 
 const App: React.FC = () => {
@@ -95,7 +98,7 @@ const App: React.FC = () => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `${process.env.CLIENT_API_URL}/api/karina/`
+          `${process.env.REACT_APP_API_URL}/api/karina/`
         );
         const data = await response.json();
         console.log(data);
@@ -127,13 +130,13 @@ const App: React.FC = () => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `${process.env.CLIENT_API_URL}/auth/cookie`,
+          `${process.env.REACT_APP_API_URL}/auth/cookie`,
           {
-            credentials: "same-origin",
+            credentials: "include",
           }
         );
         if (!response.ok) {
-          // throw new Error("서버가 이상해");
+          throw new Error("야 쿠키쪽이 문제가 있는데?");
         }
         const data = await response.json();
         setJwtToken(data);
@@ -146,13 +149,6 @@ const App: React.FC = () => {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    // 서버로 요청 보내기
-    fetch(`${process.env.CLIENT_API_URL}/api/test`)
-      .then((response) => response.json())
-      .then((data) => console.log(data))
-      .catch((error) => console.error("에러 발생:", error));
-  }, []);
   // const isSignUpPage = location.pathname === "/signUp";
 
   // if (isSignUpPage) {
@@ -204,6 +200,9 @@ const App: React.FC = () => {
             }
           />
           <Route path="signUp" element={<SignUp />} />
+          <Route path="addNickName" element={<Nickname />} />
+          <Route path="nonSocialLogin" element={<NonSocialLogin />} />
+          <Route path="recoverUser" element={<RecoverUserInfo />} />
         </Routes>
         <ShowSeachbar />
         {/* <SeachBar {...authContextValue} /> */}

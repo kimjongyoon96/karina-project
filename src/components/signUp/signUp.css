@@ -2,7 +2,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 150vh;
   background-image: linear-gradient(
     45deg,
     #ff0047,
@@ -23,9 +23,15 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.title {
-  margin-bottom: 20px;
-  color: #333;
+.loginTitle {
+  margin-top: 75vh;
+  padding: 10px 20px;
+  font-family: "Arial", sans-serif;
+  font-size: 24px;
+  color: #ffef00;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* 텍스트에 그림자 추가 */
+  border-radius: 4px;
+  display: inline-block; /* 블록 요소로 설정 */
 }
 
 .google-login-btn {
@@ -40,6 +46,13 @@
 
 .google-login-btn:hover {
   background-color: #e74b37;
+}
+.naver-login-btn:hover {
+  background-color: green;
+}
+.recovery-options {
+  margin-top: 20px; /* 로그인 버튼들과의 간격 조정 */
+  text-align: center; /* 버튼들을 중앙 정렬 */
 }
 
 @keyframes gradientBG {

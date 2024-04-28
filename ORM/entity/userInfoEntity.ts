@@ -6,12 +6,17 @@ export class userInfoData {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "varchar", length: 255 })
+  @Column({ type: "varchar", length: 255, unique: true })
   username: string;
 
   @Column({ type: "varchar", length: 255, unique: true })
   useremail: string;
 
-  @OneToMany(() => userPost, (userPost) => userPost.user_id)
-  karinas: userPost[];
+  @Column({ type: "varchar", length: 255, default: "defaultNickName" })
+  userNickName: string;
+
+  @Column({ type: "varchar", length: 255, nullable: true })
+  userPassWord: string;
+  @OneToMany(() => userPost, (post) => post.socialUser)
+  socialPosts: userPost[];
 }

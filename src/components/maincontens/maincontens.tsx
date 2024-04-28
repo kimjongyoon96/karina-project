@@ -13,7 +13,7 @@ const MainContents: React.FC<MainContentsProps> = ({ category, myarray }) => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `${process.env.CLIENT_API_URL}/api/karina?menubar=innocence&page=1`
+          `${process.env.REACT_APP_API_URL}/api/karina?menubar=innocence&page=1`
         );
         if (!response.ok) {
           throw new Error(`Error: ${response.status}`);

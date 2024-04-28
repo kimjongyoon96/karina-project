@@ -1,1 +1,7 @@
-/* 애플리케이션 비지니스 로직 */
+//* 회원가입 정규표현식 함수
+const validUserId = (userId) => {
+  const regex = /^[a-zA-Z][a-zA-Z0-9_-]{4,19}$/;
+  return regex.test(userId);
+};
+
+export default validUserId;

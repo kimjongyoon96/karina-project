@@ -37,7 +37,7 @@ const SearchRendering: React.FC<searchProps> = ({
   const fetchItems = async (page) => {
     try {
       const response = await fetch(
-        `${process.env.CLIENT_API_URL}/api/research?search=${myInputData}&page=${page}&limit=${limit}`
+        `${process.env.REACT_APP_API_URL}/api/research?search=${myInputData}&page=${page}&limit=${limit}`
       );
       if (!response.ok) {
         throw new Error(`Http 에러났다. status ${response.status}`);

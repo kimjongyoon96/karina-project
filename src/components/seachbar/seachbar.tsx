@@ -29,7 +29,7 @@ const SeachBar: React.FC<SearchBarProps> = ({
     if (jwtToken) {
       navigate("/write");
     } else {
-      console.log(jwtToken);
+      console.log(jwtToken, "글쓰기 컴포넌트에 들어가야되느데");
       alert("로그인 하셔야 글쓰기가 가능합니다.");
     }
   };

@@ -128,7 +128,7 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray, setCategory }) => {
     });
     console.log(object, "여기가 폼데이터값입니다.");
     // 서버의 엔드포인트 URL
-    const url = `${process.env.CLIENT_API_URL}/api/upload`;
+    const url = `${process.env.REACT_APP_API_URL}/api/upload`;
 
     try {
       // fetch API를 사용하여 서버로 POST 요청을 보냄

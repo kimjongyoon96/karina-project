@@ -11,7 +11,7 @@ function Menubar({ replaceArray, setCurrentMenubar }) {
   const handleMenubar = (menubar) => {
     setCurrentMenubar(menubar);
 
-    fetch(`${process.env.CLIENT_API_URL}/api/karina?menubar=${menubar}`)
+    fetch(`${process.env.REACT_APP_API_URL}/api/karina?menubar=${menubar}`)
       .then((response) => response.json())
       .then((data) => replaceArray(data))
       .catch((error) => console.error("Error fetching data:", error))
