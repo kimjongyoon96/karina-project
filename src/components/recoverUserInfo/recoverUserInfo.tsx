@@ -7,6 +7,7 @@ const RecoverUserInfo: React.FC = () => {
   const [userId, setUserId] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [userEmailForPw, setUserEmailForPw] = useState("");
+  const navigate = useNavigate();
 
   const handleUserFindId = async (e) => {
     e.preventDefault();
@@ -50,7 +51,10 @@ const RecoverUserInfo: React.FC = () => {
         }
       );
       const data = await response.json();
-      console.log(data, "PW 서버에서 보낸 값");
+      console.log(data, "비밀번호 받은 내용");
+      if ((data.sucess = true)) {
+        navigate("/findUserPw");
+      }
     } catch (error) {
       console.error(error, "pw찾기 로직이 이상합니다.");
     }

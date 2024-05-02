@@ -5,12 +5,15 @@ import dotenv from "dotenv";
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 // 이메일 전송 함수
-async function sendEmail({ from, to, subject, text, emailConfig }) {
+async function sendEmail({ from, to, subject, text }) {
   const transporter = nodemailer.createTransport({
-    service: "gmail",
+    service: "Naver",
+    host: "smtp.naver.com",
+    port: 465,
+    secure: false,
     auth: {
-      user: process.env.GOOGLE_ID,
-      pass: process.env.GOOGLE_PW,
+      user: `${process.env.GOOGLE_ID}`,
+      pass: `${process.env.GOOGLE_PW}`,
     },
   });
 

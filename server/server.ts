@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import multer from "multer";
 import cors from "cors";
+import session from "express-session";
 import path from "path";
 import { S3 } from "@aws-sdk/client-s3";
 import multerS3 from "multer-s3";
@@ -16,6 +17,8 @@ import registerApi from "./register";
 import loginCheckApi from "./login";
 import recoverUserId from "./recoverUserId";
 import recoverUserPw from "./recoverUserPw";
+import certifyNumber from "./certifyNumber";
+import changePw from "./newPw";
 import { ormConnection } from "../ORM";
 import { userPost } from "../ORM/entity/userPostEntity";
 import { userLike } from "../ORM/entity/userLikeEntity";
@@ -28,6 +31,15 @@ app.use(
   cors({
     origin: "http://localhost:3001",
     credentials: true,
+    methods: ["GET", "POST", "OPTIONS"],
+  })
+);
+app.use(
+  session({
+    secret: `${process.env.SESSION_KEY}`,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }, // HTTPS를 사용하지 않는 경우 false로 설정
   })
 );
 const secretKey = process.env.JWT_SECRET_KEY;
@@ -92,7 +104,8 @@ app.use(registerApi); // 회원가입 라우터
 app.use(loginCheckApi); // 로그인 라우터
 app.use(recoverUserId); // 로그인 찾기 로직
 app.use(recoverUserPw); // 비밀번호 찾기 로직
-
+app.use(certifyNumber); // 인증번호 검증 로직
+app.use(changePw); // 비밀번호 변경 로직
 // app.use("/", researchResultRouter);
 //* test get 요청 받기
 

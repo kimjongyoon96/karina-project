@@ -19,6 +19,7 @@ import SerachRender from "./components/searchRendering/searchRendering";
 import Nickname from "./components/soical-nickName/nickName";
 import NonSocialLogin from "./nonSocialLogin/nonSocialLogin";
 import RecoverUserInfo from "./components/recoverUserInfo/recoverUserInfo";
+import FindUserPw from "./components/findUserPw/findUserPw";
 import { response } from "express";
 
 const App: React.FC = () => {
@@ -203,6 +204,7 @@ const App: React.FC = () => {
           <Route path="addNickName" element={<Nickname />} />
           <Route path="nonSocialLogin" element={<NonSocialLogin />} />
           <Route path="recoverUser" element={<RecoverUserInfo />} />
+          <Route path="findUserPw" element={<FindUserPw />} />
         </Routes>
         <ShowSeachbar />
         {/* <SeachBar {...authContextValue} /> */}

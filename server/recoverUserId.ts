@@ -25,16 +25,11 @@ router.post("/api/recoverId", async (req, res) => {
     if (!existUser) {
       return res.status(409).json({ message: "찾을 ID가 존재하지 않습니다." });
     } else {
-      const emailConfig = {
-        user: `${process.env.GOOGLE_ID}`,
-        pass: `${process.env.GOOGLE_PW}`,
-      };
       const emailResult = await eamilsend({
-        from: `${process.env.GOOGLE_EMAIL}`,
+        from: `${process.env.GOOGLE_ID}`,
         to: `${inputEmail}`,
         subject: "당신의 아이디를 보내드립니다.",
         text: `귀하의 아이디는 ${existUser.userid} 입니다.`,
-        emailConfig,
       });
       if (emailResult.success) {
         console.log("Notification sent successfully");
