@@ -1,13 +1,45 @@
-// import express, { Request, Response } from "express";
-// import pool from "./db"; // ./db 모듈의 실제 경로와 타입에 따라 조정이 필요합니다.
+import express, { Request, Response } from "express";
+import path from "path";
+import dotenv from "dotenv";
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
+import { ormConnection } from "../ORM";
+import { getRepository } from "typeorm";
+import { userPost } from "../ORM/entity/userPostEntity";
+const router = express.Router();
 
-// const router = express.Router();
+router.get("/api/research", async (req: any, res: Response) => {
+  try {
+    //* 쿼리스트링 객체 추출
+    const { search, page, limit } = req.query;
 
-// // 검색을 했을 때 필요한 라우터
-// router.get("/api/research", async (req: Request, res: Response) => {
-//   try {
-//     console.log(req.query, "검색쪽쿼리입니다..");
-//     let baseQuery = "SELECT * FROM karina";
+    console.log(search, page, limit);
+    const whereSearch = {};
+    if (search) {
+      whereSearch["title"] = search;
+    }
+
+    //* 엔티티 연결
+    const researchRnderThing = ormConnection.getRepository(userPost);
+
+    const take = limit ? parseInt(limit, 10) : 10; // 한 페이지에 보여질 항목의 수
+    console.log(take, "테이크다운");
+    const skip = page ? (parseInt(page, 10) - 1) * take : 0; // 건너뛸 항목 수
+    console.log(skip, "스킵하지마세요");
+    // TypeORM의 조건에 맞게 쿼리 생성
+    const existUser = await researchRnderThing.find({
+      where: whereSearch,
+      take, // 한 페이지에 보여질 항목의 수
+      skip, // 건너뛸 항목 수
+    });
+    res.json(existUser);
+    // return res.status(200).json({ message: "검색 잘 받음", existUser });
+  } catch (error) {
+    console.error(error, "검색결과 서버 에러");
+    res.status(401).json({ message: "검색 서버쪽 에러났으니까 확인" });
+  }
+});
+
+// let baseQuery = "SELECT * FROM karina";
 //     let conditions: string[] = [];
 //     if (req.query.search) {
 //       baseQuery += " WHERE title LIKE $1";
@@ -18,14 +50,5 @@
 //       let limit = parseInt(req.query.limit as string, 10) || 8;
 //       let offset = (page - 1) * limit;
 //       baseQuery += ` LIMIT ${limit} OFFSET ${offset}`;
-//     }
-//     const { rows } = await pool.query(baseQuery, conditions);
-//     console.log(rows, "검색결과 로우스");
-//     res.json(rows);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send("/api/research 서버쪽 에러났다.");
-//   }
-// });
 
-// export default router;
+export default router;

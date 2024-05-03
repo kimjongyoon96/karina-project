@@ -18,6 +18,7 @@ import loginCheckApi from "./login";
 import recoverUserId from "./recoverUserId";
 import recoverUserPw from "./recoverUserPw";
 import certifyNumber from "./certifyNumber";
+import researchOutput from "./researchResultGet";
 import changePw from "./newPw";
 import { ormConnection } from "../ORM";
 import { userPost } from "../ORM/entity/userPostEntity";
@@ -39,7 +40,7 @@ app.use(
     secret: `${process.env.SESSION_KEY}`,
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false }, // HTTPS를 사용하지 않는 경우 false로 설정
+    cookie: { secure: false }, //* HTTPS를 사용하지 않는 경우 false로 설정
   })
 );
 const secretKey = process.env.JWT_SECRET_KEY;
@@ -106,6 +107,7 @@ app.use(recoverUserId); // 로그인 찾기 로직
 app.use(recoverUserPw); // 비밀번호 찾기 로직
 app.use(certifyNumber); // 인증번호 검증 로직
 app.use(changePw); // 비밀번호 변경 로직
+app.use(researchOutput);
 // app.use("/", researchResultRouter);
 //* test get 요청 받기
 
@@ -188,17 +190,7 @@ app.get("/api/viewLikes/:postuuid", verifyToken, async (req: any, res) => {
     console.log(postuuid, "좋아요 갯구의 req.params 로직");
     const userid = req.user.userName;
     console.log(postuuid, userid, "여기는 무엇인가?");
-    // /** $1은 [postuuid]로 대체된다. */
-    // const likeQuery = "SELECT COUNT(*) FROM Likes WHERE postid = $1";
-    // const likesResult = await pool.query(likeQuery, [postuuid]);
-    // // res.json(likesResult.rows[0]); // {count :4 }
-    // const totalLikes = likesResult.rows[0];
 
-    // const userLikeQuery =
-    //   "SELECT COUNT(*) FROM Likes WHERE postid = $1 AND username = $2";
-    // const userLikeResult = await pool.query(userLikeQuery, [postuuid, userid]);
-    // // res.json(userLikeResult.rows[0]); // {count :4}
-    // const userLiked = userLikeResult.rows[0];
     //* 전체 좋아요 수
     const totalLikesCount = await ormConnection
       .getRepository(userLike)
@@ -242,23 +234,8 @@ app.post(
       UserPost.photos = req.files["photos"].map((photo) => photo.location);
       console.log("여기는 유저 업로드");
 
-      // const UUid = req.body.id;
-      // const menubar = req.body.menubar;
-      // const title = req.body.title;
-      // const photoSumnail = req.files["photoSumnail"][0].location;
-      // const photos = req.files["photos"].map((photo) => photo.location);
-      // const setThint = [UUid, menubar, title, photoSumnail, photos];
       const userPostRepository = ormConnection.getRepository(userPost);
       await userPostRepository.save(UserPost);
-      // const insertQuery = `INSERT INTO karina(uuid, menubar, title, photosumnail, photos) VALUES ($1,$2,$3,$4,$5)`;
-
-      // await pool.query(insertQuery, [
-      //   UUid,
-      //   menubar,
-      //   title,
-      //   photoSumnail,
-      //   photos,
-      // ]);
 
       res.status(200).json({
         message: "제출햇을때 주는 서버의 은총",
@@ -271,34 +248,6 @@ app.post(
   }
 );
 
-//* 모듈화 후보 6 -> 게시물 렌더링 로직
-// app.get("/api/karina", async (req: any, res) => {
-//   try {
-//     console.log(req.query, "쿼리입니다.");
-//     let baseQuery = "SELECT * FROM karina";
-//     let conditions: string[] = [];
-
-//     if (req.query.menubar) {
-//       conditions.push(`menubar = '${req.query.menubar}'`);
-//     }
-
-//     if (conditions.length > 0) {
-//       baseQuery += " WHERE " + conditions.join(" AND ");
-//     }
-//     if (req.query.page || req.query.limit) {
-//       let page = parseInt(req.query.page, 12) || 1;
-//       let limit = parseInt(req.query.limit, 12) || 10;
-//       let offset = (page - 1) * limit;
-//       baseQuery += ` LIMIT ${limit} OFFSET ${offset}`;
-//     }
-
-//     const { rows } = await pool.query(baseQuery);
-//     res.json(rows);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send("Server error");
-//   }
-// });
 //* 모듈화 후보 6 => 리팩토링 ORM
 app.get("/api/karina", async (req: any, res) => {
   try {
@@ -324,6 +273,7 @@ app.get("/api/karina", async (req: any, res) => {
     });
 
     res.json(posts);
+    console.log(posts, "페이지네이션 결과값");
   } catch (err) {
     console.error(err);
     res.status(500).send("Server error");
@@ -406,9 +356,7 @@ app.get("/auth/google/redirect", async (req: any, res) => {
     console.log(token, "내가 발행한 유저의 토큰입니다.");
 
     if (!user?.userNickName) {
-      res.redirect(`${process.env.CLIENT_API_URL}/addNickName`); //닉네임 없으면 닉네임 추가 컴포넌트로 리다이렉트
-    } else {
-      res.redirect(`${process.env.CLIENT_API_URL}`);
+      return res.redirect(`${process.env.CLIENT_API_URL}/addNickName`); //닉네임 없으면 닉네임 추가 컴포넌트로 리다이렉트
     }
 
     res.cookie("token", token, { httpOnly: true, secure: false });
@@ -457,17 +405,6 @@ app.get("/auth/cookie", (req, res) => {
 app.get("/*", function (req, res) {
   res.sendFile(path.join(__dirname, "..", "dist", "index.html"));
 });
-// ormConnection
-//   .initialize()
-//   .then(() => {
-//     const PORT = 4000;
-//     app.listen(PORT, () => {
-//       console.log(`여기서 실행중: ${PORT}`);
-//     });
-//   })
-//   .catch((error) => {
-//     console.error("서버연결 에러 || ORM 연결 에러", error);
-//   });
 
 const PORT = 4000;
 app.listen(PORT, () => {

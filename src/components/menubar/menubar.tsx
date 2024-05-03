@@ -19,11 +19,11 @@ function Menubar({ replaceArray, setCurrentMenubar }) {
   };
   return (
     <nav className="cute">
-      <ul onClick={() => handleMenubar("innocence")}>청순카리나</ul>
+      <ul onClick={() => handleMenubar("innocence")}>장원영</ul>
 
-      <ul onClick={() => handleMenubar("cute")}>큐트카리나</ul>
-      <ul onClick={() => handleMenubar("sexy")}>섹시카리나</ul>
-      <ul onClick={() => handleMenubar("daily")}>일상카리나</ul>
+      <ul onClick={() => handleMenubar("cute")}>카리나</ul>
+      <ul onClick={() => handleMenubar("sexy")}>설윤</ul>
+      <ul onClick={() => handleMenubar("daily")}>유나</ul>
     </nav>
   );
 }

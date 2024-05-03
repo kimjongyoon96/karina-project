@@ -190,6 +190,7 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray, setCategory }) => {
         multiple
         onChange={handlePhotosChange}
       />
+
       {/* 사용자가 선택한 사진들을 보여주는 부분 */}
       <div className="photos-preview">
         {photos.map((photoUrl, index) => (

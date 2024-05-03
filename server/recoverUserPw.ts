@@ -27,8 +27,11 @@ router.post("/api/recoverPw", async (req: any, res) => {
       res.status(409).json({ message: "pw찾기위한 회원정보 없음" });
     }
     const random = await generateNumber();
+    const userID = inputUserId;
     req.session.authcode = random;
-    req.session.authUserId = inputUserId;
+    req.session.authUserId = userID;
+    console.log(req.session.authUserId, "확인");
+
     const emailResult = await eamilsend({
       from: `${process.env.GOOGLE_ID}`,
       to: `${inputUserEmail}`,

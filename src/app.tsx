@@ -38,6 +38,8 @@ const App: React.FC = () => {
   console.log(myInputData, "실시간업데이트되스난되는");
   const authContextValue: AuthContextType = { jwtToken, setJwtToken };
 
+  console.log(myInputData, "검색했을때 타이핑한 문자열");
+
   const ShowSeachbar = () => {
     const location = useLocation();
 

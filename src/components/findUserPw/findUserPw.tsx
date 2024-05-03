@@ -12,6 +12,7 @@ const FindUserPw: React.FC = () => {
   const [isPwValid, setIsPwValid] = useState(false);
   const [doPasswordsMatch, setDoPasswordsMatch] = useState(false);
   const navigate = useNavigate();
+
   useEffect(() => {
     let interval: any = null;
 
@@ -51,6 +52,7 @@ const FindUserPw: React.FC = () => {
         }
       );
       const data = await response.json();
+      console.log(data, "클라이언트가 보낸것입니다.");
       if (data.success === true) {
         setIsVerified(true); // => input 태그 나오게하기
       }
@@ -117,7 +119,13 @@ const FindUserPw: React.FC = () => {
             </button>
           </div>
         </form>
-        {isActive ? <p>남은 시간: {leftTime}초</p> : <p>시간 만료</p>}
+        {isVerified ? (
+          <p>인증 완료</p>
+        ) : isActive ? (
+          <p>남은 시간: {leftTime}초</p>
+        ) : (
+          <p>시간 만료</p>
+        )}
         {isVerified && (
           <form onSubmit={handleCertifyPw}>
             <div className="input-group-new-pw">
@@ -151,6 +159,7 @@ const FindUserPw: React.FC = () => {
             </div>
           </form>
         )}
+        <input type="file"></input>
       </div>
     </main>
   );

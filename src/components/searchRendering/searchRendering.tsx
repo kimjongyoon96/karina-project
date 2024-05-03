@@ -16,7 +16,6 @@ const SearchRendering: React.FC<searchProps> = ({
   const limit = 8;
   const [items, setItems] = useState<karinaData[]>([]);
   const [page, setPage] = useState(1); // 페이지 번호 상태
-
   const goToSecondMain = (uuid: string): void => {
     navigate(`/detail/${uuid}`);
   };
@@ -43,6 +42,7 @@ const SearchRendering: React.FC<searchProps> = ({
         throw new Error(`Http 에러났다. status ${response.status}`);
       }
       const data = await response.json();
+      console.log(data, "검색결과니까 잘봐라잉");
       setItems((prevItems) => [...prevItems, ...data]);
     } catch (error) {
       console.error("스크롤링 요청 에러", error);
@@ -65,7 +65,7 @@ const SearchRendering: React.FC<searchProps> = ({
     return () => window.removeEventListener("scroll", throttledHandleScroll);
   }, []);
 
-  //* 데이터 요청 useEffect
+  //* 마운트 되었을때 실행되는 함수 즉 검색결과
   useEffect(() => {
     fetchItems(page);
   }, [page]);
