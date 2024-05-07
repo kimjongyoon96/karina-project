@@ -47,8 +47,8 @@
 .google-login-btn:hover {
   background-color: #e74b37;
 }
-.naver-login-btn:hover {
-  background-color: green;
+.naver-logo {
+  height: 36px;
 }
 .recovery-options {
   margin-top: 20px; /* 로그인 버튼들과의 간격 조정 */

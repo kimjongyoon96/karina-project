@@ -39,16 +39,4 @@ router.get("/api/research", async (req: any, res: Response) => {
   }
 });
 
-// let baseQuery = "SELECT * FROM karina";
-//     let conditions: string[] = [];
-//     if (req.query.search) {
-//       baseQuery += " WHERE title LIKE $1";
-//       conditions.push(`%${req.query.search}%`);
-//     }
-//     if (req.query.page || req.query.limit) {
-//       let page = parseInt(req.query.page as string, 10) || 1;
-//       let limit = parseInt(req.query.limit as string, 10) || 8;
-//       let offset = (page - 1) * limit;
-//       baseQuery += ` LIMIT ${limit} OFFSET ${offset}`;
-
 export default router;

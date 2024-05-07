@@ -3,14 +3,39 @@ import { useState } from "react";
 import "./signUp.css";
 import { AuthContextType } from "../../types/contentType";
 import { useNavigate } from "react-router-dom";
+import { encrypt, decrypt } from "../../services/cryptoForState";
+import navertag from "../../assets/photo/naver.png";
 const SignUp = () => {
+  const navigate = useNavigate();
+
+  //* 구글 로그인
   const handleGoogleLogin = () => {
     window.location.href = `${process.env.REACT_APP_API_URL}/auth/google`;
+  };
+  //* 장카설유 로그인
+  const jangkasulyoo = () => {
+    navigate("/nonSocialLogin");
+  };
+  //* 네이버 로그인
+  const handleNaverLogin = () => {
+    const clientId = `${process.env.NAVER_CLIENT_ID}`;
+    const redirectURI = `${process.env.NAVER_CALLBACK_URL}`;
+    const rawState = `${process.env.CSRF}`;
+    const encryptedState = encrypt(rawState);
+    const decryptedState = decrypt(encryptedState);
+    if (decryptedState === rawState) {
+      rawState;
+    }
+
+    const naverLoginUrl = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(
+      redirectURI
+    )}&state=${rawState}`;
+    window.location.href = naverLoginUrl;
   };
   const [userInputId, setUserInputId] = useState("");
   const [userInputPw, setUserInputPw] = useState("");
   const [userCheckedPw, setUserCheckedPw] = useState("");
-  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -65,10 +90,13 @@ const SignUp = () => {
         <button className="google-login-btn" onClick={handleGoogleLogin}>
           구글로 로그인하기
         </button>
-        <button className="naver-login-btn" onClick={handleGoogleLogin}>
-          네이버 로그인하기
+        <button className="naver-login-btn" onClick={handleNaverLogin}>
+          <img
+            height="50"
+            src="http://static.nid.naver.com/oauth/small_g_in.PNG"
+          />
         </button>
-        <button className="nomal-login-btn" onClick={handleGoogleLogin}>
+        <button className="nomal-login-btn" onClick={jangkasulyoo}>
           장카설유 회원가입 하기
         </button>
         <div className="recovery-options">

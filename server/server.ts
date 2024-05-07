@@ -20,6 +20,7 @@ import recoverUserPw from "./recoverUserPw";
 import certifyNumber from "./certifyNumber";
 import researchOutput from "./researchResultGet";
 import changePw from "./newPw";
+import naverLogin from "./naverLogin";
 import { ormConnection } from "../ORM";
 import { userPost } from "../ORM/entity/userPostEntity";
 import { userLike } from "../ORM/entity/userLikeEntity";
@@ -108,6 +109,7 @@ app.use(recoverUserPw); // 비밀번호 찾기 로직
 app.use(certifyNumber); // 인증번호 검증 로직
 app.use(changePw); // 비밀번호 변경 로직
 app.use(researchOutput);
+app.use(naverLogin);
 // app.use("/", researchResultRouter);
 //* test get 요청 받기
 
@@ -273,7 +275,7 @@ app.get("/api/karina", async (req: any, res) => {
     });
 
     res.json(posts);
-    console.log(posts, "페이지네이션 결과값");
+    // console.log(posts, "페이지네이션 결과값");
   } catch (err) {
     console.error(err);
     res.status(500).send("Server error");

@@ -20,7 +20,7 @@ export const ormConnection = new DataSource({
     nonSocialUserInfoData,
   ],
   synchronize: true, // 개발할때만 사용, 배포시 마이그레이션
-  logging: true,
+  // logging: true,
 });
 
 ormConnection

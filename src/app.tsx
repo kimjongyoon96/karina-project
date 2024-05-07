@@ -20,6 +20,7 @@ import Nickname from "./components/soical-nickName/nickName";
 import NonSocialLogin from "./nonSocialLogin/nonSocialLogin";
 import RecoverUserInfo from "./components/recoverUserInfo/recoverUserInfo";
 import FindUserPw from "./components/findUserPw/findUserPw";
+import myPage from "./components/myPage/myPage";
 import { response } from "express";
 
 const App: React.FC = () => {
@@ -63,7 +64,13 @@ const App: React.FC = () => {
 
     return null;
   };
+  //* 마이페이지 조건부 렌더링 함수
+  //  myPage =()=>{
+  //   const location = useLocation();
 
+  //   if
+
+  // }
   //* 배열추가 함수, write 컴포넌트에서 사용
   const addToArray = (obj: karinaData) => {
     switch (category) {
@@ -210,7 +217,7 @@ const App: React.FC = () => {
         </Routes>
         <ShowSeachbar />
         {/* <SeachBar {...authContextValue} /> */}
-
+        {/* <myPage/> */}
         <Number
           replaceArray={replaceArray}
           setCurrentPage={setCurrentPage}
