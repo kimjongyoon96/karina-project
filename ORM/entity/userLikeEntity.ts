@@ -1,4 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { userInfo } from "os";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { userInfoData } from "./userInfoEntity";
+import { userPost } from "./userPostEntity";
 
 @Entity()
 export class userLike {
@@ -13,4 +16,10 @@ export class userLike {
 
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   creationdate: Date;
+  //* 사용자 엔티티와 연결
+  @ManyToOne(() => userInfoData, (user) => user.likes)
+  user: userInfoData;
+  //* 게시물 엔티티와 연결
+  @ManyToOne(() => userPost, (post) => post.like)
+  post: userPost;
 }

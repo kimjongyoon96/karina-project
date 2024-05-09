@@ -17,7 +17,7 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
   const itemId = uuid !== undefined ? uuid : null;
   console.log(itemId);
 
-  // 문자열 id를 숫자로 변환하고, 해당하는 게시물을 찾습니다.
+  //* itemId가 null이 아니면 배열에서 uuid가 일치하는 것 찾음
   const post = itemId !== null ? myArray.find((p) => p.uuid === itemId) : null;
   console.log(post, "디테일페이지의 값인데 뭐가나올지 궁금하군..큭큭");
 
@@ -118,19 +118,17 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
         {
           method: "GET",
           headers: {
-            "content-Type": "application/json",
             Authorization: `Bearer ${jwtToken?.["token"]}`,
           },
         }
       );
-      if (!response.ok) {
-        throw new Error("추천수 조회 잘못 보냈다!");
+      if (response.ok) {
+        const data = await response.json();
+        setTotalLikes(data.totalLikes);
+        setHasLiked(data.userLiked > 0);
+      } else {
+        throw new Error("문제가있다.");
       }
-      const data = await response.json();
-      // console.log(data); // total 값, user값 같이 온다.
-      console.log(data.totalLikes, data.userLiked);
-      setTotalLikes(data.totalLikes);
-      setHasLiked(data.userLiked > 0);
     } catch (error) {
       console.log("좋아요 불러오기 실패");
     }

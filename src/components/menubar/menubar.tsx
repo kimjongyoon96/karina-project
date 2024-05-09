@@ -18,12 +18,13 @@ function Menubar({ replaceArray, setCurrentMenubar }) {
       .finally(() => console.log(`${menubar}가 눌러졌군..`));
   };
   return (
-    <nav className="cute">
-      <ul onClick={() => handleMenubar("innocence")}>장원영</ul>
+    <nav className="menubar-container">
+      <ul onClick={() => handleMenubar("jang")}>장원영</ul>
 
-      <ul onClick={() => handleMenubar("cute")}>카리나</ul>
-      <ul onClick={() => handleMenubar("sexy")}>설윤</ul>
-      <ul onClick={() => handleMenubar("daily")}>유나</ul>
+      <ul onClick={() => handleMenubar("karina")}>카리나</ul>
+      <ul onClick={() => handleMenubar("sulyoon")}>설윤</ul>
+      <ul onClick={() => handleMenubar("yoona")}>유나</ul>
+      <ul>기타갤러리</ul>
     </nav>
   );
 }

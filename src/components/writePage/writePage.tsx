@@ -25,16 +25,7 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray, setCategory }) => {
   );
   const [compressedImages, setCompressedImages] = useState<File[]>([]);
   console.log(compressedImages, "여기에 blob 객체가 나와야돼!!");
-  //   const handlePhotoSumnailChange = (
-  //     event: React.ChangeEvent<HTMLInputElement> // event는 React.ChangeEvent<HTMLInputElement>타입이다. input요소의 변경 이벤트이며, 사용자가 파일을 업로드할때 발생하는 이벤트정보이다.
-  //   ) => {
-  //     if (event.target.files && event.target.files[0]) {
 
-  //       // envet는 객체, target은 발생한 DOM요소(<input>), files는 선택한 파일(여러개라 배열형태)
-  //       setPhotoSumnail(URL.createObjectURL(event.target.files[0])); // 객체의 DOM요소의 파일에 대한 URL을 생성한다. 브라우저 메모리에 있는 파일에 대한 URL이다.
-  //     }
-  //     // console.log(event.target.files)=> FileList {0: File, length: 1}
-  //   };
   const handlePhotoSumnailChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -141,7 +132,6 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray, setCategory }) => {
       const responseData = await response.json();
       console.log(responseData.data.menubar);
 
-      // 성공 처리 로직 (예: 상태 초기화, 사용자에게 알림 등)
       addToArray(responseData.data);
       navigate("/");
     } catch (error) {
@@ -170,12 +160,12 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray, setCategory }) => {
         }}
       >
         <option value="" disabled selected>
-          메뉴바를 선택하세요
+          게시판을 선택하세요
         </option>
-        <option value="innocence">청순카리나</option>
-        <option value="cute">큐트카리나</option>
-        <option value="sexy">섹시카리나</option>
-        <option value="daily">일상카리나</option>
+        <option value="jang">장원영</option>
+        <option value="karina">카리나</option>
+        <option value="sulyoon">설윤</option>
+        <option value="yoona">유나</option>
       </select>
 
       <input

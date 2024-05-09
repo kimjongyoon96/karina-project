@@ -1,6 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+} from "typeorm";
 import { userInfoData } from "./userInfoEntity"; // User 엔티티를 불러오는 가정입니다.
 import { nonSocialUserInfoData } from "./nonSocialUserInfoEntity";
+import { userComment } from "./userCommentsEntity";
+import { userLike } from "./userLikeEntity";
 //* @primaryGeneratoedColumn => 프라이머리 키
 @Entity()
 export class userPost {
@@ -27,4 +35,11 @@ export class userPost {
   // 비소셜 로그인 사용자와의 관계 설정
   @ManyToOne(() => nonSocialUserInfoData, (user) => user.nonSocialPosts)
   nonSocialUser: nonSocialUserInfoData;
+
+  //* 코멘트 엔티티와 연결
+  @OneToMany(() => userComment, (comment) => comment.user)
+  comments: userComment[];
+  //* 라이크 엔티티와 연결
+  @OneToMany(() => userLike, (like) => like.post)
+  like: userLike[];
 }

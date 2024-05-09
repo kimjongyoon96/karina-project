@@ -52,6 +52,7 @@ router.get("/callback", async (req, res) => {
     const userInfo = userInfoResponse.data;
     //* userInfo.response.email || userInfo.response.nickname || userInfo.response.name
     const { email, nickname, name } = userInfo.response;
+    const isSocial = true;
     //* 소셜로그인 엔티티 불러오기
     const naverUserExist = await ormConnection.getRepository(userInfoData);
     //* 소셜로그인 엔티티에 정보 찾기(이메일과 이름으로)
@@ -64,6 +65,7 @@ router.get("/callback", async (req, res) => {
       newUser.username = name;
       newUser.useremail = email;
       newUser.userNickName = nickname;
+      newUser.isSocial = isSocial;
       await naverUserExist.save(newUser);
 
       //* 새로 추가된 사용자 정보를 가져옴(네이버)

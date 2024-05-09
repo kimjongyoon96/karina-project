@@ -12,6 +12,7 @@ import exchangeCodeForAccessToken from "./oauth";
 import getUserInfo from "./userinfo";
 import cookieParser from "cookie-parser";
 // import researchResultRouter from "./researchResultGet";
+import { verifyToken } from "./jwt";
 import { requestValueList } from "aws-sdk/clients/customerprofiles";
 import registerApi from "./register";
 import loginCheckApi from "./login";
@@ -21,6 +22,7 @@ import certifyNumber from "./certifyNumber";
 import researchOutput from "./researchResultGet";
 import changePw from "./newPw";
 import naverLogin from "./naverLogin";
+// import { setupWebSocket } from "./socet";
 import { ormConnection } from "../ORM";
 import { userPost } from "../ORM/entity/userPostEntity";
 import { userLike } from "../ORM/entity/userLikeEntity";
@@ -75,33 +77,33 @@ const upload = multer({
   }),
 });
 //* 토크 검증 함수
-const verifyToken = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  // console.log("여기 auth있냐?", req, "여기까지야");
-  if (authHeader) {
-    console.log(authHeader, "여기는 뭐가 나올까?");
-    const token = authHeader.split(" ")[1];
-    console.log(token, "여기가지는");
-    jwt.verify(token, secretKey, (err, decoded) => {
-      if (err) {
-        console.log(err, "에러내용을 보자");
-        return res.sendStatus(403);
-      }
-      console.log(decoded, "디코딩된데이터");
+// const verifyToken = (req, res, next) => {
+//   const authHeader = req.headers.authorization;
+//   console.log("여기 auth있냐?", req, "여기까지야");
+//   if (authHeader) {
+//     console.log(authHeader, "여기는 뭐가 나올까?");
+//     const token = authHeader.split(" ")[1];
+//     console.log(token, "여기가지는");
+//     jwt.verify(token, secretKey, (err, decoded) => {
+//       if (err) {
+//         console.log(err, "에러내용을 보자");
+//         return res.sendStatus(403);
+//       }
+//       console.log(decoded, "디코딩된데이터");
 
-      const { userName, userEmail } = decoded;
+//       const { userName, userEmail } = decoded;
 
-      if (!userName || !userEmail) {
-        return res.status(400).send("페이로드에 Id 혹은 email이 없음.");
-      }
-      req.user = decoded;
-      // req.user = { id: decoded.id };
-      next();
-    });
-  } else {
-    return res.sendStatus(401);
-  }
-};
+//       if (!userName || !userEmail) {
+//         return res.status(400).send("페이로드에 Id 혹은 email이 없음.");
+//       }
+//       req.user = decoded;
+//       // req.user = { id: decoded.id };
+//       next();
+//     });
+//   } else {
+//     return res.sendStatus(401);
+//   }
+// };
 app.use(registerApi); // 회원가입 라우터
 app.use(loginCheckApi); // 로그인 라우터
 app.use(recoverUserId); // 로그인 찾기 로직
@@ -110,6 +112,8 @@ app.use(certifyNumber); // 인증번호 검증 로직
 app.use(changePw); // 비밀번호 변경 로직
 app.use(researchOutput);
 app.use(naverLogin);
+
+// setupWebSocket(app);
 // app.use("/", researchResultRouter);
 //* test get 요청 받기
 
@@ -147,7 +151,7 @@ app.post("/api/addcomment", verifyToken, async (req: any, res) => {
   }
 });
 
-//* 모듈화 후보 2 -> 좋아요 로직 => ORM 리팩토링
+//* 좋아요 로직
 app.post("/api/like", verifyToken, async (req: any, res) => {
   try {
     const { postuuid } = req.body;
@@ -215,7 +219,7 @@ app.get("/api/viewLikes/:postuuid", verifyToken, async (req: any, res) => {
       userLiked: userLikeCount, // 좋아요 수가 0보다 크면 현재 사용자가 좋아요를 누른 것으로 간주합니다.
     });
   } catch (error) {
-    console.error(" 댓글 서버 에러 확인 하라", error);
+    console.error(" 좋아요 서버 에러 확인 하라", error);
   }
 });
 
@@ -234,10 +238,10 @@ app.post(
       UserPost.title = req.body.title;
       UserPost.photosumnail = req.files["photoSumnail"][0].location;
       UserPost.photos = req.files["photos"].map((photo) => photo.location);
-      console.log("여기는 유저 업로드");
 
       const userPostRepository = ormConnection.getRepository(userPost);
       await userPostRepository.save(UserPost);
+      console.log(UserPost, "업로두한거 뮤ㅓㅗㄴ가");
 
       res.status(200).json({
         message: "제출햇을때 주는 서버의 은총",
@@ -356,8 +360,8 @@ app.get("/auth/google/redirect", async (req: any, res) => {
       { expiresIn: "5h" }
     );
     console.log(token, "내가 발행한 유저의 토큰입니다.");
-
-    if (!user?.userNickName) {
+    console.log(user?.userNickName, "유저닉네임이 있는가?");
+    if (!user?.userNickName || user.userNickName === "defaultNickName") {
       return res.redirect(`${process.env.CLIENT_API_URL}/addNickName`); //닉네임 없으면 닉네임 추가 컴포넌트로 리다이렉트
     }
 
@@ -380,6 +384,7 @@ app.post("/api/addNickName", async (req: any, res) => {
       await userentity.save(User);
       res.status(200).json({ message: "닉네임이 성공적으로 추가되었습니다." });
     }
+    return res.redirect(`${process.env.CLIENT_API_URL}`);
   } catch (error) {
     console.error(error, "닉네임 post 서버쪽 에러입니다.");
     res.status(500).json({ message: "닉네임 서버 에러 발생" });
@@ -392,14 +397,10 @@ app.get("/auth/cookie", (req, res) => {
   console.log(token);
   // const token = jwt.sign({ hi: "bye" }, secretKey, { expiresIn: "2h" });
   if (token) {
-    console.log(
-      "ath/cookie에 대한 응답입니다.",
-      token,
-      "auth/cookie에 대한 응답이다"
-    );
+    console.log("ath/cookie에 대한 응답입니다.", token);
     res.json({ token });
   } else {
-    res.status(200).send(token);
+    res.status(403).send({ message: "token expired" });
   }
 });
 //* 모든 요청에 대한 HTML 반환

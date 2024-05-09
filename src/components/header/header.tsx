@@ -9,6 +9,12 @@ const Header: React.FC<AuthContextType> = ({ jwtToken, setJwtToken }) => {
   console.log("전역변수로 선언된 JWT", jwtToken);
   return (
     <header className="header">
+      <button
+        className="myPage-btn"
+        onClick={() => {
+          Navigate("myPage");
+        }}
+      />
       <img
         className="logo"
         onClick={() => {
@@ -26,12 +32,7 @@ const Header: React.FC<AuthContextType> = ({ jwtToken, setJwtToken }) => {
           }}
         />
       )}
-      <button
-        className="myPage-btn"
-        onClick={() => {
-          Navigate("myPage");
-        }}
-      />
+
       <h1 className="title">정카설유</h1>
     </header>
   );

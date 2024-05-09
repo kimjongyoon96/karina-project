@@ -20,7 +20,7 @@ import Nickname from "./components/soical-nickName/nickName";
 import NonSocialLogin from "./nonSocialLogin/nonSocialLogin";
 import RecoverUserInfo from "./components/recoverUserInfo/recoverUserInfo";
 import FindUserPw from "./components/findUserPw/findUserPw";
-import myPage from "./components/myPage/myPage";
+import MyPage from "./components/myPage/myPage";
 import { response } from "express";
 
 const App: React.FC = () => {
@@ -39,8 +39,7 @@ const App: React.FC = () => {
   console.log(myInputData, "실시간업데이트되스난되는");
   const authContextValue: AuthContextType = { jwtToken, setJwtToken };
 
-  console.log(myInputData, "검색했을때 타이핑한 문자열");
-
+  //* 서치바 컴포넌트 조건부 렌더링
   const ShowSeachbar = () => {
     const location = useLocation();
 
@@ -74,21 +73,20 @@ const App: React.FC = () => {
   //* 배열추가 함수, write 컴포넌트에서 사용
   const addToArray = (obj: karinaData) => {
     switch (category) {
-      case "innocence":
+      case "jang":
         if (obj.menubar === category)
           setMyInnocenceArray([...innocenceArray, obj]);
 
         break;
-      case "cute":
+      case "karina":
         if (obj.menubar === category) setMyCuteArray([...cuteArray, obj]);
-        // console.log(myArray);
-        // console.log("디버깅용");
+        console.log("addToArray 테스트:", cuteArray, myArray);
         break;
-      case "sexy":
-        if (obj.menubar === category) setMySexyArray([...cuteArray, obj]);
+      case "sulyoon":
+        if (obj.menubar === category) setMySexyArray([...sexyArray, obj]);
 
         break;
-      case "daily":
+      case "yoona":
         if (obj.menubar === category) setMyDailyArray([...dailyArray, obj]);
 
         break;
@@ -97,13 +95,15 @@ const App: React.FC = () => {
     }
   };
 
-  // 빨강=>파랑을 전시바구니로 옮기는 로직
-  // 옮기는 로직이니, 전시
+  //* 1. 메뉴바를 클릭시 handle 함수가 실행되어, 해당 menubar가 속한 데이터를 가져옴.
+  //* 2. 그 data를 replaceArray(data)에 넣음 , 이 data는 해당 메뉴바에 속한 데이터
+  //* 3. setMyArray의 상태는 myArray 즉, 메뉴바가 클릭될때마다 myArray가 동적으로 바뀜
   const replaceArray = (arrayToReset: any[]) => {
     setMyArray(arrayToReset);
-    // console.log(arrayToReset);
+    console.log("이것은필시 메뉴바에 해당하는 data:", arrayToReset);
   };
-
+  //* 1. 페이지가 마운트 되었을때 모든 게시물을 가져온다.
+  //*
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -111,15 +111,14 @@ const App: React.FC = () => {
           `${process.env.REACT_APP_API_URL}/api/karina/`
         );
         const data = await response.json();
-        console.log(data);
+        console.log("메인페이지 useEffect 발생:", data);
         setMyArray(data);
 
-        setMyInnocenceArray(
-          data.filter((item) => item.menubar === "innocence")
-        );
-        setMyCuteArray(data.filter((item) => item.menubar === "cute"));
-        setMyDailyArray(data.filter((item) => item.menubar === "daily"));
-        setMySexyArray(data.filter((item) => item.menubar === "sexy"));
+        setMyInnocenceArray(data.filter((item) => item.menubar === "jang"));
+        console.log(innocenceArray, "여기서는 innocence가 어떻게 될까?");
+        setMyCuteArray(data.filter((item) => item.menubar === "karina"));
+        setMyDailyArray(data.filter((item) => item.menubar === "sulyoon"));
+        setMySexyArray(data.filter((item) => item.menubar === "yoona"));
       } catch (error) {
         console.error("뭔가 잘못되었다", error);
       }
@@ -127,15 +126,7 @@ const App: React.FC = () => {
     fetchData();
   }, []);
 
-  // useEffect(() => {
-  //   fetch(`${process.env.REACT_APP_API_URL}/api/karina?menubar=innocence`)
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       replaceArray(data);
-  //     })
-  //     .catch((error) => console.error("Error fetching data:", error));
-  // }, []);
-
+  //* 쿠키에 있는 JWT 가져오기
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -159,11 +150,6 @@ const App: React.FC = () => {
     fetchData();
   }, []);
 
-  // const isSignUpPage = location.pathname === "/signUp";
-
-  // if (isSignUpPage) {
-  //   return <SignUp />;
-  // }
   return (
     <Router>
       <div>
@@ -214,10 +200,11 @@ const App: React.FC = () => {
           <Route path="nonSocialLogin" element={<NonSocialLogin />} />
           <Route path="recoverUser" element={<RecoverUserInfo />} />
           <Route path="findUserPw" element={<FindUserPw />} />
+          <Route path="myPage" element={<MyPage />} />
         </Routes>
         <ShowSeachbar />
         {/* <SeachBar {...authContextValue} /> */}
-        {/* <myPage/> */}
+
         <Number
           replaceArray={replaceArray}
           setCurrentPage={setCurrentPage}
