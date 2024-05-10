@@ -76,11 +76,12 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
         throw new Error("Network response was not ok.");
       }
       const data = await response.json();
-      console.log(data.userInfo);
+      console.log(data, "댓글추가시 오는 데이터");
+
       setCommentText("");
       setComments((prevComments) => [
         ...prevComments,
-        { username: data.userInfo, text: commentText },
+        { username: data.userNickName, text: commentText },
       ]); //* prevComments는 현재 댓글 , ...prevCommnets는 현재댓글을 그대로 복사, 오른쪽 객체는 복사한 댓글에 추가하고 싶은 값
     } catch (error) {
       console.log(error);

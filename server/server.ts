@@ -130,21 +130,29 @@ app.post("/api/addcomment", verifyToken, async (req: any, res) => {
   try {
     const { text, postuuid } = req.body;
     const userInfo = req.user.userName;
+    //* 닉네임 추출위한 userInfo 가져오기
+    const userInfoRepository = ormConnection.getRepository(userInfoData);
+    const userInfoDetail = await userInfoRepository.findOne({
+      where: { username: userInfo },
+    });
+    if (!userInfoDetail) {
+      return res.status(404).json({ message: "닉네임이 없습니다." });
+    }
+    console.log(userInfoDetail, "닉네임");
     const UserComment = new userComment(); // 엔티티 클래스 선언
     UserComment.text = text;
     UserComment.postuuid = postuuid;
     UserComment.username = userInfo;
-    console.log("Received comment:", text); // 받은 텍스트
-    console.log("받은 uuid", postuuid); // 받은 게시물 Uuid
-    console.log("검증된 아이디", userInfo); // 쓴놈의 이름
+
     const userPostRepository = ormConnection.getRepository(userComment);
     await userPostRepository.save(UserComment);
+    const userNickName = userInfoDetail?.["userNickName"];
     res.status(200).json({
-      message: "Comment added successfully",
-      userInfo: userInfo, // 여기서 userInfo는 전송하고자 하는 사용자 정보 객체입니다.
+      message: "댓글 작성이 완료되었습니다.",
+      userNickName: userNickName, //* 닉네임을 클라이언트로 보낸다.
     });
   } catch (error) {
-    console.error("Error while adding comment:", error);
+    console.error("댓글 작성 에러가 발생했습니다.:", error);
     if (!res.headersSent) {
       res.status(500).send("전송 실패");
     }

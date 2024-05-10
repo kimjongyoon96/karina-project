@@ -3,7 +3,7 @@ const secretKey = process.env.JWT_SECRET_KEY;
 
 export const verifyToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
-  console.log("여기 auth있냐?", req, "여기까지야");
+  //   console.log("여기 auth있냐?", req, "여기까지야");
   if (authHeader) {
     console.log(authHeader, "여기는 뭐가 나올까?");
     const token = authHeader.split(" ")[1];
