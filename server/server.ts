@@ -22,6 +22,7 @@ import certifyNumber from "./certifyNumber";
 import researchOutput from "./researchResultGet";
 import changePw from "./newPw";
 import naverLogin from "./naverLogin";
+import myPage from "./myPage";
 // import { setupWebSocket } from "./socet";
 import { ormConnection } from "../ORM";
 import { userPost } from "../ORM/entity/userPostEntity";
@@ -112,6 +113,7 @@ app.use(certifyNumber); // 인증번호 검증 로직
 app.use(changePw); // 비밀번호 변경 로직
 app.use(researchOutput);
 app.use(naverLogin);
+app.use(myPage); //마이페이지 라우터
 
 // setupWebSocket(app);
 // app.use("/", researchResultRouter);

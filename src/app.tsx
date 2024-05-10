@@ -200,7 +200,10 @@ const App: React.FC = () => {
           <Route path="nonSocialLogin" element={<NonSocialLogin />} />
           <Route path="recoverUser" element={<RecoverUserInfo />} />
           <Route path="findUserPw" element={<FindUserPw />} />
-          <Route path="myPage" element={<MyPage />} />
+          <Route
+            path="myPage"
+            element={<MyPage jwtToken={jwtToken} setJwtToken={setJwtToken} />}
+          />
         </Routes>
         <ShowSeachbar />
         {/* <SeachBar {...authContextValue} /> */}

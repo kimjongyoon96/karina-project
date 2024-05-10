@@ -29,6 +29,7 @@ export class userPost {
 
   @Column("text", { array: true, default: "{}" })
   photos: string[];
+  //* 소셜로그인 엔티티와 연결을 상징
   @ManyToOne(() => userInfoData, (user) => user.socialPosts)
   socialUser: userInfoData;
 

@@ -2,6 +2,10 @@ import jwt from "jsonwebtoken";
 const secretKey = process.env.JWT_SECRET_KEY;
 
 export const verifyToken = (req, res, next) => {
+  const token = req.headers["authorization"];
+  if (!token) {
+    return res.json({ message: "토큰이 존재하지 않습니다." });
+  }
   const authHeader = req.headers.authorization;
   //   console.log("여기 auth있냐?", req, "여기까지야");
   if (authHeader) {
@@ -21,10 +25,12 @@ export const verifyToken = (req, res, next) => {
         return res.status(400).send("페이로드에 Id 혹은 email이 없음.");
       }
       req.user = decoded;
-      // req.user = { id: decoded.id };
+
       next();
     });
   } else {
-    return res.sendStatus(401);
+    return res
+      .sendStatus(401)
+      .json({ message: "JWT 로직 전반에 이상이있습니다." });
   }
 };
