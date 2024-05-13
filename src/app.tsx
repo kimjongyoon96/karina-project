@@ -22,6 +22,7 @@ import RecoverUserInfo from "./components/recoverUserInfo/recoverUserInfo";
 import FindUserPw from "./components/findUserPw/findUserPw";
 import MyPage from "./components/myPage/myPage";
 import useAuthStore from "./JustAnd/GlobalState";
+import AuthManager from "./containers/container";
 import { response } from "express";
 const App: React.FC = () => {
   const [category, setCategory] = useState("");
@@ -165,11 +166,14 @@ const App: React.FC = () => {
           <Route
             path="/"
             element={
-              <MainContens
-                category={category}
-                myarray={myArray}
-                matchedItems={matchedItems}
-              />
+              <>
+                <MainContens
+                  category={category}
+                  myarray={myArray}
+                  matchedItems={matchedItems}
+                />
+                <AuthManager />
+              </>
             }
           />
           <Route
