@@ -8,9 +8,11 @@ export class userInfoData {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "varchar", length: 255 })
+  @Column({ type: "varchar", length: 255, nullable: true })
   username: string;
-
+  //* 논소셜 전용, 소셜은 Id 안받음
+  @Column({ type: "varchar", length: 255, nullable: true })
+  userId: string;
   @Column({ type: "varchar", length: 255, unique: true })
   useremail: string;
 

@@ -77,34 +77,7 @@ const upload = multer({
     },
   }),
 });
-//* 토크 검증 함수
-// const verifyToken = (req, res, next) => {
-//   const authHeader = req.headers.authorization;
-//   console.log("여기 auth있냐?", req, "여기까지야");
-//   if (authHeader) {
-//     console.log(authHeader, "여기는 뭐가 나올까?");
-//     const token = authHeader.split(" ")[1];
-//     console.log(token, "여기가지는");
-//     jwt.verify(token, secretKey, (err, decoded) => {
-//       if (err) {
-//         console.log(err, "에러내용을 보자");
-//         return res.sendStatus(403);
-//       }
-//       console.log(decoded, "디코딩된데이터");
 
-//       const { userName, userEmail } = decoded;
-
-//       if (!userName || !userEmail) {
-//         return res.status(400).send("페이로드에 Id 혹은 email이 없음.");
-//       }
-//       req.user = decoded;
-//       // req.user = { id: decoded.id };
-//       next();
-//     });
-//   } else {
-//     return res.sendStatus(401);
-//   }
-// };
 app.use(registerApi); // 회원가입 라우터
 app.use(loginCheckApi); // 로그인 라우터
 app.use(recoverUserId); // 로그인 찾기 로직
@@ -115,18 +88,6 @@ app.use(researchOutput);
 app.use(naverLogin);
 app.use(myPage); //마이페이지 라우터
 
-// setupWebSocket(app);
-// app.use("/", researchResultRouter);
-//* test get 요청 받기
-
-// app.get("/test", async (req: any, res: any) => {
-//   try {
-//     console.log(req, "test에서 보낸 메시지입니다.");
-//     res.json({ message: "성공적으로 서버에서 응답 받음" });
-//   } catch (error) {
-//     console.log("야 서버에는 왔는데, 에러가떳어.", error);
-//   }
-// });
 //* 모듈화 후보 1 -> 댓글 추가 로직 => ORM 리팩토링
 app.post("/api/addcomment", verifyToken, async (req: any, res) => {
   try {

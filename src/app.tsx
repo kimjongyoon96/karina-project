@@ -138,6 +138,7 @@ const App: React.FC = () => {
         );
         if (!response.ok) {
           throw new Error("야 쿠키쪽이 문제가 있는데?");
+          alert("다시 로그인하세요");
         }
         const data = await response.json();
         setJwtToken(data);

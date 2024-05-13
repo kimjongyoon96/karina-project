@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContextType } from "../../types/contentType";
-
+import "./myPage.css";
 const MyPage: React.FC<AuthContextType> = ({ jwtToken }) => {
   //* 내가 쓴글, 내가 쓴 댓글, 내가 좋아요 한 게시물
   //* 내 정보 수정 => 닉네임 수정
