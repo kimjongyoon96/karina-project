@@ -379,7 +379,7 @@ app.get("/auth/cookie", (req, res) => {
         .json({ message: "토큰이 유효하지 않거나, 만료되었습니다." });
     }
   } else {
-    res.status(403).send({ message: "토큰이 존재하지 않습니다." });
+    res.status(404).send({ message: "토큰이 존재하지 않습니다." });
   }
 });
 //* 모든 요청에 대한 HTML 반환

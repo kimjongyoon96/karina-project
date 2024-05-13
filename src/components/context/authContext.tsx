@@ -8,27 +8,22 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  //* jwtToken 상태와 이를 설정하는 함수를 useState를 통해 생성합니다. 초기값은 null입니다.
   const [jwtToken, setJwtToken] = useState<string | null>(null);
 
-  //* AuthContext.Provider에 전달할 값입니다. 여기서는 jwtToken과 setJwtToken 함수를 객체로 묶어 제공합니다.
   const value = { jwtToken, setJwtToken };
-
   //* AuthContext.Provider 컴포넌트를 사용하여 children을 래핑하고, 위에서 정의한 value를 context 값으로 제공합니다.
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 //* useAuth 커스텀 훅을 정의합니다. 이 훅을 사용하여 컴포넌트에서 AuthContext의 값을 쉽게 접근할 수 있습니다.
 export const useAuth = (): AuthContextType => {
-  //* useContext 훅을 사용하여 AuthContext의 현재 값을 읽어옵니다.
   const context = useContext(AuthContext);
-  //* 디버깅을 위해 현재 context 값을 콘솔에 출력합니다.
+
   console.log("check_here");
-  console.log(context);
+  console.log(context, "여기를 확인하쎄요!");
   //* 만약 context가 undefined일 경우, 즉 useAuth 훅이 AuthProvider 내부에서 사용되지 않았을 경우 에러를 발생시킵니다.
   if (context === undefined) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
-  //* context 값이 정상적으로 존재하면 해당 값을 반환합니다.
   return context;
 };

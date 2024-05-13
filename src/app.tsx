@@ -1,5 +1,5 @@
 // src/App.tsx
-import React, { useState, useEffect, createContext, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -21,9 +21,8 @@ import NonSocialLogin from "./nonSocialLogin/nonSocialLogin";
 import RecoverUserInfo from "./components/recoverUserInfo/recoverUserInfo";
 import FindUserPw from "./components/findUserPw/findUserPw";
 import MyPage from "./components/myPage/myPage";
+import useAuthStore from "./JustAnd/GlobalState";
 import { response } from "express";
-import { useNavigate } from "react-router-dom";
-
 const App: React.FC = () => {
   const [category, setCategory] = useState("");
   const [currentMenubar, setCurrentMenubar] = useState("");
@@ -37,10 +36,11 @@ const App: React.FC = () => {
   const [dailyArray, setMyDailyArray] = useState<karinaData[]>([]); // 초록바구니
   const [matchedItems, setMatchedItems] = useState<karinaData[]>([]);
   const [myInputData, setMyInputData] = useState("");
-
   console.log(myInputData, "실시간업데이트되스난되는");
   const authContextValue: AuthContextType = { jwtToken, setJwtToken };
-
+  const { jwtExpired, setJwtExpired } = useAuthStore();
+  console.log(jwtExpired, "여기가 저스탠드");
+  console.log("checkhere!!:", authContextValue.jwtToken);
   //* 서치바 컴포넌트 조건부 렌더링
   const ShowSeachbar = () => {
     const location = useLocation();
@@ -127,7 +127,6 @@ const App: React.FC = () => {
     };
     fetchData();
   }, []);
-  const navigate = useNavigate();
   // * 쿠키에 있는 JWT 가져오기
   useEffect(() => {
     const fetchData = async () => {
@@ -138,9 +137,9 @@ const App: React.FC = () => {
             credentials: "include",
           }
         );
-        if (response.status === 403) {
-          navigate("/SignUp");
-          // throw new Error("야 쿠키쪽이 문제가 있는데?");
+        if (response.status === 404) {
+          setJwtExpired(true); // 서버에서 받은 status가 403이면, 만료되었다고 판단
+          console.log("실시간으로 바뀌나 보자:", jwtExpired);
         }
         const data = await response.json();
         setJwtToken(data);
