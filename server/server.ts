@@ -366,12 +366,20 @@ app.post("/api/addNickName", async (req: any, res) => {
 app.get("/auth/cookie", (req, res) => {
   const token = req.cookies.token; // 쿠키에서 토큰 읽기
   console.log(token);
-  // const token = jwt.sign({ hi: "bye" }, secretKey, { expiresIn: "2h" });
+
   if (token) {
-    console.log("ath/cookie에 대한 응답입니다.", token);
-    res.json({ token });
+    try {
+      console.log("ath/cookie에 대한 응답입니다.", token);
+      res.json({ token });
+    } catch (error) {
+      console.error("쿠키에 있는 토큰 에러:", error.message);
+      res.clearCookie("token");
+      return res
+        .status(403)
+        .json({ message: "토큰이 유효하지 않거나, 만료되었습니다." });
+    }
   } else {
-    res.status(403).send({ message: "token expired" });
+    res.status(403).send({ message: "토큰이 존재하지 않습니다." });
   }
 });
 //* 모든 요청에 대한 HTML 반환

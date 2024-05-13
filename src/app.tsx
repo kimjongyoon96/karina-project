@@ -22,6 +22,7 @@ import RecoverUserInfo from "./components/recoverUserInfo/recoverUserInfo";
 import FindUserPw from "./components/findUserPw/findUserPw";
 import MyPage from "./components/myPage/myPage";
 import { response } from "express";
+import { useNavigate } from "react-router-dom";
 
 const App: React.FC = () => {
   const [category, setCategory] = useState("");
@@ -36,6 +37,7 @@ const App: React.FC = () => {
   const [dailyArray, setMyDailyArray] = useState<karinaData[]>([]); // 초록바구니
   const [matchedItems, setMatchedItems] = useState<karinaData[]>([]);
   const [myInputData, setMyInputData] = useState("");
+
   console.log(myInputData, "실시간업데이트되스난되는");
   const authContextValue: AuthContextType = { jwtToken, setJwtToken };
 
@@ -125,8 +127,8 @@ const App: React.FC = () => {
     };
     fetchData();
   }, []);
-
-  //* 쿠키에 있는 JWT 가져오기
+  const navigate = useNavigate();
+  // * 쿠키에 있는 JWT 가져오기
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -136,9 +138,9 @@ const App: React.FC = () => {
             credentials: "include",
           }
         );
-        if (!response.ok) {
-          throw new Error("야 쿠키쪽이 문제가 있는데?");
-          alert("다시 로그인하세요");
+        if (response.status === 403) {
+          navigate("/SignUp");
+          // throw new Error("야 쿠키쪽이 문제가 있는데?");
         }
         const data = await response.json();
         setJwtToken(data);
