@@ -19,7 +19,7 @@ router.get("/auth/cookie", (req, res) => {
   if (token) {
     try {
       console.log("ath/cookie에 대한 응답입니다.", token);
-      res.json({ token });
+      res.status(200).json({ token });
     } catch (error) {
       console.error("쿠키에 있는 토큰 에러:", error.message);
       res.clearCookie("token");

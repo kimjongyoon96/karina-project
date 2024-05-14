@@ -23,16 +23,27 @@ const Header: React.FC<AuthContextType> = ({ jwtToken, setJwtToken }) => {
         src={pageLogo}
         alt="Page Logo"
       />
-      {jwtToken && (
+      {!jwtToken ? (
         <button
           className="loginButton"
           onClick={() => {
             console.log("login 버튼 누름");
             Navigate("SignUp");
           }}
-        />
+        >
+          로그인
+        </button>
+      ) : (
+        <button
+          className="logoutButton"
+          onClick={() => {
+            console.log("login 버튼 누름");
+            Navigate("SignUp");
+          }}
+        >
+          로그아웃
+        </button>
       )}
-
       <h1 className="title">정카설유</h1>
     </header>
   );

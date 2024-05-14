@@ -40,7 +40,7 @@ const App: React.FC = () => {
   // console.log(myInputData, "실시간업데이트되스난되는");
   const authContextValue: AuthContextType = { jwtToken, setJwtToken };
   const { jwtExpired, setJwtExpired } = useAuthStore();
-  console.log(jwtExpired, "여기가 저스탠드");
+  console.log(jwtExpired, jwtToken, "여기가 저스탠드");
   //* 서치바 컴포넌트 조건부 렌더링
   const ShowSeachbar = () => {
     const location = useLocation();
@@ -130,25 +130,28 @@ const App: React.FC = () => {
   //* 토큰이 있을때만, useEffect 실행 =>
   useEffect(() => {
     const fetchData = async () => {
-      if (!jwtToken) {
-        try {
-          const response = await fetch(
-            `${process.env.REACT_APP_API_URL}/auth/cookie`,
-            {
-              credentials: "include",
-            }
-          );
-          if (response.status === 404) {
-            setJwtExpired(true); // 서버에서 받은 status가 403이면, 만료되었다고 판단
-            console.log("실시간으로 바뀌나 보자:", jwtExpired);
+      // if (jwtToken) {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_API_URL}/auth/cookie`,
+          {
+            credentials: "include",
           }
-          const data = await response.json();
-          setJwtToken(data);
-
-          console.log(data.token, "내가받은 JWT 토큰입니다.");
-        } catch (error) {
-          console.error("잘못된 fetch 데이터", error);
+        );
+        if (response.status === 403) {
+          setJwtExpired(true); // 서버에서 받은 status가 403이면, 만료되었다고 판단
+          console.log("실시간으로 바뀌나 보자:", jwtExpired);
+        } else if (response.status === 200) {
+          setJwtExpired(false);
+        } else {
+          //* 여기는 jwt가 있지도, 만료되지도 않은 상태
         }
+        const data = await response.json();
+        setJwtToken(data);
+
+        console.log(data.token, "내가받은 JWT 토큰입니다.");
+      } catch (error) {
+        console.error("잘못된 fetch 데이터", error);
       }
     };
     fetchData();
