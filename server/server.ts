@@ -41,7 +41,7 @@ app.use(
   cors({
     origin: "http://localhost:3001",
     credentials: true,
-    // methods: ["GET", "POST", "OPTIONS"],
+    methods: ["GET", "POST", "OPTIONS"],
   })
 );
 
@@ -241,6 +241,7 @@ app.get("/auth/google/redirect", async (req: any, res) => {
       const User = new userInfoData();
       User.username = userName;
       User.useremail = userEmail;
+      User.isSocial = true;
       await useregist.save(User);
 
       // 새로 추가된 사용자 정보를 가져옴
@@ -256,14 +257,15 @@ app.get("/auth/google/redirect", async (req: any, res) => {
     console.log(token, "내가 발행한 유저의 토큰입니다.");
     console.log(user?.userNickName, "유저닉네임이 있는가?");
     if (!user?.userNickName || user.userNickName === "defaultNickName") {
+      res.cookie("token", token, { httpOnly: true, secure: false });
       return res.redirect(`${process.env.CLIENT_API_URL}/addNickName`); //닉네임 없으면 닉네임 추가 컴포넌트로 리다이렉트
     }
-
+    //* 닉네임 있는 경우 바로 토큰 발급
     res.cookie("token", token, { httpOnly: true, secure: false });
-    res.redirect(`${process.env.CLIENT_API_URL}`); // 클라이언트 페이지로 리디렉션
+    return res.redirect(`${process.env.CLIENT_API_URL}`); // 클라이언트 페이지로 리디렉션
   } catch (error) {
     console.error("Error handling OAuth callback:", error);
-    res.status(500).send("Authentication failed");
+    res.status(500).send("구글 로그인 문제가 있습니다");
   }
 });
 app.delete("/deleteMyTable", async (req: any, res) => {

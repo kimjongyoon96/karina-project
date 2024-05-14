@@ -207,7 +207,10 @@ const App: React.FC = () => {
             }
           />
           <Route path="signUp" element={<SignUp />} />
-          <Route path="addNickName" element={<Nickname />} />
+          <Route
+            path="addNickName"
+            element={<Nickname jwtToken={jwtToken} setJwtToken={setJwtToken} />}
+          />
           <Route path="nonSocialLogin" element={<NonSocialLogin />} />
           <Route path="recoverUser" element={<RecoverUserInfo />} />
           <Route path="findUserPw" element={<FindUserPw />} />

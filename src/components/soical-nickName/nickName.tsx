@@ -1,9 +1,15 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./nickNAme.css";
-const Nickname: React.FC = () => {
+import { AuthContextType } from "../../types/contentType";
+import { useAsyncValue, useNavigate } from "react-router-dom";
+const Nickname: React.FC<AuthContextType> = ({ jwtToken }) => {
   const [nickdName, setNickName] = useState("");
-  //* 버튼 클릭 했을 때 실행 될 함수
+  const navigate = useNavigate();
+  //* 버튼 클릭 했을 때 실행 될 함수\ㅊ
+  useEffect(() => {
+    console.log(jwtToken, "닉네임에서의 JWt토큰의값입니다.");
+  }, [jwtToken]); // jwtToken이 변경될 때만 실행
   const inputNickName = async () => {
     try {
       const response = await fetch(
@@ -12,6 +18,7 @@ const Nickname: React.FC = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${jwtToken?.["token"]}`,
           },
           body: JSON.stringify({ nickName: nickdName }),
         }
@@ -20,10 +27,9 @@ const Nickname: React.FC = () => {
       if (!response.ok) {
         // 요청이 실패했다면 에러를 던집니다.
         throw new Error("닉네임 제출에 실패했습니다.");
+      } else {
+        navigate("/");
       }
-
-      // 예: 성공 알림 표시, 페이지 리디렉션, 상태 업데이트 등
-      console.log("닉네임이 성공적으로 제출되었습니다.");
     } catch (error) {
       // 에러 처리 로직, 예: 사용자에게 에러 메시지 표시
       console.error(error.message);

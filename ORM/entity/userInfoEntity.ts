@@ -16,7 +16,7 @@ export class userInfoData {
   @Column({ type: "varchar", length: 255, nullable: true })
   useremail: string;
 
-  @Column({ type: "varchar", length: 255 })
+  @Column({ type: "varchar", length: 255, nullable: true })
   userNickName: string;
 
   @Column({ type: "varchar", length: 255, nullable: true })
