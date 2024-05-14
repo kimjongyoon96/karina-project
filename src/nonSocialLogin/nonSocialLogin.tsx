@@ -6,6 +6,7 @@ import validUserPw from "../services/vaildws";
 import validUserEmail from "../services/validEmail";
 import validUserNickName from "../services/validNick";
 import { useNavigate } from "react-router-dom";
+import { error } from "console";
 const NonSocialLogin: React.FC = () => {
   const [inputUserId, setInputUserId] = useState("");
   const [isValidUserId, setIsValidUserId] = useState<null | boolean>(null);
@@ -24,6 +25,21 @@ const NonSocialLogin: React.FC = () => {
   const [inputUserEmail, setInputUserEmail] = useState("");
   const [inputUserNickName, setInputUserNickName] = useState("");
   const navigate = useNavigate();
+  //* 함수 추상화 => 추후 Type 추가해서 리팩터링
+  // const handleValidation = (
+  //   validator,
+  //   inputValue,
+  //   setValidState,
+  //   setValidationMessage
+  // ) => {
+  //   const isValid = validator(inputValue);
+  //   setValidState(isValid);
+  //   if (setValidationMessage) {
+  //     setValidationMessage(
+  //       isValid ? "유효한 입력입니다." : "유효하지 않은 입력입니다."
+  //     );
+  //   }
+  // };
   //* 유저 아이디 검증
   const handleVerifyUserId = () => {
     const isvalid = validUserId(inputUserId);
@@ -91,12 +107,18 @@ const NonSocialLogin: React.FC = () => {
             }),
           }
         );
-        if (!response.ok) {
-          throw new Error("회원가입 클라이언트 로직에 문제가 있습니다.");
+        if (response.status === 409) {
+          alert("이미 등록된 사용자입니다 로그인 해주세요"); //* 추후 로그인페이지로 이동시키는 모달 발생
+          throw new Error("이미 등록된 사용자 입니다.");
+        } else if (response.status === 500) {
+          throw new Error("회원가입 도중 문제가 생겼습니다.");
+        } else if (response.ok) {
+          const data = await response.json();
+          console.log(data, "서버로부터 받은 회원가입 데이터");
+          return navigate("/");
+        } else {
+          throw new Error(`예상치 못한 상태 코드 ${response.status}`);
         }
-        const data = await response.json();
-        console.log(data, "서버로부터 받은 회원가입 데이터");
-        return navigate("/SignUp"); // 회원가입 완료시 메인화면으로 이동
       } catch (error) {
         console.error(error, "회원가입 로직에서 에러가 발생했습니다.");
       }

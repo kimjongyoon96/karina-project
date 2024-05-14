@@ -37,11 +37,10 @@ const App: React.FC = () => {
   const [dailyArray, setMyDailyArray] = useState<karinaData[]>([]); // 초록바구니
   const [matchedItems, setMatchedItems] = useState<karinaData[]>([]);
   const [myInputData, setMyInputData] = useState("");
-  console.log(myInputData, "실시간업데이트되스난되는");
+  // console.log(myInputData, "실시간업데이트되스난되는");
   const authContextValue: AuthContextType = { jwtToken, setJwtToken };
   const { jwtExpired, setJwtExpired } = useAuthStore();
   console.log(jwtExpired, "여기가 저스탠드");
-  console.log("checkhere!!:", authContextValue.jwtToken);
   //* 서치바 컴포넌트 조건부 렌더링
   const ShowSeachbar = () => {
     const location = useLocation();
@@ -103,7 +102,7 @@ const App: React.FC = () => {
   //* 3. setMyArray의 상태는 myArray 즉, 메뉴바가 클릭될때마다 myArray가 동적으로 바뀜
   const replaceArray = (arrayToReset: any[]) => {
     setMyArray(arrayToReset);
-    console.log("이것은필시 메뉴바에 해당하는 data:", arrayToReset);
+    // console.log("이것은필시 메뉴바에 해당하는 data:", arrayToReset);
   };
   //* 1. 페이지가 마운트 되었을때 모든 게시물을 가져온다.
   //*
@@ -118,7 +117,6 @@ const App: React.FC = () => {
         setMyArray(data);
 
         setMyInnocenceArray(data.filter((item) => item.menubar === "jang"));
-        console.log(innocenceArray, "여기서는 innocence가 어떻게 될까?");
         setMyCuteArray(data.filter((item) => item.menubar === "karina"));
         setMyDailyArray(data.filter((item) => item.menubar === "sulyoon"));
         setMySexyArray(data.filter((item) => item.menubar === "yoona"));

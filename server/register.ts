@@ -21,6 +21,7 @@ router.post("/api/userRegister", async (req, res) => {
     const { userid, userpw, useremail, userNickName } = req.body;
     //* nonsocial 유저 있는지 확인
     const userRepository = await ormConnection.getRepository(userInfoData);
+    //* 모든 조건이 일치할때만 사용자가 있다고 판단
     const existingUser = await userRepository.findOne({
       where: {
         userId: userid,
@@ -28,9 +29,13 @@ router.post("/api/userRegister", async (req, res) => {
         userNickName: userNickName,
       },
     });
+
+    console.log(existingUser, "존재합니까?"); //* 존재하지 않으면 null값을 반환
+
     if (existingUser) {
       return res.status(409).json({ message: "이미 등록된 사용자입니다." });
     }
+
     const hashpw = await hashPassWord(userpw);
 
     const newUser = userRepository.create({
@@ -47,9 +52,12 @@ router.post("/api/userRegister", async (req, res) => {
         userEmail: useremail,
       },
       secretKey,
-      { expiresIn: "5h" }
+      { expiresIn: "2h" }
     );
     res.cookie("token", token, { httpOnly: true, secure: false });
+    return res
+      .status(200)
+      .json({ message: "회원가입이 성공적으로 이루어졌습니다." });
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ message: "회원가입 등록에서 에러가 발생했습니다." });
