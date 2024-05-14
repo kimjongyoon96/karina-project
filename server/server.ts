@@ -11,6 +11,7 @@ import jwt from "jsonwebtoken";
 import exchangeCodeForAccessToken from "./oauth";
 import getUserInfo from "./userinfo";
 import cookieParser from "cookie-parser";
+import bodyParser from "body-parser";
 // import researchResultRouter from "./researchResultGet";
 import { verifyToken } from "./jwt";
 import { requestValueList } from "aws-sdk/clients/customerprofiles";
@@ -36,22 +37,16 @@ app.use(
   cors({
     origin: "http://localhost:3001",
     credentials: true,
-    methods: ["GET", "POST", "OPTIONS"],
+    // methods: ["GET", "POST", "OPTIONS"],
   })
 );
-app.use(
-  session({
-    secret: `${process.env.SESSION_KEY}`,
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false }, //* HTTPS를 사용하지 않는 경우 false로 설정
-  })
-);
+
 const secretKey = process.env.JWT_SECRET_KEY;
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
-
+app.use(bodyParser.json({ limit: "10mb" }));
+app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
 const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
 const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
 const region = process.env.AWS_REGION;
@@ -77,13 +72,20 @@ const upload = multer({
     },
   }),
 });
+console.log(upload, "여기뭐가나오나보자");
+const sessionMiddleware = session({
+  secret: `${process.env.SESSION_KEY}`,
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }, //* HTTPS를 사용하지 않는 경우 false로 설정
+});
 
 app.use(registerApi); // 회원가입 라우터
 app.use(loginCheckApi); // 로그인 라우터
 app.use(recoverUserId); // 로그인 찾기 로직
-app.use(recoverUserPw); // 비밀번호 찾기 로직
-app.use(certifyNumber); // 인증번호 검증 로직
-app.use(changePw); // 비밀번호 변경 로직
+app.use("api//recoverUserPw", recoverUserPw, sessionMiddleware); // 비밀번호 찾기 로직
+app.use("api//certifyNumber", certifyNumber, sessionMiddleware); // 인증번호 검증 로직
+app.use("/api/changePw", changePw, sessionMiddleware); // 비밀번호 변경 로직
 app.use(researchOutput);
 app.use(naverLogin);
 app.use(myPage); //마이페이지 라우터
@@ -191,6 +193,7 @@ app.get("/api/viewLikes/:postuuid", verifyToken, async (req: any, res) => {
     });
   } catch (error) {
     console.error(" 좋아요 서버 에러 확인 하라", error);
+    return res.status(500).json({ message: "좋아요 에러입니다," });
   }
 });
 
@@ -203,6 +206,8 @@ app.post(
   ]),
   async (req: any, res) => {
     try {
+      // const userRepository = ormConnection.getRepository(userInfoData); //* 유저정보 가져옴
+      // const user =await userRepository.findOne({where:{userId:}})
       const UserPost = new userPost();
       UserPost.uuid = req.body.id;
       UserPost.menubar = req.body.menubar;
@@ -212,7 +217,7 @@ app.post(
 
       const userPostRepository = ormConnection.getRepository(userPost);
       await userPostRepository.save(UserPost);
-      console.log(UserPost, "업로두한거 뮤ㅓㅗㄴ가");
+      console.log(UserPost, "업로드한것입니다.");
 
       res.status(200).json({
         message: "제출햇을때 주는 서버의 은총",
@@ -220,7 +225,7 @@ app.post(
       });
     } catch (error) {
       console.error("Error:", error);
-      res.status(500).json({ message: "서버 에러 떳따!" });
+      res.status(500).json({ message: "업로드 에러입니다. 서버쪽 확인하세요" });
     }
   }
 );
@@ -343,7 +348,9 @@ app.get("/auth/google/redirect", async (req: any, res) => {
     res.status(500).send("Authentication failed");
   }
 });
-
+app.get("/test", (req, res) => {
+  res.send("Test route without session");
+});
 //* 소셜 로그인시 닉네임 받는 요소
 app.post("/api/addNickName", async (req: any, res) => {
   try {
@@ -365,7 +372,7 @@ app.post("/api/addNickName", async (req: any, res) => {
 //* 모듈화 후보 7 => 쿠키 로직
 app.get("/auth/cookie", (req, res) => {
   const token = req.cookies.token; // 쿠키에서 토큰 읽기
-  console.log(token);
+  console.log("쿠키의 토큰:", token);
 
   if (token) {
     try {

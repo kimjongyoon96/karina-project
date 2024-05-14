@@ -32,6 +32,7 @@ router.post("/api/userRegister", async (req, res) => {
 
     console.log(existingUser, "존재합니까?"); //* 존재하지 않으면 null값을 반환
 
+    //* 존재하지 않으면 스킵
     if (existingUser) {
       return res.status(409).json({ message: "이미 등록된 사용자입니다." });
     }

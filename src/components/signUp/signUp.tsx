@@ -34,7 +34,6 @@ const SignUp = () => {
   };
   const [userInputId, setUserInputId] = useState("");
   const [userInputPw, setUserInputPw] = useState("");
-  const [userCheckedPw, setUserCheckedPw] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();

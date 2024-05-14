@@ -19,7 +19,7 @@ const MyPage: React.FC<AuthContextType> = ({ jwtToken }) => {
   const handleMyWriteArticle = () => {
     alert("여기는 마이게시글");
     setMyCheckedData("myWrite");
-    fetchData("myWrite");
+    fetchData("myWrite", 1);
     try {
     } catch (error) {
       console.error(error, "에러가 발생했습니다.");
@@ -29,22 +29,22 @@ const MyPage: React.FC<AuthContextType> = ({ jwtToken }) => {
   //* 사진 | 댓글
   const handleMyWriteComments = () => {
     alert("여기는 마이댓글");
-    fetchData("myComment");
+    fetchData("myComment", 1);
     setMyCheckedData("myComment");
   };
   //* 내가 좋아요 누른 게시물
   //* 인스타 형식 정사각형 9개
   const handleMyLikeArticle = () => {
     alert("여기는 나의 좋아요");
-    fetchData("myLikes");
+    fetchData("myLikes", 1);
     setMyCheckedData("myLikes");
   };
 
   //*
-  const fetchData = async (type) => {
+  const fetchData = async (type, page) => {
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/myThings?type=${type}`,
+        `${process.env.REACT_APP_API_URL}/api/users?selected=${type}&page=${page}`,
         {
           headers: {
             Authorization: `Bearer ${jwtToken?.["token"]}`,

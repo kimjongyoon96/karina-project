@@ -16,6 +16,7 @@ export class userLike {
 
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   creationdate: Date;
+
   //* 사용자 엔티티와 연결
   @ManyToOne(() => userInfoData, (user) => user.likes)
   user: userInfoData;

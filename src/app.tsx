@@ -127,25 +127,28 @@ const App: React.FC = () => {
     fetchData();
   }, []);
   // * 쿠키에 있는 JWT 가져오기
+  //* 토큰이 있을때만, useEffect 실행 =>
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/auth/cookie`,
-          {
-            credentials: "include",
+      if (!jwtToken) {
+        try {
+          const response = await fetch(
+            `${process.env.REACT_APP_API_URL}/auth/cookie`,
+            {
+              credentials: "include",
+            }
+          );
+          if (response.status === 404) {
+            setJwtExpired(true); // 서버에서 받은 status가 403이면, 만료되었다고 판단
+            console.log("실시간으로 바뀌나 보자:", jwtExpired);
           }
-        );
-        if (response.status === 404) {
-          setJwtExpired(true); // 서버에서 받은 status가 403이면, 만료되었다고 판단
-          console.log("실시간으로 바뀌나 보자:", jwtExpired);
-        }
-        const data = await response.json();
-        setJwtToken(data);
+          const data = await response.json();
+          setJwtToken(data);
 
-        console.log(data.token, "내가받은 JWT 토큰입니다.");
-      } catch (error) {
-        console.error("잘못된 fetch 데이터", error);
+          console.log(data.token, "내가받은 JWT 토큰입니다.");
+        } catch (error) {
+          console.error("잘못된 fetch 데이터", error);
+        }
       }
     };
     fetchData();
@@ -177,7 +180,11 @@ const App: React.FC = () => {
           <Route
             path="/write"
             element={
-              <WritePage addToArray={addToArray} setCategory={setCategory} />
+              <WritePage
+                addToArray={addToArray}
+                setCategory={setCategory}
+                jwtToken={jwtToken}
+              />
             }
           />
           <Route

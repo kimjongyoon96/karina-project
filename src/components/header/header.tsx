@@ -23,7 +23,7 @@ const Header: React.FC<AuthContextType> = ({ jwtToken, setJwtToken }) => {
         src={pageLogo}
         alt="Page Logo"
       />
-      {!jwtToken && (
+      {jwtToken && (
         <button
           className="loginButton"
           onClick={() => {

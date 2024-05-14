@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { karinaData } from "../../types/contentType";
+import { karinaData, AuthContextType } from "../../types/contentType";
 import "./writePage.css";
 import { v4 as uuidv4 } from "uuid";
 import imageCompression from "browser-image-compression";
@@ -10,9 +10,14 @@ import imageCompression from "browser-image-compression";
 interface MaintentsProps {
   addToArray: (obj: karinaData) => void;
   setCategory: (category: string) => void;
+  jwtToken;
 }
 
-const WritePage: React.FC<MaintentsProps> = ({ addToArray, setCategory }) => {
+const WritePage: React.FC<MaintentsProps> = ({
+  addToArray,
+  setCategory,
+  jwtToken,
+}) => {
   const navigate = useNavigate();
   const myUUID = uuidv4();
   const [title, setTitle] = useState("");
@@ -66,7 +71,7 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray, setCategory }) => {
         maxWidthOrHeight: 1280,
         useWebWorker: true,
       };
-
+      console.log("imageCompresiion Check");
       try {
         // 각 이미지 파일을 압축하고 Blob URL 생성
         const compressedFiles = await Promise.all(
@@ -126,6 +131,10 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray, setCategory }) => {
       const response = await fetch(url, {
         method: "POST",
         body: formData, // FormData 객체를 body로 설정
+        headers: {
+          "content-Type": "application/json",
+          Authorization: `Bearer ${jwtToken?.["token"]}`,
+        },
       });
 
       if (!response.ok) throw new Error(`Error: ${response.status}`);
