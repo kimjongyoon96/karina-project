@@ -132,7 +132,6 @@ const WritePage: React.FC<MaintentsProps> = ({
         method: "POST",
         body: formData, // FormData 객체를 body로 설정
         headers: {
-          "content-Type": "application/json",
           Authorization: `Bearer ${jwtToken?.["token"]}`,
         },
       });
