@@ -24,6 +24,10 @@ import researchOutput from "./researchResultGet";
 import changePw from "./newPw";
 import naverLogin from "./naverLogin";
 import myPage from "./myPage";
+import fileUpload from "./fileUpload";
+import cookieParserRouter from "./cookieParser";
+import uploadDatajksy from "./uploadData";
+import addNickName from "./addNickName";
 // import { setupWebSocket } from "./socet";
 import { ormConnection } from "../ORM";
 import { userPost } from "../ORM/entity/userPostEntity";
@@ -47,32 +51,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json({ limit: "10mb" }));
 app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
-const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
-const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
-const region = process.env.AWS_REGION;
-if (!accessKeyId || !secretAccessKey || !region) {
-  throw new Error("키값이 존재하지 않습니다.");
-}
-const s3 = new S3({
-  credentials: {
-    accessKeyId,
-    secretAccessKey,
-  },
-  region,
-});
-// s3, 사진 게시물 업로드용
-const upload = multer({
-  storage: multerS3({
-    s3: s3,
-    bucket: "akarina",
-    acl: "public-read",
-    contentType: multerS3.AUTO_CONTENT_TYPE,
-    key: function (req, file, cb) {
-      cb(null, `uploads/${Date.now().toString()}-${file.originalname}`);
-    },
-  }),
-});
-console.log(upload, "여기뭐가나오나보자");
+
 const sessionMiddleware = session({
   secret: `${process.env.SESSION_KEY}`,
   resave: false,
@@ -89,6 +68,10 @@ app.use("/api/changePw", changePw, sessionMiddleware); // 비밀번호 변경 �
 app.use(researchOutput);
 app.use(naverLogin);
 app.use(myPage); //마이페이지 라우터
+app.use(fileUpload); //* 파일 업로드 라우터
+app.use(cookieParserRouter); //* 쿠키 읽기 라우터
+app.use(uploadDatajksy); //* 업로드한 라우터
+app.use(addNickName); //닉네임 추가로직 라우터
 
 //* 모듈화 후보 1 -> 댓글 추가 로직 => ORM 리팩토링
 app.post("/api/addcomment", verifyToken, async (req: any, res) => {
@@ -197,71 +180,6 @@ app.get("/api/viewLikes/:postuuid", verifyToken, async (req: any, res) => {
   }
 });
 
-//* 모듈화 후보 5 -> 게시물 업로드 로직 => ORM 리팩토링
-app.post(
-  "/api/upload",
-  upload.fields([
-    { name: "photos", maxCount: 10 },
-    { name: "photoSumnail", maxCount: 1 },
-  ]),
-  async (req: any, res) => {
-    try {
-      // const userRepository = ormConnection.getRepository(userInfoData); //* 유저정보 가져옴
-      // const user =await userRepository.findOne({where:{userId:}})
-      const UserPost = new userPost();
-      UserPost.uuid = req.body.id;
-      UserPost.menubar = req.body.menubar;
-      UserPost.title = req.body.title;
-      UserPost.photosumnail = req.files["photoSumnail"][0].location;
-      UserPost.photos = req.files["photos"].map((photo) => photo.location);
-
-      const userPostRepository = ormConnection.getRepository(userPost);
-      await userPostRepository.save(UserPost);
-      console.log(UserPost, "업로드한것입니다.");
-
-      res.status(200).json({
-        message: "제출햇을때 주는 서버의 은총",
-        data: { UserPost },
-      });
-    } catch (error) {
-      console.error("Error:", error);
-      res.status(500).json({ message: "업로드 에러입니다. 서버쪽 확인하세요" });
-    }
-  }
-);
-
-//* 모듈화 후보 6 => 리팩토링 ORM
-app.get("/api/karina", async (req: any, res) => {
-  try {
-    // 요청에서 쿼리스트링 파라미터를 추출
-    const { menubar, page, limit } = req.query;
-
-    // TypeORM에서 사용할 쿼리 조건 객체
-    const whereConditions = {};
-    if (menubar) {
-      whereConditions["menubar"] = menubar;
-    }
-
-    // 페이징 처리를 위한 옵션
-    const take = limit ? parseInt(limit, 10) : 10;
-    const skip = page ? (parseInt(page, 10) - 1) * take : 0;
-
-    // TypeORM을 사용하여 데이터 조회
-    const userPostRepository = ormConnection.getRepository(userPost);
-    const posts = await userPostRepository.find({
-      where: whereConditions,
-      take,
-      skip,
-    });
-
-    res.json(posts);
-    // console.log(posts, "페이지네이션 결과값");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server error");
-  }
-});
-
 // 사용자를 Google 로그인 페이지로 리디렉션하는 경로
 const client_id = process.env.CLIENT_ID;
 const redirect_uri = `${process.env.REACT_APP_API_URL}/auth/google/redirect`;
@@ -348,47 +266,24 @@ app.get("/auth/google/redirect", async (req: any, res) => {
     res.status(500).send("Authentication failed");
   }
 });
-app.get("/test", (req, res) => {
-  res.send("Test route without session");
-});
-//* 소셜 로그인시 닉네임 받는 요소
-app.post("/api/addNickName", async (req: any, res) => {
+app.delete("/deleteMyTable", async (req: any, res) => {
+  const { myName } = req.query;
+  console.log(myName, "쿼리문이 뭐가오는지보자");
   try {
-    const { nickName, username } = req.body;
-    const userentity = await ormConnection.getRepository(userInfoData);
-    const User = await userentity.findOne({ where: { id: username } });
-    if (User) {
-      User.userNickName = nickName;
-      await userentity.save(User);
-      res.status(200).json({ message: "닉네임이 성공적으로 추가되었습니다." });
+    const myData = ormConnection.getRepository(userInfoData);
+
+    const userToDelete = await myData.find({ where: { username: myName } });
+    console.log(userToDelete, "dd");
+    if (userToDelete.length === 0) {
+      return res.status(404).json({ message: "데이터가 없습니다." });
     }
-    return res.redirect(`${process.env.CLIENT_API_URL}`);
+    await myData.remove(userToDelete);
+    return res.status(200).json({ messgae: "정상적으로 삭제되었습니다" });
   } catch (error) {
-    console.error(error, "닉네임 post 서버쪽 에러입니다.");
-    res.status(500).json({ message: "닉네임 서버 에러 발생" });
+    return res.status(500).json({ message: "서버쪽 에러가 발생했습니다." });
   }
 });
 
-//* 모듈화 후보 7 => 쿠키 로직
-app.get("/auth/cookie", (req, res) => {
-  const token = req.cookies.token; // 쿠키에서 토큰 읽기
-  console.log("쿠키의 토큰:", token);
-
-  if (token) {
-    try {
-      console.log("ath/cookie에 대한 응답입니다.", token);
-      res.json({ token });
-    } catch (error) {
-      console.error("쿠키에 있는 토큰 에러:", error.message);
-      res.clearCookie("token");
-      return res
-        .status(403)
-        .json({ message: "토큰이 유효하지 않거나, 만료되었습니다." });
-    }
-  } else {
-    res.status(404).send({ message: "토큰이 존재하지 않습니다." });
-  }
-});
 //* 모든 요청에 대한 HTML 반환
 // app.use(express.static(path.join(__dirname, "..", "dist")));
 app.get("/*", function (req, res) {
