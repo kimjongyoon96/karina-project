@@ -10,6 +10,8 @@ export class userComment {
   @Column({ type: "character", length: 255 })
   username: string;
 
+  @Column({ type: "character", length: 255, nullable: true })
+  userNickName: string;
   @Column({ type: "uuid" })
   postuuid: string;
 

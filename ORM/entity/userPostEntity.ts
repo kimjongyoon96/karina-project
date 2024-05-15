@@ -30,6 +30,7 @@ export class userPost {
   @Column("text", { array: true, default: "{}" })
   photos: string[];
   //* 소셜로그인 엔티티와 연결을 상징
+  //* socialUser 필드는 userInfoData 엔티티의 인스턴스이다.
   @ManyToOne(() => userInfoData, (user) => user.socialPosts)
   socialUser: userInfoData;
 

@@ -105,7 +105,6 @@ const App: React.FC = () => {
     // console.log("이것은필시 메뉴바에 해당하는 data:", arrayToReset);
   };
   //* 1. 페이지가 마운트 되었을때 모든 게시물을 가져온다.
-  //*
   useEffect(() => {
     const fetchData = async () => {
       try {

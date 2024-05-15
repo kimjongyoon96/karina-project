@@ -5,10 +5,11 @@ import { AuthContextType } from "../../types/contentType";
 import { useNavigate } from "react-router-dom";
 import { encrypt, decrypt } from "../../services/cryptoForState";
 import navertag from "../../assets/photo/naver.png";
-const SignUp = () => {
+
+const SignUp: React.FC = () => {
   const navigate = useNavigate();
 
-  //* 구글 로그인
+  //* 구글 로그인s
   const handleGoogleLogin = () => {
     window.location.href = `${process.env.REACT_APP_API_URL}/auth/google`;
   };
@@ -32,10 +33,10 @@ const SignUp = () => {
     )}&state=${rawState}`;
     window.location.href = naverLoginUrl;
   };
-  const [userInputId, setUserInputId] = useState("");
+  const [userInputId, setUserInputId] = useState<string>("");
   const [userInputPw, setUserInputPw] = useState("");
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       const response = await fetch(
@@ -73,7 +74,9 @@ const SignUp = () => {
           <input
             type="text"
             value={userInputId}
-            onChange={(e) => setUserInputId(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setUserInputId(e.target.value)
+            }
             placeholder="아이디를 입력하세요"
           ></input>
           <input
@@ -102,7 +105,7 @@ const SignUp = () => {
           <button className="find-id-btn" onClick={handleGoogleLogin}>
             ID 찾기
           </button>
-          <button className="find-pw-btn" onClick={handleSubmit}>
+          <button className="find-pw-btn" onClick={handleGoogleLogin}>
             PW 찾기
           </button>
         </div>

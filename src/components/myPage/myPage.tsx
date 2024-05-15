@@ -6,7 +6,7 @@ import "./myPage.css";
 const MyPage: React.FC<AuthContextType> = ({ jwtToken }) => {
   //* 내가 쓴글, 내가 쓴 댓글, 내가 좋아요 한 게시물
   //* 내 정보 수정 => 닉네임 수정
-  const [data, setData] = useState([]);
+  const [bringData, setData] = useState([]);
 
   const [myCheckedData, setMyCheckedData] = useState("");
   const navigate = useNavigate();
@@ -17,9 +17,9 @@ const MyPage: React.FC<AuthContextType> = ({ jwtToken }) => {
   //* 내가쓴글 클릭했을때 나오는 함수
   //* 사진 | 제목 | 삭제
   const handleMyWriteArticle = () => {
-    alert("여기는 마이게시글");
+    console.log("마이게시글");
     setMyCheckedData("myWrite");
-    fetchData("myWrite", 1);
+    fetchData("myWrite", 1, 8);
     try {
     } catch (error) {
       console.error(error, "에러가 발생했습니다.");
@@ -28,23 +28,21 @@ const MyPage: React.FC<AuthContextType> = ({ jwtToken }) => {
   //* 내가쓴 댓글 나오게 하는 함수
   //* 사진 | 댓글
   const handleMyWriteComments = () => {
-    alert("여기는 마이댓글");
-    fetchData("myComment", 1);
-    setMyCheckedData("myComment");
+    fetchData("myComments", 1, 8);
+    setMyCheckedData("myComments");
   };
   //* 내가 좋아요 누른 게시물
   //* 인스타 형식 정사각형 9개
   const handleMyLikeArticle = () => {
-    alert("여기는 나의 좋아요");
-    fetchData("myLikes", 1);
+    fetchData("myLikes", 1, 8);
     setMyCheckedData("myLikes");
   };
 
   //*
-  const fetchData = async (type, page) => {
+  const fetchData = async (type, page, limit) => {
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/users?selected=${type}&page=${page}`,
+        `${process.env.REACT_APP_API_URL}/api/users?selected=${type}&page=${page}&limit=${limit}`,
         {
           headers: {
             Authorization: `Bearer ${jwtToken?.["token"]}`,
@@ -55,7 +53,10 @@ const MyPage: React.FC<AuthContextType> = ({ jwtToken }) => {
         throw new Error("Network response was not ok.");
       }
       const data = response.json();
+      setData(bringData);
+      console.group();
       console.log(data, "서버에서 준거");
+      console.groupEnd;
     } catch (error) {
       console.error(error, "에러가났다.");
     }

@@ -23,7 +23,7 @@ const Header: React.FC<AuthContextType> = ({ jwtToken, setJwtToken }) => {
         src={pageLogo}
         alt="Page Logo"
       />
-      {!jwtToken ? (
+      {jwtToken ? (
         <button
           className="loginButton"
           onClick={() => {
@@ -37,7 +37,7 @@ const Header: React.FC<AuthContextType> = ({ jwtToken, setJwtToken }) => {
         <button
           className="logoutButton"
           onClick={() => {
-            console.log("login 버튼 누름");
+            console.log("로그아웃 버튼 눌림");
             Navigate("SignUp");
           }}
         >

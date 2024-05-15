@@ -8,7 +8,7 @@ interface DetailProps extends AuthContextType {
   myArray: karinaData[];
 }
 type Comment = {
-  username: string;
+  userNickName: string;
   text: string;
 };
 const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
@@ -19,7 +19,7 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
 
   //* itemId가 null이 아니면 배열에서 uuid가 일치하는 것 찾음
   const post = itemId !== null ? myArray.find((p) => p.uuid === itemId) : null;
-  console.log(post, "디테일페이지의 값인데 뭐가나올지 궁금하군..큭큭");
+  console.table(post);
 
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentText, setCommentText] = useState("");
@@ -27,12 +27,8 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
   const [recommendation, setRecommendation] = useState(0);
   const [totalLikes, setTotalLikes] = useState(0);
   const [hasLiked, setHasLiked] = useState(false);
-  // console.log(userLiked, "ture인가 false인가?"); // 값이 있으니 true
 
-  /**
-   * @fetchAllCommentView => 상세페이지 마운트 되었을때 작동할 함수 모든 댓글을 보여줌.
-   * @setCommentLoading =>로딩이 완료 유무 상태변경함수
-   */
+  //* 댓글 불러오기
   const fetchAllCommentView = async () => {
     // setCommentLoading(true);
     try {
@@ -46,14 +42,17 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
         }
       );
       const data = await response.json();
-      console.log(data);
+      console.group("My Group");
+      console.log(data, "내가쓴댓글");
+      console.groupEnd();
+      console.table(data);
+
       setComments(data);
     } catch (error) {
       console.error(error);
       console.log("댓글 불러오기 실패");
     }
   };
-  // console.log(jwtToken?.["token"]);
   //* 댓글 제출시 실행될 함수
   const handleCommentSubmit = async (event) => {
     if (event != undefined) {
@@ -81,14 +80,14 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
       setCommentText("");
       setComments((prevComments) => [
         ...prevComments,
-        { username: data.userNickName, text: commentText },
+        { userNickName: data.userNickName, text: commentText },
       ]); //* prevComments는 현재 댓글 , ...prevCommnets는 현재댓글을 그대로 복사, 오른쪽 객체는 복사한 댓글에 추가하고 싶은 값
     } catch (error) {
       console.log(error);
       console.error("Error fetching data:", error);
     }
   };
-  //* 추천을 눌렀을때 실행되는 함수
+  //* 추천 눌렀을때 실행되는 함수
   const handleLike = async () => {
     try {
       const response = await fetch(
@@ -105,13 +104,13 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
       if (response.ok) {
         setTotalLikes(totalLikes + 1);
       } else {
-        // throw new Error("서버가 이상하다. 추천 로직을 검사하라");
+        throw new Error("서버가 이상하다. 추천 로직을 검사하라");
       }
     } catch (error) {
       console.error("추천 에러가 발생했따리", "error");
     }
   };
-  //* 마운트시 가져올 추천수 함수
+  //* 추천 가져오는 함수
   const fetchBringdLikes = async () => {
     try {
       const response = await fetch(
@@ -136,8 +135,8 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
   };
   //* detail 페이지 진입시 실행
   useEffect(() => {
-    fetchAllCommentView();
-    fetchBringdLikes();
+    fetchAllCommentView(); // 댓글 불러오기
+    fetchBringdLikes(); // 좋아요 가져오기
   }, []);
 
   return (
@@ -156,7 +155,7 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
         <ul>
           {comments.map((comment, index) => (
             <li key={index}>
-              <strong>{comment.username}:</strong> {comment.text}
+              <strong>{comment.userNickName}:</strong> {comment.text}
             </li>
           ))}
         </ul>
@@ -173,7 +172,7 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
       <div className="recommendationBox">
         <h3>추천수: {totalLikes}</h3>
         <button onClick={handleLike} disabled={hasLiked}>
-          {hasLiked ? "추천됨" : "추천"}
+          {hasLiked ? "좋아요됌" : "좋아요"}
         </button>
       </div>
     </div>

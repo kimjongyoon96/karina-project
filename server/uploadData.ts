@@ -16,6 +16,7 @@ router.get("/api/karina", async (req: any, res) => {
   try {
     // 요청에서 쿼리스트링 파라미터를 추출
     const { menubar, page, limit } = req.query;
+    console.log(menubar, page);
 
     // TypeORM에서 사용할 쿼리 조건 객체
     const whereConditions = {};
@@ -35,11 +36,11 @@ router.get("/api/karina", async (req: any, res) => {
       skip,
     });
 
-    res.json(posts);
+    res.status(200).json(posts);
     // console.log(posts, "페이지네이션 결과값");
   } catch (err) {
     console.error(err);
-    res.status(500).send("Server error");
+    res.status(500).send("게시물을 가져오는데 실패했습니다.");
   }
 });
 

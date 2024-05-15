@@ -14,7 +14,6 @@ import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 // import researchResultRouter from "./researchResultGet";
 import { verifyToken } from "./jwt";
-import { requestValueList } from "aws-sdk/clients/customerprofiles";
 import registerApi from "./register";
 import loginCheckApi from "./login";
 import recoverUserId from "./recoverUserId";
@@ -76,21 +75,26 @@ app.use(addNickName); //닉네임 추가로직 라우터
 //* 모듈화 후보 1 -> 댓글 추가 로직 => ORM 리팩토링
 app.post("/api/addcomment", verifyToken, async (req: any, res) => {
   try {
+    //클라이언트로 부터 text,postuuid 받음
     const { text, postuuid } = req.body;
+    //* jwt에서 유저이름 추출
     const userInfo = req.user.userName;
-    //* 닉네임 추출위한 userInfo 가져오기
+    //* 유저인포 엔티티에 접근
     const userInfoRepository = ormConnection.getRepository(userInfoData);
+    //* jwt에서 추출한 user 이름과 동일한 엔티티가 존재하는지 찾음
     const userInfoDetail = await userInfoRepository.findOne({
       where: { username: userInfo },
     });
     if (!userInfoDetail) {
       return res.status(404).json({ message: "닉네임이 없습니다." });
     }
-    console.log(userInfoDetail, "닉네임");
+    console.log(userInfoDetail.userNickName, "닉네임");
+
     const UserComment = new userComment(); // 엔티티 클래스 선언
     UserComment.text = text;
     UserComment.postuuid = postuuid;
     UserComment.username = userInfo;
+    UserComment.userNickName = userInfoDetail.userNickName;
 
     const userPostRepository = ormConnection.getRepository(userComment);
     await userPostRepository.save(UserComment);
@@ -115,13 +119,24 @@ app.post("/api/like", verifyToken, async (req: any, res) => {
 
     console.log(postuuid, "포스트유유아이디");
     console.log(userinfo, "받은 유저의이름");
+
+    const findUserInfo = ormConnection.getRepository(userInfoData);
+    const userInfoMatch = findUserInfo.findOne({
+      where: { username: userinfo },
+    });
+    if (!userInfoMatch) {
+      return res
+        .status(404)
+        .json({ message: "좋아요를 위한 사용자가 없습니다." });
+    }
+
     const UserLike = new userLike();
     UserLike.postid = postuuid;
     UserLike.username = userinfo;
 
     const userPostRepository = ormConnection.getRepository(userLike);
     await userPostRepository.save(UserLike);
-    res.status(200).json({ message: "Like added successfully" });
+    res.status(200).json({ message: "추천이 정상적으로 되었습니다." });
   } catch (error) {
     console.error("에러가 발생, 좋아요 로직 이상 서버", error);
     if (!res.headersSent) {
@@ -138,11 +153,12 @@ app.get("/api/viewComments/:postuuid", async (req: any, res) => {
 
     const comments = await ormConnection.getRepository(userComment).find({
       where: { postuuid: postuuid },
-      select: ["username", "text"],
+      select: ["userNickName", "text"],
     });
-    res.json(comments);
+    res.status(200).json(comments);
   } catch (error) {
     console.error("댓글 불러오는데 에러났다", error);
+    res.status(500).json({ message: "댓글을 불러올수 없습니다." });
   }
 });
 //* 모듈화 후보 4 -> 좋아요 보기 로직 => ORM 리팩터링
@@ -283,6 +299,21 @@ app.delete("/deleteMyTable", async (req: any, res) => {
     return res.status(200).json({ messgae: "정상적으로 삭제되었습니다" });
   } catch (error) {
     return res.status(500).json({ message: "서버쪽 에러가 발생했습니다." });
+  }
+});
+
+app.delete("/deleteTable", async (req: any, res) => {
+  const { query } = req.query;
+  console.log(query);
+  try {
+    const myCommnet = ormConnection.getRepository(userComment);
+    const userDelete = await myCommnet.findOne({ where: { username: query } });
+    if (userDelete) {
+      await myCommnet.remove(userDelete);
+      return res.status(200).json({ message: "잘햇따." });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "아무것도 삭제할것이 없습니다." });
   }
 });
 

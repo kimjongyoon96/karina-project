@@ -7,13 +7,13 @@ import { karinaData } from "../../types/contentType";
 const MainContents: React.FC<MainContentsProps> = ({ category, myarray }) => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
-  console.log(myarray, "메인컨텐츠의 유동적으로 바뀌어야하는것.");
+  console.log(myarray, "모든 게시물의 값");
   //* 바로 특정 메뉴바 메인페이지 마운트
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/karina?menubar=innocence&page=1`
+          `${process.env.REACT_APP_API_URL}/api/karina?menubar=jang&page=1`
         );
         if (!response.ok) {
           throw new Error(`Error: ${response.status}`);
@@ -57,10 +57,9 @@ const MainContents: React.FC<MainContentsProps> = ({ category, myarray }) => {
   //       return <div>기본 컨텐츠</div>;
   //   }
   // };
-
-  //* 검색결과가 있으면 검색결과 상태 렌더링 아니면, 원래 배열 렌더링
-  //* myarray =변화하는값  data =초기
-  //* myarray의 길이가 data보다 작으면, 즉 특정
+  //* myarray는 최상위 컴포넌트에서 가져오는 모든 게시물의 값
+  //* data는 특정 메뉴바의 page=1의 값
+  //* 즉, myarray의 길이가 data의 길이보다 작다는것은, 게시물이 존재하지 않는다고 판단.
   const itemsToRender = myarray.length < data.length ? myarray : data;
   console.log(itemsToRender, "myarray가 data보다 작은경우 Myarray");
   return (
