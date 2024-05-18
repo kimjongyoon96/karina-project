@@ -39,8 +39,10 @@ const App: React.FC = () => {
   const [myInputData, setMyInputData] = useState("");
   // console.log(myInputData, "실시간업데이트되스난되는");
   const authContextValue: AuthContextType = { jwtToken, setJwtToken };
-  const { jwtExpired, setJwtExpired } = useAuthStore();
-  console.log(jwtExpired, jwtToken, "여기가 저스탠드");
+  const { jwtExpiredThing, setJwtExpiredThing } = useAuthStore(
+    (state) => state.jwtExpired
+  );
+  console.log(jwtExpiredThing, jwtToken, "여기가 저스탠드");
   //* 서치바 컴포넌트 조건부 렌더링
   const ShowSeachbar = () => {
     const location = useLocation();
@@ -139,10 +141,10 @@ const App: React.FC = () => {
           }
         );
         if (response.status === 403) {
-          setJwtExpired(true); // 서버에서 받은 status가 403이면, 만료되었다고 판단
-          console.log("실시간으로 바뀌나 보자:", jwtExpired);
+          setJwtExpiredThing(true); // 서버에서 받은 status가 403이면, 만료되었다고 판단
+          console.log("실시간으로 바뀌나 보자:", jwtExpiredThing);
         } else if (response.status === 200) {
-          setJwtExpired(false);
+          setJwtExpiredThing(false);
         } else {
           //* 여기는 jwt가 있지도, 만료되지도 않은 상태
         }

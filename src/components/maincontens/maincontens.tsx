@@ -2,15 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useActionData, useNavigate } from "react-router-dom";
 import "./maincontens.css";
 import { MainContentsProps } from "./maincomponent";
-import userAuthStore from "../../JustAnd/GlobalState";
-import CompatiWithJangKaSuYoo from "../../compatibilityToJangKaSulYoo/compatiWithJangKaSulYoo";
+import useAuthStore from "../../JustAnd/GlobalState";
+import CompatiWithJangKaSuYoo from "./compatibilityToJangKaSulYoo/compatiWithJangKaSulYoo";
 const MainContents: React.FC<MainContentsProps> = ({ myarray }) => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
   //* 메뉴바 클릭시 변경되는 상태값 collabo JsutAnd로 받아옴.
-  const collabo = userAuthStore((state) => state.iscollabo);
+  const { collaboClick, setCollaboClick } = useAuthStore(
+    (state) => state.isCollabo
+  );
   console.log(
-    collabo,
+    collaboClick,
     "여기는 메인페이지의 콜라보입니다. collabo가 뭐가나오는지 보자구!"
   );
   console.log(myarray, "모든 게시물의 값");
@@ -45,7 +47,7 @@ const MainContents: React.FC<MainContentsProps> = ({ myarray }) => {
   console.log(itemsToRender, "myarray가 data보다 작은경우 Myarray");
   return (
     <main className="mainContents">
-      {collabo !== "collabo" &&
+      {collaboClick !== "collabo" &&
         itemsToRender.length > 0 &&
         itemsToRender.slice(0, 16).map((item) => (
           <li
@@ -57,7 +59,9 @@ const MainContents: React.FC<MainContentsProps> = ({ myarray }) => {
             <h1>{item.title}</h1>
           </li>
         ))}
-      {collabo === "collabo" && collabo !== null && <CompatiWithJangKaSuYoo />}
+      {collaboClick === "collabo" && collaboClick !== null && (
+        <CompatiWithJangKaSuYoo />
+      )}
     </main>
   );
 };

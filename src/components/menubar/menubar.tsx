@@ -19,8 +19,9 @@ const Menubar: React.FC<MenubarProps> = ({
   replaceArray,
   setCurrentMenubar,
 }) => {
-  const setIsCollabo = useAuthStore((state) => state.setIsCollabo);
-  const collabo = useAuthStore((state) => state.iscollabo);
+  const { collaboClick, setCollaboClick } = useAuthStore(
+    (state) => state.isCollabo
+  );
   const handleMenubar = (menubar) => {
     setCurrentMenubar(menubar);
 
@@ -32,7 +33,7 @@ const Menubar: React.FC<MenubarProps> = ({
   };
 
   const handleCollabo = (collabo: string) => {
-    setIsCollabo(collabo);
+    setCollaboClick(collabo);
     console.log(collabo, "콜라보레이션");
   };
   return (
