@@ -80,10 +80,12 @@
     "react": "^18.2.0",
     "react-cookie": "^7.0.2",
     "react-dom": "^18.2.0",
+    "react-google-recaptcha": "^3.1.0",
     "react-router-dom": "^6.20.1",
     "reflect-metadata": "^0.2.1",
     "sequelize": "^6.37.1",
     "socket.io": "^4.7.5",
+    "styled-components": "^6.1.11",
     "typeorm": "^0.3.20",
     "uuid": "^9.0.1",
     "zustand": "^4.5.2"

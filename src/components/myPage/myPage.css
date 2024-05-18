@@ -10,3 +10,17 @@
   padding: 10px; /* 패딩으로 클릭 영역 확장 */
   list-style: none; /* 기본 목록 스타일 제거 */
 }
+
+.mypage-container:hover {
+  background-color: aliceblue;
+}
+.delete-btn-myWrite {
+  background-color: red;
+  width: 100px;
+  height: 100px;
+}
+.delete-btn-myComments {
+  background-color: blue;
+  width: 100px;
+  height: 100px;
+}

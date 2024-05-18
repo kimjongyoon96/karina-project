@@ -1,44 +1,89 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContextType } from "../../types/contentType";
+import { AuthContextType, myWrite } from "../../types/contentType";
 import "./myPage.css";
+import WarningDeleteModal from "../customComponent/deleteModalForMyPage/warningDelete";
+interface users {
+  id: number;
+  title: string;
+  content: string;
+  userNickName: string;
+  text: string;
+  likeid: string;
+  postid: number;
+  creationdate: string;
+  post: string;
+  username: string;
+  menubar: string;
+  photosumnail: string;
+  commentid: string;
+}
+
+interface BringData {
+  posts?: users[];
+  commnets?: users[];
+  likes?: users[];
+  total?: number;
+}
 const MyPage: React.FC<AuthContextType> = ({ jwtToken }) => {
   //* 내가 쓴글, 내가 쓴 댓글, 내가 좋아요 한 게시물
   //* 내 정보 수정 => 닉네임 수정
-  const [bringData, setData] = useState([]);
+  const [bringData, setData] = useState<BringData | null>(null);
+  const [bringCommnets, setBringComments] = useState<BringData | null>(null);
+  const [bringWrites, setBringWrites] = useState<BringData | null>(null);
+  const [bringLikes, setBringLikes] = useState<BringData | null>(null);
+  const [pageNumber, setPageNumber] = useState("");
+  const [activeSection, setActiveSection] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false); // default "닫힘"
+  console.log(bringCommnets);
+  console.log(bringWrites);
+  console.log(bringLikes);
+  console.table(bringLikes);
 
-  const [myCheckedData, setMyCheckedData] = useState("");
   const navigate = useNavigate();
   //* 내정보 수정 누를시 컴포넌트 이동
   const handleNavigateMyInfo = () => {
     navigate("/myInfoChange");
   };
   //* 내가쓴글 클릭했을때 나오는 함수
-  //* 사진 | 제목 | 삭제
   const handleMyWriteArticle = () => {
     console.log("마이게시글");
-    setMyCheckedData("myWrite");
+
     fetchData("myWrite", 1, 8);
-    try {
-    } catch (error) {
-      console.error(error, "에러가 발생했습니다.");
-    }
+    setActiveSection("myWriteUl");
   };
   //* 내가쓴 댓글 나오게 하는 함수
-  //* 사진 | 댓글
   const handleMyWriteComments = () => {
     fetchData("myComments", 1, 8);
-    setMyCheckedData("myComments");
+    setActiveSection("myCommentsUl");
   };
   //* 내가 좋아요 누른 게시물
-  //* 인스타 형식 정사각형 9개
   const handleMyLikeArticle = () => {
     fetchData("myLikes", 1, 8);
-    setMyCheckedData("myLikes");
+    setActiveSection("myLikesUl");
   };
+  //* 삭제 눌렀을때 실행되는 함수
+  const handleDeleteType = async () => {
+    setIsModalOpen(true);
+  };
+  const handleModalConfirm = async (deleteType, postid) => {
+    await fetchDeleteData(deleteType, postid);
+  };
+  const handleModalCancle = () => {
+    setIsModalOpen(false);
+  };
+  //* 클릭할때마다 바뀌는 data에 대한 useEffect 훅
+  useEffect(() => {
+    if (bringData?.commnets && bringData.commnets.length > 0) {
+      setBringComments(bringData);
+    } else if (bringData?.likes && bringData.likes.length > 0) {
+      setBringLikes(bringData);
+    } else {
+      setBringWrites(bringData);
+    }
+  }, [bringData]); // 댓글, 게시글, 좋아요
 
-  //*
   const fetchData = async (type, page, limit) => {
     try {
       const response = await fetch(
@@ -50,19 +95,34 @@ const MyPage: React.FC<AuthContextType> = ({ jwtToken }) => {
         }
       );
       if (!response.ok) {
-        throw new Error("Network response was not ok.");
+        throw new Error("나의 정보 데이터가 이상합니다.");
       }
-      const data = response.json();
-      setData(bringData);
-      console.group();
-      console.log(data, "서버에서 준거");
-      console.groupEnd;
+      const data = await response.json();
+      setData(data);
     } catch (error) {
-      console.error(error, "에러가났다.");
+      console.error(error, "나의 정보 로직에 문제가있습니다.");
     }
   };
 
-  //* header 부분만 존재하게 나머지 컴포넌트 blocked
+  const fetchDeleteData = async (deleteType, postid) => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/deleteMyPage?selected=${deleteType}&infoSelected=${postid}`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (response.ok) {
+        const result = await response.json();
+      } else {
+        console.error("삭제하는데 실패했습니다.");
+      }
+    } catch (error) {
+      throw new Error("삭제로직에 문제가 있습니다.");
+    }
+  };
+  //* 조건부 렌더링
+  //*
   return (
     <main className="mypage-box">
       <section className="mypage-header">
@@ -85,12 +145,74 @@ const MyPage: React.FC<AuthContextType> = ({ jwtToken }) => {
       </section>
       <section className="mypage-selected-render">
         <div className="mypage-render-box">
-          <div className="mypage-render-box-image" />
-          안녕
-          <div className="mypage-render-box-title" />
-          하십
-          <div className="mypage-render-box-delete-btn" />
-          니까
+          <div className="mypage-render-box-myWrite">
+            {activeSection === "myWriteUl" && bringWrites
+              ? bringWrites.posts?.slice(0, 8).map((post) => (
+                  <div key={post.id}>
+                    <h2>{post.title}</h2>
+                    <h2>{post.menubar}</h2>
+
+                    <img src={post.photosumnail} />
+                    <button
+                      className="delete-btn-myWrite"
+                      onClick={() => handleDeleteType()}
+                    >
+                      삭제
+                    </button>
+                    {isModalOpen && (
+                      <WarningDeleteModal
+                        message="이 댓글을 삭제하겟습니까?"
+                        onConfirm={() => handleModalConfirm("myWrite", post.id)}
+                        onCancel={handleModalCancle}
+                      />
+                    )}
+                  </div>
+                ))
+              : "어떠한 게시글도 없다."}
+          </div>
+
+          <div className="mypage-render-box-myComments">
+            {activeSection === "myCommentsUl" &&
+            bringCommnets?.commnets &&
+            bringCommnets.commnets.length > 0
+              ? bringCommnets.commnets.slice(0, 8).map((comment) => (
+                  <div>
+                    <h2>{comment.text}</h2>
+                    <h2>{comment.userNickName}</h2>
+                    <h3>{comment.commentid}</h3>
+                    <button
+                      className="delete-btn-myComments"
+                      onClick={() => handleDeleteType()}
+                    >
+                      삭제
+                    </button>
+                    {isModalOpen && (
+                      <WarningDeleteModal
+                        message="이 댓글을 삭제하겟습니까?"
+                        onConfirm={() =>
+                          handleModalConfirm("myComments", comment.commentid)
+                        }
+                        onCancel={handleModalCancle}
+                      />
+                    )}
+                  </div>
+                ))
+              : "어떠한 댓글도 없습니다."}
+          </div>
+
+          <div className="mypage-render-box-myLikes">
+            {activeSection === "myLikesUl" &&
+            bringLikes?.likes &&
+            bringLikes.likes.length > 0
+              ? bringLikes.likes.slice(0, 8).map((like) => (
+                  <div key={like.likeid}>
+                    <h2>{like.username}</h2>
+                    <div>{like.postid}</div>
+                    <div>{like.creationdate}</div>
+                  </div>
+                ))
+              : "어떠한 좋아요도 안했다."}
+          </div>
         </div>
       </section>
     </main>

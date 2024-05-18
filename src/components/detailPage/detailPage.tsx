@@ -155,7 +155,8 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
         <ul>
           {comments.map((comment, index) => (
             <li key={index}>
-              <strong>{comment.userNickName}:</strong> {comment.text}
+              <strong>{comment.userNickName}:</strong>{" "}
+              {comment.text ? comment.text : "댓글이 없습니다."}
             </li>
           ))}
         </ul>

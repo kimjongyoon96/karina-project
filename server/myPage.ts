@@ -15,6 +15,7 @@ import { or } from "sequelize";
 import { off } from "process";
 
 const router = express.Router();
+//* req.query 로직 처리 함수
 const helperParmas = (query) => {
   const page = parseInt(query.page, 10) || 1;
   const limit = parseInt(query.limit, 8) || 8;
@@ -59,7 +60,7 @@ const getMyCommnets = async (req, res) => {
     const userinfo = ormConnection.getRepository(userComment);
     const [commnets, total] = await userinfo.findAndCount({
       where: { username: userName }, // 어떤 넘거를
-      select: ["userNickName", "text"], //뭐를
+      select: ["userNickName", "text", "postuuid", "commentid"], //뭐를
       skip: offset, //* 건너뛸거 skip 10은 10개 건너뛴다
       take: limit, //* limit이 10개면 10개 가져오겠다.
     });
@@ -96,6 +97,7 @@ const getMyLikes = async (req, res) => {
     return res.status(500).json({ message: "좋아요 가 없어요" });
   }
 };
+//* api.users 쿼리스트링 처리
 router.get("/api/users", verifyToken, async (req, res) => {
   const { selected } = req.query;
   switch (selected) {

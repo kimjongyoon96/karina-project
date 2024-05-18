@@ -50,7 +50,7 @@ const SeachBar: React.FC<SearchBarProps> = ({
   //* 검색결과 렌더링 Usenavigate
   return (
     <div className="searchwrap">
-      <div className="lefttitle">제목:</div>
+      <div className="lefttitle">검색</div>
       <input
         className="seachbox"
         value={tempInput} // input 태그의 value를 상태와 연결

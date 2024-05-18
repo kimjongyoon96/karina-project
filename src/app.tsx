@@ -23,7 +23,7 @@ import FindUserPw from "./components/findUserPw/findUserPw";
 import MyPage from "./components/myPage/myPage";
 import useAuthStore from "./JustAnd/GlobalState";
 import AuthManager from "./containers/container";
-import { response } from "express";
+
 const App: React.FC = () => {
   const [category, setCategory] = useState("");
   const [currentMenubar, setCurrentMenubar] = useState("");
@@ -97,9 +97,10 @@ const App: React.FC = () => {
     }
   };
 
-  //* 1. 메뉴바를 클릭시 handle 함수가 실행되어, 해당 menubar가 속한 데이터를 가져옴.
-  //* 2. 그 data를 replaceArray(data)에 넣음 , 이 data는 해당 메뉴바에 속한 데이터
-  //* 3. setMyArray의 상태는 myArray 즉, 메뉴바가 클릭될때마다 myArray가 동적으로 바뀜
+  //* 장원영 메뉴바를 포함한 데이터를 가진 배열을 replaceArray의 매개변수에 할당
+  //* replaceArray의 매개변수는 arrayToRest, 이것은 setMyArray의 상태
+  //* 즉, 최종적으로 setMyArray에 장원영 데이터가 포함, 이것은 MyArray의 값이 장원영인 상태
+  //* 최종적으로 myArray의 상태를 공유하는 메인컴포넌트에서 이값을 통해서 렌더링 한다.
   const replaceArray = (arrayToReset: any[]) => {
     setMyArray(arrayToReset);
     // console.log("이것은필시 메뉴바에 해당하는 data:", arrayToReset);

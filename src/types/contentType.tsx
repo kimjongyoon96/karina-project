@@ -12,3 +12,10 @@ export interface AuthContextType {
   // isLoading: boolean;
   // setIsLoading: (loading: boolean) => void;
 }
+
+export interface myWrite {
+  comments: object;
+  likes: object;
+  posts: object;
+  total: number;
+}
