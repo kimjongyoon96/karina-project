@@ -4,17 +4,16 @@ import "./maincontens.css";
 import { MainContentsProps } from "./maincomponent";
 import useAuthStore from "../../JustAnd/GlobalState";
 import CompatiWithJangKaSuYoo from "./compatibilityToJangKaSulYoo/compatiWithJangKaSulYoo";
+import RenderCompatibilityWithJksy from "./compatibilityToJangKaSulYoo/renderCompatibility/renderCompatibility";
+
 const MainContents: React.FC<MainContentsProps> = ({ myarray }) => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
   //* 메뉴바 클릭시 변경되는 상태값 collabo JsutAnd로 받아옴.
-  const { collaboClick, setCollaboClick } = useAuthStore(
-    (state) => state.isCollabo
-  );
-  console.log(
-    collaboClick,
-    "여기는 메인페이지의 콜라보입니다. collabo가 뭐가나오는지 보자구!"
-  );
+  const { collaboClick } = useAuthStore((state) => state.isCollabo);
+  const { collaboResult } = useAuthStore((state) => state.collaboResultData);
+  console.log(collaboClick, collaboResult, "여기는 메인페이지 입니다.");
+  console.log(collaboResult.includes("궁합")); // true 출력, 즉 궁합보기가 눌러짐
   console.log(myarray, "모든 게시물의 값");
   //* 바로 특정 메뉴바 메인페이지 마운트
   useEffect(() => {
@@ -28,6 +27,7 @@ const MainContents: React.FC<MainContentsProps> = ({ myarray }) => {
         }
         const data = await response.json();
         setData(data); // 로드된 데이터를 상태에 저장
+        console.log("제출눌렀을때");
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -45,6 +45,15 @@ const MainContents: React.FC<MainContentsProps> = ({ myarray }) => {
   //* 즉, myarray의 길이가 data의 길이보다 작다는것은, 게시물이 존재하지 않는다고 판단.
   const itemsToRender = myarray.length < data.length ? myarray : data;
   console.log(itemsToRender, "myarray가 data보다 작은경우 Myarray");
+  const miniComponentRender = () => {
+    if (collaboClick === "collabo" && !collaboResult) {
+      return <CompatiWithJangKaSuYoo />;
+    }
+    if (collaboResult && collaboResult.includes("궁합은")) {
+      return <RenderCompatibilityWithJksy />;
+    }
+    return null;
+  };
   return (
     <main className="mainContents">
       {collaboClick !== "collabo" &&
@@ -59,9 +68,7 @@ const MainContents: React.FC<MainContentsProps> = ({ myarray }) => {
             <h1>{item.title}</h1>
           </li>
         ))}
-      {collaboClick === "collabo" && collaboClick !== null && (
-        <CompatiWithJangKaSuYoo />
-      )}
+      {miniComponentRender()}
     </main>
   );
 };

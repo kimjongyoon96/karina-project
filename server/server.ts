@@ -29,6 +29,7 @@ import uploadDatajksy from "./uploadData";
 import addNickName from "./addNickName";
 import deleteMyPage from "./myPageDelete";
 import collaboration from "./saju";
+import sajuResult from "./sajuResult/sajuResult";
 // import { setupWebSocket } from "./socet";
 import { ormConnection } from "../ORM";
 import { userPost } from "../ORM/entity/userPostEntity";
@@ -75,6 +76,7 @@ app.use(uploadDatajksy); //* 업로드한 라우터
 app.use(addNickName); //닉네임 추가로직 라우터
 app.use(deleteMyPage); //* 마이페이지 게시글,댓글 삭제 라우터
 app.use(collaboration); // 사주팔자 라우터
+app.use(sajuResult); // 사주팔자 결과값 렌더링
 
 //* 모듈화 후보 1 -> 댓글 추가 로직 => ORM 리팩토링
 app.post("/api/addcomment", verifyToken, async (req: any, res) => {

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "./compatibility.css";
-import jangSelected from "../assets/photo/jangSelected.gif";
-import karinaSelected from "../assets/photo/karinaSelected.gif";
-import sulSelected from "../assets/photo/sulSelected.gif";
-import yunaSelected from "../assets/photo/yunaSelected.gif";
-
+import jangSelected from "../../../assets/photo/jangSelected.gif";
+import karinaSelected from "../../../assets/photo/karinaSelected.gif";
+import sulSelected from "../../../assets/photo/sulSelected.gif";
+import yunaSelected from "../../../assets/photo/yunaSelected.gif";
+import useAuthStore from "../../../JustAnd/GlobalState";
 interface typeModule {
   inputName: string;
   menubar: string;
@@ -27,8 +27,13 @@ const CompatiWithJangKaSuYoo: React.FC = () => {
   const [saveData, setSaveData] = useState<typeModule | null>(null);
   const [bringImage, setBringImage] = useState("");
   console.log(saveData, "모든 최종적인 값들입니다.");
+  const { collaboResult, setCollaboResult } = useAuthStore(
+    (state) => state.collaboResultData
+  );
+  console.log(collaboResult, "전역변수로 설정되어있는데 큭큭..");
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInPutName(e.target.value);
+    0;
   };
 
   const handleInputSave = () => {
@@ -63,6 +68,10 @@ const CompatiWithJangKaSuYoo: React.FC = () => {
       userSelected: userSelected,
       userSelectedSex: sex,
     };
+    if (!finalName || !menubar || !userSelected || !sex) {
+      alert("모두 입력하셔야 합니다.");
+      return;
+    }
     setSaveData(dataToSave);
 
     try {
@@ -80,7 +89,9 @@ const CompatiWithJangKaSuYoo: React.FC = () => {
         throw new Error(`궁합에러:${response.status}`);
       }
       const responseData = await response.json();
+
       console.log(responseData, "뭐가오나");
+      setCollaboResult(responseData);
     } catch (error) {
       console.error("궁합보기 에러", error);
     }
@@ -174,6 +185,6 @@ export default CompatiWithJangKaSuYoo;
 
 //* 옵션 셀렉트 하면 밸류값에 따라서  오른쪽에 다른 jpg 렌더링. (gif)
 //* 궁합 보기 결과가 클라이언트로 오면, 다른 컴포넌트 렌더링
-//* 그 컴포넌트는 결과값을 렌더링, 중앙에 결과값, "천생연분"연분,보통,나쁜,상극 에 따라서 경우의수 16가지 gif
+//* 그 컴포넌트는 결과값을 렌더링, 중앙에 결과값, 천생연분,약간호감,나쁜,상극 에 따라서 경우의수 16가지 gif
 //* 총 20개의 gif가 필요
 //* 옵션 select에 따른 움짤4개 , 결과값에 따른 16개의 gif

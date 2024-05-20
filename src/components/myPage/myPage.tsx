@@ -44,7 +44,7 @@ const MyPage: React.FC<AuthContextType> = ({ jwtToken }) => {
   const navigate = useNavigate();
   //* 내정보 수정 누를시 컴포넌트 이동
   const handleNavigateMyInfo = () => {
-    navigate("/myInfoChange");
+    navigate("/UpdateProfile");
   };
   //* 내가쓴글 클릭했을때 나오는 함수
   const handleMyWriteArticle = () => {

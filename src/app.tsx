@@ -23,6 +23,7 @@ import FindUserPw from "./components/findUserPw/findUserPw";
 import MyPage from "./components/myPage/myPage";
 import useAuthStore from "./JustAnd/GlobalState";
 import AuthManager from "./containers/container";
+import UpdateProfile from "./components/updateProfile/updateProfile";
 
 const App: React.FC = () => {
   const [category, setCategory] = useState("");
@@ -223,8 +224,10 @@ const App: React.FC = () => {
             path="myPage"
             element={<MyPage jwtToken={jwtToken} setJwtToken={setJwtToken} />}
           />
+          <Route path="updateProfile" element={<UpdateProfile />} />
         </Routes>
         <ShowSeachbar />
+
         {/* <SeachBar {...authContextValue} /> */}
 
         <Number

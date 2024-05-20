@@ -1,7 +1,6 @@
 import express from "express";
 import { collaboWithjksu } from "./service/collaboration";
 const router = express.Router();
-
 router.post("/api/collabo", async (req: any, res) => {
   const { inputName, menubar, userSelected, userSelectedSex } = req.body;
 
