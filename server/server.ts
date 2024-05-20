@@ -30,6 +30,7 @@ import addNickName from "./addNickName";
 import deleteMyPage from "./myPageDelete";
 import collaboration from "./saju";
 import sajuResult from "./sajuResult/sajuResult";
+import profileUpdate from "./myProfileUpdate/myProfileUpdate";
 // import { setupWebSocket } from "./socet";
 import { ormConnection } from "../ORM";
 import { userPost } from "../ORM/entity/userPostEntity";
@@ -76,7 +77,8 @@ app.use(uploadDatajksy); //* 업로드한 라우터
 app.use(addNickName); //닉네임 추가로직 라우터
 app.use(deleteMyPage); //* 마이페이지 게시글,댓글 삭제 라우터
 app.use(collaboration); // 사주팔자 라우터
-app.use(sajuResult); // 사주팔자 결과값 렌더링
+app.use(sajuResult); // 사주팔자 결과값
+app.use(profileUpdate); //마이프로필 업데이트 라우터
 
 //* 모듈화 후보 1 -> 댓글 추가 로직 => ORM 리팩토링
 app.post("/api/addcomment", verifyToken, async (req: any, res) => {
@@ -85,6 +87,7 @@ app.post("/api/addcomment", verifyToken, async (req: any, res) => {
     const { text, postuuid } = req.body;
     //* jwt에서 유저이름 추출
     const userInfo = req.user.userName;
+    console.log(req.user, "댓글 입력시 userInfo 뭐가오나");
     //* 유저인포 엔티티에 접근
     const userInfoRepository = ormConnection.getRepository(userInfoData);
     //* jwt에서 추출한 user 이름과 동일한 엔티티가 존재하는지 찾음
@@ -263,7 +266,7 @@ app.get("/auth/google/redirect", async (req: any, res) => {
       const User = new userInfoData();
       User.username = userName;
       User.useremail = userEmail;
-      User.isSocial = true;
+      User.googleLogin = true;
       await useregist.save(User);
 
       // 새로 추가된 사용자 정보를 가져옴

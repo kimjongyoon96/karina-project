@@ -39,7 +39,7 @@ router.get("/callback", async (req, res) => {
     });
 
     const accessToken = response.data.access_token;
-    console.log(accessToken, "여기 뭐가 나오나 보자이기");
+    // console.log(accessToken, "여기 뭐가 나오나 보자");
     // 인증 후 클라이언트로 리디렉션
 
     const userInfoURI = "https://openapi.naver.com/v1/nid/me";
@@ -52,7 +52,7 @@ router.get("/callback", async (req, res) => {
     const userInfo = userInfoResponse.data;
     //* userInfo.response.email || userInfo.response.nickname || userInfo.response.name
     const { email, nickname, name } = userInfo.response;
-    const isSocial = true;
+    const naverUser = true;
     //* 소셜로그인 엔티티 불러오기
     const naverUserExist = await ormConnection.getRepository(userInfoData);
     //* 소셜로그인 엔티티에 정보 찾기(이메일과 이름으로)
@@ -65,7 +65,7 @@ router.get("/callback", async (req, res) => {
       newUser.username = name;
       newUser.useremail = email;
       newUser.userNickName = nickname;
-      newUser.isSocial = isSocial;
+      newUser.naverLogin = naverUser;
       await naverUserExist.save(newUser);
 
       //* 새로 추가된 사용자 정보를 가져옴(네이버)
@@ -73,7 +73,7 @@ router.get("/callback", async (req, res) => {
     }
     //* JWT 토큰 정의
     const tokenForJwt = jwt.sign(
-      { userName: name, userEmail: email },
+      { userName: name, userEmail: email, naverLogin: naverUser },
       secretKey,
       { expiresIn: "3h" }
     );

@@ -24,6 +24,7 @@ import MyPage from "./components/myPage/myPage";
 import useAuthStore from "./JustAnd/GlobalState";
 import AuthManager from "./containers/container";
 import UpdateProfile from "./components/updateProfile/updateProfile";
+import UserProfileUpdate from "./components/userProfileUpdate/userProfileUpdate";
 
 const App: React.FC = () => {
   const [category, setCategory] = useState("");
@@ -133,7 +134,6 @@ const App: React.FC = () => {
   //* 토큰이 있을때만, useEffect 실행 =>
   useEffect(() => {
     const fetchData = async () => {
-      // if (jwtToken) {
       try {
         const response = await fetch(
           `${process.env.REACT_APP_API_URL}/auth/cookie`,
@@ -224,7 +224,13 @@ const App: React.FC = () => {
             path="myPage"
             element={<MyPage jwtToken={jwtToken} setJwtToken={setJwtToken} />}
           />
-          <Route path="updateProfile" element={<UpdateProfile />} />
+          <Route
+            path="updateProfile"
+            element={
+              <UpdateProfile jwtToken={jwtToken} setJwtToken={setJwtToken} />
+            }
+          />
+          <Route path="userProfileUpdate" element={<UserProfileUpdate />} />
         </Routes>
         <ShowSeachbar />
 

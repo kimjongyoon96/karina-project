@@ -23,7 +23,11 @@ export class userInfoData {
   userPassWord: string;
   //* //* social || non 구별
   @Column({ type: "boolean", default: false })
-  isSocial: boolean;
+  nonSocial: boolean;
+  @Column({ type: "boolean", default: false })
+  naverLogin: boolean;
+  @Column({ type: "boolean", default: false })
+  googleLogin: boolean;
   //* 게시물 엔티티와 연결
   //* socialPosts 필드는 userPost 엔티티의 배열이다.
   @OneToMany(() => userPost, (post) => post.socialUser)

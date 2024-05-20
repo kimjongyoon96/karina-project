@@ -89,14 +89,6 @@ router.get("/api/sajuRenderImage", async (req: any, res) => {
     const targetFileKey = filekey.find((key) => key?.includes(nameInCludes));
     console.log(targetFileKey, "정확한 명칭이 나와야한다."); // 문자열이 출력이 된다.
 
-    // const filesPromise = filekey.map((key) => getFile(key));
-    // const files = await Promise.all(filesPromise);
-    // console.log(files);
-    // const processdFiles = files.map((file) => ({
-    //   contentType: file.ContentType,
-    //   data: file.Body?.toString("base64"),
-    // }));
-    // res.status(200).json(processdFiles);
     const file = await getFile(targetFileKey);
     const processedFile = {
       contentType: file.ContentType,

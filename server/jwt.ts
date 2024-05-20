@@ -9,7 +9,7 @@ export const verifyToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
   //   console.log("여기 auth있냐?", req, "여기까지야");
   if (authHeader) {
-    console.log(authHeader, "여기는 뭐가 나올까?");
+    console.log(authHeader, "토큰 검증 함수의 authHeader의 값");
     const token = authHeader.split(" ")[1];
     console.log(token, "여기가지는");
     jwt.verify(token, secretKey, (err, decoded) => {
@@ -19,13 +19,14 @@ export const verifyToken = (req, res, next) => {
       }
       console.log(decoded, "디코딩된데이터");
 
-      const { userName, userEmail } = decoded;
+      const { userName, userEmail, naverLogin, googoleLogin, nonSocial } =
+        decoded;
 
       if (!userName || !userEmail) {
         return res.status(400).send("페이로드에 Id 혹은 email이 없음.");
       }
-      req.user = decoded;
 
+      req.user = decoded;
       next();
     });
   } else {

@@ -44,13 +44,14 @@ router.post("/api/userRegister", async (req, res) => {
       useremail: useremail,
       userNickName: userNickName,
       userPassWord: hashpw,
-      isSocial: false,
+      nonSocial: true,
     });
     await userRepository.save(newUser);
     const token = jwt.sign(
       {
-        userId: userid,
+        userName: userid,
         userEmail: useremail,
+        nonSocial: true,
       },
       secretKey,
       { expiresIn: "2h" }
