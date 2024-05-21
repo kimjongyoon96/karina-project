@@ -9,17 +9,24 @@ const randomNumberFunction = () => {
 };
 router.post("/api/emailForAuth", verifyToken, async (req: any, res) => {
   const { inputEmail } = req.body;
-  const { userName } = req.user;
-  console.log(userName, "유저의이름입니다.");
-  const randomNumber = randomNumberFunction();
-
+  const { userName, naverLogin, loginType } = req.user;
+  console.log(
+    userName,
+    naverLogin,
+    loginType,
+    "유저의이름과 로그인 수단입니다."
+  );
   console.log(inputEmail, "비밀번호");
+  const { dataSet } = req.user;
+
+  const randomNumber = randomNumberFunction();
   try {
     const userRepository = ormConnection.getRepository(userInfoData);
     const findUser = userRepository.findOne({
       where: {
         useremail: inputEmail,
         username: userName,
+        nonSocial: naverLogin,
       },
     });
     if (!findUser) {

@@ -19,11 +19,12 @@ export const verifyToken = (req, res, next) => {
       }
       console.log(decoded, "디코딩된데이터");
 
-      const { userName, userEmail, naverLogin, googoleLogin, nonSocial } =
-        decoded;
+      const { userName, userEmail, loginType } = decoded;
 
-      if (!userName || !userEmail) {
-        return res.status(400).send("페이로드에 Id 혹은 email이 없음.");
+      if (!userName || !userEmail || !loginType) {
+        return res
+          .status(400)
+          .send("페이로드에 Id 혹은 email 혹은 로그인타입이 없음.");
       }
 
       req.user = decoded;

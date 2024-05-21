@@ -14,11 +14,12 @@ import { hashPassWord } from "../src/services/userPwHash";
 const router = express.Router();
 const secretKey = process.env.JWT_SECRET_KEY;
 
-router.post("/api/userRegister", async (req, res) => {
+router.post("/api/userRegister", async (req: any, res) => {
   try {
     console.log(req.body, "클라이언트에서 보낸 바디");
 
     const { userid, userpw, useremail, userNickName } = req.body;
+    req.session.useremail = useremail; //* 회원가입 할때 세션에 이메일 저장
     //* nonsocial 유저 있는지 확인
     const userRepository = await ormConnection.getRepository(userInfoData);
     //* 모든 조건이 일치할때만 사용자가 있다고 판단
@@ -38,25 +39,18 @@ router.post("/api/userRegister", async (req, res) => {
     }
 
     const hashpw = await hashPassWord(userpw);
+    //* loginType 설정, naver와 google과 구분되게
+    const loginType = "nonSocial";
 
     const newUser = userRepository.create({
       userId: userid,
       useremail: useremail,
       userNickName: userNickName,
       userPassWord: hashpw,
-      nonSocial: true,
+      loginType: loginType,
     });
     await userRepository.save(newUser);
-    const token = jwt.sign(
-      {
-        userName: userid,
-        userEmail: useremail,
-        nonSocial: true,
-      },
-      secretKey,
-      { expiresIn: "2h" }
-    );
-    res.cookie("token", token, { httpOnly: true, secure: false });
+
     return res
       .status(200)
       .json({ message: "회원가입이 성공적으로 이루어졌습니다." });

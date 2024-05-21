@@ -52,7 +52,7 @@ router.get("/callback", async (req, res) => {
     const userInfo = userInfoResponse.data;
     //* userInfo.response.email || userInfo.response.nickname || userInfo.response.name
     const { email, nickname, name } = userInfo.response;
-    const naverUser = true;
+    const loginType = "NAVER";
     //* 소셜로그인 엔티티 불러오기
     const naverUserExist = await ormConnection.getRepository(userInfoData);
     //* 소셜로그인 엔티티에 정보 찾기(이메일과 이름으로)
@@ -65,7 +65,7 @@ router.get("/callback", async (req, res) => {
       newUser.username = name;
       newUser.useremail = email;
       newUser.userNickName = nickname;
-      newUser.naverLogin = naverUser;
+      newUser.loginType = loginType;
       await naverUserExist.save(newUser);
 
       //* 새로 추가된 사용자 정보를 가져옴(네이버)
@@ -73,9 +73,9 @@ router.get("/callback", async (req, res) => {
     }
     //* JWT 토큰 정의
     const tokenForJwt = jwt.sign(
-      { userName: name, userEmail: email, naverLogin: naverUser },
+      { userName: name, userEmail: email, loginType: loginType },
       secretKey,
-      { expiresIn: "3h" }
+      { expiresIn: "5h" }
     );
     console.log(tokenForJwt, "네이버 로그인시 발행되는 JWT 토큰입니다.");
     res.cookie("token", tokenForJwt, { httpOnly: true, secure: false });

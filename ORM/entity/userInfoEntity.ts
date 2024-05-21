@@ -28,6 +28,8 @@ export class userInfoData {
   naverLogin: boolean;
   @Column({ type: "boolean", default: false })
   googleLogin: boolean;
+  @Column({ type: "varchar", default: false })
+  loginType: string;
   //* 게시물 엔티티와 연결
   //* socialPosts 필드는 userPost 엔티티의 배열이다.
   @OneToMany(() => userPost, (post) => post.socialUser)

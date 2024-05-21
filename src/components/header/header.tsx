@@ -4,8 +4,11 @@ import pageLogo from "../../assets/photo/pagelogo.png";
 import "./header.css";
 import { useNavigate } from "react-router-dom";
 import { AuthContextType } from "../../types/contentType";
+import Alert from "../customComponent/signModalComponent/signModalComponent";
+import useAuthStore from "../../JustAnd/GlobalState";
 const Header: React.FC<AuthContextType> = ({ jwtToken, setJwtToken }) => {
   const Navigate = useNavigate();
+  const { setAllertMessage } = useAuthStore((state) => state.alertState);
   console.log("전역변수로 선언된 JWT", jwtToken);
   return (
     <header className="header">

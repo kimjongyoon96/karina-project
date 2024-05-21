@@ -62,8 +62,8 @@ const sessionMiddleware = session({
   cookie: { secure: false }, //* HTTPS를 사용하지 않는 경우 false로 설정
 });
 
-app.use(registerApi); // 회원가입 라우터
-app.use(loginCheckApi); // 로그인 라우터
+app.use(registerApi, sessionMiddleware); // 회원가입 라우터
+app.use(loginCheckApi, sessionMiddleware); // 로그인 라우터
 app.use(recoverUserId); // 로그인 찾기 로직
 app.use("api//recoverUserPw", recoverUserPw, sessionMiddleware); // 비밀번호 찾기 로직
 app.use("api//certifyNumber", certifyNumber, sessionMiddleware); // 인증번호 검증 로직
@@ -254,28 +254,33 @@ app.get("/auth/google/redirect", async (req: any, res) => {
 
     const userName = userInfo.names[0].displayName;
     const userEmail = userInfo.emailAddresses[0].value;
+    const loginType = "google";
     // 여기까지는 동일한 적용(회원유무 상관없이)0
 
     // 로그인 하는 인간이 DB에 있는지 확인 로직
     const useregist = await ormConnection.getRepository(userInfoData);
 
-    let user = await useregist.findOne({ where: { useremail: userEmail } });
+    let user = await useregist.findOne({
+      where: { useremail: userEmail, loginType: loginType },
+    });
 
     if (!user) {
       // DB에 사용자가 없으면 새로 추가
       const User = new userInfoData();
       User.username = userName;
       User.useremail = userEmail;
-      User.googleLogin = true;
+      User.loginType = loginType;
       await useregist.save(User);
 
       // 새로 추가된 사용자 정보를 가져옴
-      user = await useregist.findOne({ where: { useremail: userEmail } });
+      user = await useregist.findOne({
+        where: { useremail: userEmail, loginType: loginType },
+      });
     }
 
-    // JWT 토큰 생성
+    // JWT 토큰 생성 => 유저이름, 유저이메일, 유저 로그인타입
     const token = jwt.sign(
-      { userName: userName, userEmail: userEmail },
+      { userName: userName, userEmail: userEmail, loginType: loginType },
       secretKey,
       { expiresIn: "5h" }
     );

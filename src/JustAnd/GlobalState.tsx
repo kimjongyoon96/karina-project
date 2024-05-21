@@ -43,6 +43,25 @@ const useAuthStore = create<AuthStated>((set) => ({
         },
       })),
   },
+  alertState: {
+    alertMessage: "",
+    showAlert: false,
+    setAllertMessage: (result) =>
+      set((state) => ({
+        alertState: {
+          ...state.alertState,
+          alertMessage: result,
+          showAlert: true,
+        },
+      })),
+    hideAlert: () =>
+      set((state) => ({
+        alertState: {
+          ...state.alertState,
+          showAlert: false,
+        },
+      })),
+  },
 }));
 
 export default useAuthStore;

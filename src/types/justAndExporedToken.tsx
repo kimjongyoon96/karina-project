@@ -25,4 +25,14 @@ export interface AuthStated {
     collaboResult: string;
     setCollaboResult: (result: string) => void;
   };
+  alertState: {
+    alertMessage: string;
+    setAllertMessage: (result: string) => void;
+    showAlert: boolean;
+    hideAlert: () => void;
+  };
+  nonSocialUserEmail: {
+    nonSocialEmail: string;
+    setNonSocialEmail: (result: string) => void;
+  };
 }

@@ -174,7 +174,7 @@ const CompatiWithJangKaSuYoo: React.FC = () => {
         궁합보기
       </button>
       <section className="right-gif-box">
-        {bringImage === "jang"}
+        {/* {bringImage === "jang"} */}
         {renderImage()}
       </section>
     </main>

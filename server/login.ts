@@ -8,20 +8,22 @@ import { getRepository } from "typeorm";
 import { nonSocialUserInfoData } from "../ORM/entity/nonSocialUserInfoEntity";
 import { hashPassWord, verifyPassword } from "../src/services/userPwHash";
 import jwt from "jsonwebtoken";
+import { userInfoData } from "../ORM/entity/userInfoEntity";
 
 const router = express.Router();
 const secretKey = process.env.JWT_SECRET_KEY;
 
-router.post("/api/loginCheck", async (req, res) => {
+router.post("/api/loginCheck", async (req: any, res) => {
   try {
     console.log(req.body, "로그인 클라이언트에서 보낸 바디");
     const { inputId, inputPw } = req.body;
-    const userRepository = await ormConnection.getRepository(
-      nonSocialUserInfoData
-    );
+    const hashPw = await hashPassWord(inputPw);
+    const useremail = req.session.email;
+    const loginType = "nonSocial";
+    const userRepository = await ormConnection.getRepository(userInfoData);
     const existUser = await userRepository.findOne({
       where: {
-        userid: inputId,
+        userId: inputId,
       },
     });
     if (!existUser) {
@@ -32,9 +34,13 @@ router.post("/api/loginCheck", async (req, res) => {
       return res.status(401).json({ message: "비밀번호가 일치하지 않습니다." });
     }
     //* 여기까지 왔으면, DB에 정보가 있다고 판단, JWT 발급
-    const token = jwt.sign({ userid: inputId }, secretKey, {
-      expiresIn: "5h",
-    });
+    const token = jwt.sign(
+      { userid: inputId, userEmail: useremail, loginType: loginType },
+      secretKey,
+      {
+        expiresIn: "5h",
+      }
+    );
     console.log(token, "아이디 로직시 토큰");
     res.cookie("token", token, { httpOnly: true, secure: false });
 
