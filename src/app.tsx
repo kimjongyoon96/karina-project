@@ -25,7 +25,6 @@ import useAuthStore from "./JustAnd/GlobalState";
 import AuthManager from "./containers/container";
 import UpdateProfile from "./components/updateProfile/updateProfile";
 import UserProfileUpdate from "./components/userProfileUpdate/userProfileUpdate";
-
 const App: React.FC = () => {
   const [category, setCategory] = useState("");
   const [currentMenubar, setCurrentMenubar] = useState("");
@@ -43,6 +42,13 @@ const App: React.FC = () => {
   const authContextValue: AuthContextType = { jwtToken, setJwtToken };
   const { jwtExpiredThing, setJwtExpiredThing } = useAuthStore(
     (state) => state.jwtExpired
+  );
+  const { jwtDecodingData, setJwtDecodingData } = useAuthStore(
+    (state) => state.jwtGlobal
+  ); //* authStore JWT전역
+  console.log(
+    jwtDecodingData,
+    "전역으로 설정한 값인데, 객체형태로 나와야하낟."
   );
   console.log(jwtExpiredThing, jwtToken, "여기가 저스탠드");
   //* 서치바 컴포넌트 조건부 렌더링
@@ -143,19 +149,11 @@ const App: React.FC = () => {
             credentials: "include",
           }
         );
-        // if (response.status === 403) {
-        //   setJwtExpiredThing(true); // 서버에서 받은 status가 403이면, 만료되었다고 판단
-        //   console.log("실시간으로 바뀌나 보자:", jwtExpiredThing);
-        // } else if (response.status === 200) {
-        //   setJwtExpiredThing(false);
-        // } else {
-        //   //* 여기는 jwt가 있지도, 만료되지도 않은 상태
-        // }
+
         const data = await response.json();
         console.log(data, "전역으로 관리되는 토큰입니다.");
-        // setJwtToken(data);
-
-        // console.log(data.token, "내가받은 JWT 토큰입니다.");
+        setJwtDecodingData(data);
+        console.log(jwtToken, "전역으로 선언된 토큰");
       } catch (error) {
         console.error("잘못된 fetch 데이터", error);
       }

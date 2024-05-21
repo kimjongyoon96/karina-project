@@ -2,17 +2,8 @@ import { create } from "zustand";
 import { AuthStated } from "../types/justAndExporedToken";
 //* Zustand store 생성
 
-// const useAuthStore = create<AuthState>((set) => ({
-//   a: "forJwtExpired",
-//   jwtExpired: null,
-//   setJwtExpired: (isExpired) => set({ jwtExpired: isExpired }),
-//   b: "forCollabo",
-//   iscollabo: "",
-//   setIsCollabo: (collabo: string) => set({ iscollabo: collabo }),
-// }));
-// export default useAuthStore;
-
 const useAuthStore = create<AuthStated>((set) => ({
+  //* jwt 토큰 만료 판단 전역상태
   jwtExpired: {
     jwtExpiredThing: null,
     setJwtExpiredThing: (isExpired) =>
@@ -23,6 +14,7 @@ const useAuthStore = create<AuthStated>((set) => ({
         },
       })),
   },
+  //* 콜라보 결과물 전역상태
   isCollabo: {
     collaboClick: "",
     setCollaboClick: (collabo) =>
@@ -43,6 +35,7 @@ const useAuthStore = create<AuthStated>((set) => ({
         },
       })),
   },
+  //* 알림 컴포넌트 전역상태
   alertState: {
     alertMessage: "",
     showAlert: false,
@@ -62,13 +55,14 @@ const useAuthStore = create<AuthStated>((set) => ({
         },
       })),
   },
-  nonSocialUserEmail: {
-    nonSocialEmail: "",
-    setNonSocialEmail: (result) =>
+
+  jwtGlobal: {
+    jwtDecodingData: null,
+    setJwtDecodingData: (jwtData) =>
       set((state) => ({
-        nonSocialUserEmail: {
-          ...state.nonSocialUserEmail,
-          nonSocialEmail: result,
+        jwtGlobal: {
+          ...state.jwtGlobal,
+          jwtDecodingData: jwtData,
         },
       })),
   },

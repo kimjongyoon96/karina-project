@@ -25,14 +25,15 @@ export interface AuthStated {
     collaboResult: string;
     setCollaboResult: (result: string) => void;
   };
+  //* 알러트 상태 함수, 추후 로직으로 활용할 예정이다.
   alertState: {
     alertMessage: string;
     setAllertMessage: (result: string) => void;
     showAlert: boolean;
     hideAlert: () => void;
   };
-  nonSocialUserEmail: {
-    nonSocialEmail: string;
-    setNonSocialEmail: (result: string) => void;
+  jwtGlobal: {
+    jwtDecodingData: string | null | object;
+    setJwtDecodingData: (jwtData: string | null | object) => void;
   };
 }
