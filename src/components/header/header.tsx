@@ -3,13 +3,13 @@ import React from "react";
 import pageLogo from "../../assets/photo/pagelogo.png";
 import "./header.css";
 import { useNavigate } from "react-router-dom";
-import { AuthContextType } from "../../types/contentType";
-import Alert from "../customComponent/signModalComponent/signModalComponent";
 import useAuthStore from "../../JustAnd/GlobalState";
-const Header: React.FC<AuthContextType> = ({ jwtToken, setJwtToken }) => {
+const Header: React.FC = () => {
   const Navigate = useNavigate();
   const { setAllertMessage } = useAuthStore((state) => state.alertState);
-  console.log("전역변수로 선언된 JWT", jwtToken);
+  const { jwtDecodingData, setJwtDecodingData } = useAuthStore(
+    (state) => state.jwtGlobal
+  );
   return (
     <header className="header">
       <button
@@ -28,7 +28,7 @@ const Header: React.FC<AuthContextType> = ({ jwtToken, setJwtToken }) => {
         src={pageLogo}
         alt="Page Logo"
       />
-      {jwtToken ? (
+      {jwtDecodingData ? (
         <button
           className="loginButton"
           onClick={() => {

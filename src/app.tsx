@@ -22,7 +22,7 @@ import RecoverUserInfo from "./components/recoverUserInfo/recoverUserInfo";
 import FindUserPw from "./components/findUserPw/findUserPw";
 import MyPage from "./components/myPage/myPage";
 import useAuthStore from "./JustAnd/GlobalState";
-import AuthManager from "./containers/container";
+// import AuthManager from "./containers/container";
 import UpdateProfile from "./components/updateProfile/updateProfile";
 import UserProfileUpdate from "./components/userProfileUpdate/userProfileUpdate";
 const App: React.FC = () => {
@@ -164,7 +164,7 @@ const App: React.FC = () => {
   return (
     <Router>
       <div>
-        <Header {...authContextValue} />
+        <Header />
         <Menubar
           replaceArray={replaceArray}
           setCurrentMenubar={setCurrentMenubar}
@@ -180,18 +180,14 @@ const App: React.FC = () => {
                   myarray={myArray}
                   matchedItems={matchedItems}
                 />
-                <AuthManager />
+                {/* <AuthManager /> */}
               </>
             }
           />
           <Route
             path="/write"
             element={
-              <WritePage
-                addToArray={addToArray}
-                setCategory={setCategory}
-                jwtToken={jwtToken}
-              />
+              <WritePage addToArray={addToArray} setCategory={setCategory} />
             }
           />
           <Route

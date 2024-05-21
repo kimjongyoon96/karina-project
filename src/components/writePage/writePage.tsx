@@ -4,6 +4,7 @@ import { karinaData, AuthContextType } from "../../types/contentType";
 import "./writePage.css";
 import { v4 as uuidv4 } from "uuid";
 import imageCompression from "browser-image-compression";
+import useAuthStore from "../../JustAnd/GlobalState";
 
 // 상위 컴포넌트로부터, MaintentsProps 인터페이스를 통해, prop을 받는다.
 // addToArray라는 함수는, obj라는 인자를 받고, obj는 karinadata이다.
@@ -13,11 +14,7 @@ interface MaintentsProps {
   jwtToken;
 }
 
-const WritePage: React.FC<MaintentsProps> = ({
-  addToArray,
-  setCategory,
-  jwtToken,
-}) => {
+const WritePage: React.FC<MaintentsProps> = ({ addToArray, setCategory }) => {
   const navigate = useNavigate();
   const myUUID = uuidv4();
   const [title, setTitle] = useState("");
@@ -29,6 +26,7 @@ const WritePage: React.FC<MaintentsProps> = ({
     null
   );
   const [compressedImages, setCompressedImages] = useState<File[]>([]);
+  const { jwtDecodingData } = useAuthStore((state) => state.jwtGlobal);
   console.log(compressedImages, "여기에 blob 객체가 나와야돼!!");
 
   const handlePhotoSumnailChange = async (
@@ -130,9 +128,10 @@ const WritePage: React.FC<MaintentsProps> = ({
       // fetch API를 사용하여 서버로 POST 요청을 보냄
       const response = await fetch(url, {
         method: "POST",
-        body: formData, // FormData 객체를 body로 설정
+        body: formData,
+
         headers: {
-          Authorization: `Bearer ${jwtToken?.["token"]}`,
+          "Who-AM-I": JSON.stringify(jwtDecodingData),
         },
       });
 

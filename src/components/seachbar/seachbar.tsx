@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { AuthContextType, karinaData } from "../../types/contentType";
 import { response } from "express";
 import { Template } from "webpack";
+import useAuthStore from "../../JustAnd/GlobalState";
+import Modal from "../customComponent/signModalComponent/signModalForJwtExpired";
 interface SearchBarProps extends AuthContextType {
   myArray: karinaData[];
   matchedItems: karinaData[]; // 선택적 속성으로 추가
@@ -20,17 +22,20 @@ const SeachBar: React.FC<SearchBarProps> = ({
   myInputData,
 }) => {
   const [tempInput, setTempInput] = useState(""); // 검색 결과 임시데이터
+  const { jwtDecodingData } = useAuthStore((state) => state.jwtGlobal);
+  const [showModal, setShowModal] = useState(false);
   //* 글쓰기 컴포넌트로 이동 함수
   const navigate = useNavigate();
   const goToSecondMain = (): void => {
-    if (jwtToken) {
+    if (jwtDecodingData) {
       navigate("/write");
     } else {
-      console.log(jwtToken, "글쓰기 컴포넌트에 들어가야되느데");
-      alert("로그인 하셔야 글쓰기가 가능합니다.");
+      setShowModal(true);
     }
   };
-
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
       handleSearch();
@@ -62,6 +67,12 @@ const SeachBar: React.FC<SearchBarProps> = ({
       <button className="writebox" onClick={goToSecondMain}>
         글쓰기
       </button>
+      {showModal && (
+        <Modal
+          message="로그인 하셔야 글쓰기가 가능합니다."
+          onClose={handleCloseModal}
+        />
+      )}
     </div>
   );
 };

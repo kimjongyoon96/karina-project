@@ -47,23 +47,23 @@ router.post(
   ]),
   async (req: any, res) => {
     try {
-      const { userName, userEmail } = req.user;
-
-      console.log(userName, userEmail, "업로드한 인간의 이름이 나와야한다.");
-
-      console.log(`sercing ${userName},${userEmail}`);
-      const userRepository = ormConnection.getRepository(userInfoData); //* 유저정보 가져옴
-      const user = await userRepository.findOne({
-        where: { username: userName, useremail: userEmail },
-      });
-      console.log(user, "뭐가나오나보자");
-      if (!user) {
-        console.log(
-          `User not found with userId: ${userName} and useremail: ${userEmail}`
-        );
-        return res.status(404).json({ message: "사용자 찾을수가 없어" });
+      const jwtDecodingDataHeader = req.headers["Who-AM-I"];
+      console.log(jwtDecodingDataHeader);
+      if (jwtDecodingDataHeader) {
+        return res.status(200).json({ message: "잘받음" });
       }
-      console.log(user, "조회된 사용자 정보");
+      const userRepository = ormConnection.getRepository(userInfoData); //* 유저정보 가져옴
+      // const user = await userRepository.findOne({
+      //   where: { username: userName, useremail: userEmail },
+      // });
+      // console.log(user, "뭐가나오나보자");
+      // if (!user) {
+      //   console.log(
+      //     `User not found with userId: ${userName} and useremail: ${userEmail}`
+      //   );
+      //   return res.status(404).json({ message: "사용자 찾을수가 없어" });
+      // }
+      // console.log(user, "조회된 사용자 정보");
       const UserPost = new userPost();
       UserPost.uuid = req.body.id;
       UserPost.menubar = req.body.menubar;
@@ -72,7 +72,7 @@ router.post(
       UserPost.photos = req.files["photos"].map((photo) => photo.location);
 
       //* 유저와 게시물 연결
-      UserPost.socialUser = user; //
+      // UserPost.socialUser = user; //
       const userPostRepository = ormConnection.getRepository(userPost);
       await userPostRepository.save(UserPost);
       console.log(UserPost, "업로드한것입니다.");
