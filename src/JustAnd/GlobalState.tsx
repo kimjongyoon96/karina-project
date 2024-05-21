@@ -62,6 +62,16 @@ const useAuthStore = create<AuthStated>((set) => ({
         },
       })),
   },
+  nonSocialUserEmail: {
+    nonSocialEmail: "",
+    setNonSocialEmail: (result) =>
+      set((state) => ({
+        nonSocialUserEmail: {
+          ...state.nonSocialUserEmail,
+          nonSocialEmail: result,
+        },
+      })),
+  },
 }));
 
 export default useAuthStore;

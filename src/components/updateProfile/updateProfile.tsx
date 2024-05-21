@@ -24,6 +24,7 @@ const UpdateProfile: React.FC<AuthContextType> = ({ jwtToken }) => {
     }
   }, [showVerification, timeLeft]);
 
+  //* 인풋태그 값 서버 이메일 요청
   const handleSendEmail = (e) => {
     const value = e.target.value;
     setInputEmail(value);
@@ -50,7 +51,7 @@ const UpdateProfile: React.FC<AuthContextType> = ({ jwtToken }) => {
             response.status
           );
         }
-        setVerifySixNumber(data);
+        setVerifySixNumber(data); //* 서버에서 클라이언트로 준 Data 즉 이메일값
         setShowVerification(true);
         setTimeLeft(180);
         setIsBlocked(false);

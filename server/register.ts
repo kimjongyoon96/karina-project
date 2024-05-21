@@ -12,15 +12,15 @@ import jwt from "jsonwebtoken";
 
 import { hashPassWord } from "../src/services/userPwHash";
 const router = express.Router();
-const secretKey = process.env.JWT_SECRET_KEY;
 
 router.post("/api/userRegister", async (req: any, res) => {
   try {
     console.log(req.body, "클라이언트에서 보낸 바디");
 
     const { userid, userpw, useremail, userNickName } = req.body;
-    req.session.useremail = useremail; //* 회원가입 할때 세션에 이메일 저장
-    //* nonsocial 유저 있는지 확인
+    console.log(useremail, "이멜값을보자.");
+
+    //* 데이터베이스에 연결
     const userRepository = await ormConnection.getRepository(userInfoData);
     //* 모든 조건이 일치할때만 사용자가 있다고 판단
     const existingUser = await userRepository.findOne({
@@ -50,7 +50,7 @@ router.post("/api/userRegister", async (req: any, res) => {
       loginType: loginType,
     });
     await userRepository.save(newUser);
-
+    req.session.userEmail = useremail; //* 회원가입 할때 세션에 이메일 저장
     return res
       .status(200)
       .json({ message: "회원가입이 성공적으로 이루어졌습니다." });

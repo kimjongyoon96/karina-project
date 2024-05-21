@@ -16,8 +16,8 @@ router.post("/api/emailForAuth", verifyToken, async (req: any, res) => {
     loginType,
     "유저의이름과 로그인 수단입니다."
   );
+  //* 로그인 타입에는 google,NAVER,nonSocial이 들어있다 (jwt 생성할때 조건마다 다르게 함)
   console.log(inputEmail, "비밀번호");
-  const { dataSet } = req.user;
 
   const randomNumber = randomNumberFunction();
   try {
@@ -46,7 +46,7 @@ router.post("/api/emailForAuth", verifyToken, async (req: any, res) => {
         console.log("이메일 전송 실패!", emailResult.error);
       }
     }
-    res.status(200).json(randomNumber);
+    res.status(200).json(randomNumber); //* 클라이언트에서 검증을 하기위한 값
   } catch (error) {
     res.status(500).json({ message: "오류" });
   }

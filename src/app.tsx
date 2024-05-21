@@ -131,28 +131,31 @@ const App: React.FC = () => {
     fetchData();
   }, []);
   // * 쿠키에 있는 JWT 가져오기
-  //* 토큰이 있을때만, useEffect 실행 =>
+  //* 쿠키에에 있는 JWT를 가져오되, 깐양이 추출되게 만든다.
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(
           `${process.env.REACT_APP_API_URL}/auth/cookie`,
+
           {
             credentials: "include",
           }
         );
-        if (response.status === 403) {
-          setJwtExpiredThing(true); // 서버에서 받은 status가 403이면, 만료되었다고 판단
-          console.log("실시간으로 바뀌나 보자:", jwtExpiredThing);
-        } else if (response.status === 200) {
-          setJwtExpiredThing(false);
-        } else {
-          //* 여기는 jwt가 있지도, 만료되지도 않은 상태
-        }
+        // if (response.status === 403) {
+        //   setJwtExpiredThing(true); // 서버에서 받은 status가 403이면, 만료되었다고 판단
+        //   console.log("실시간으로 바뀌나 보자:", jwtExpiredThing);
+        // } else if (response.status === 200) {
+        //   setJwtExpiredThing(false);
+        // } else {
+        //   //* 여기는 jwt가 있지도, 만료되지도 않은 상태
+        // }
         const data = await response.json();
-        setJwtToken(data);
+        console.log(data, "전역으로 관리되는 토큰입니다.");
+        // setJwtToken(data);
 
-        console.log(data.token, "내가받은 JWT 토큰입니다.");
+        // console.log(data.token, "내가받은 JWT 토큰입니다.");
       } catch (error) {
         console.error("잘못된 fetch 데이터", error);
       }

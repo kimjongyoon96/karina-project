@@ -31,6 +31,7 @@ import deleteMyPage from "./myPageDelete";
 import collaboration from "./saju";
 import sajuResult from "./sajuResult/sajuResult";
 import profileUpdate from "./myProfileUpdate/myProfileUpdate";
+import userProfileveify from "./myProfileUpdate/myProfilejwtVerify";
 // import { setupWebSocket } from "./socet";
 import { ormConnection } from "../ORM";
 import { userPost } from "../ORM/entity/userPostEntity";
@@ -61,13 +62,13 @@ const sessionMiddleware = session({
   saveUninitialized: true,
   cookie: { secure: false }, //* HTTPS를 사용하지 않는 경우 false로 설정
 });
-
-app.use(registerApi, sessionMiddleware); // 회원가입 라우터
-app.use(loginCheckApi, sessionMiddleware); // 로그인 라우터
+app.use(sessionMiddleware);
+app.use(registerApi); // 회원가입 라우터
+app.use(loginCheckApi); // 로그인 라우터
 app.use(recoverUserId); // 로그인 찾기 로직
-app.use("api//recoverUserPw", recoverUserPw, sessionMiddleware); // 비밀번호 찾기 로직
-app.use("api//certifyNumber", certifyNumber, sessionMiddleware); // 인증번호 검증 로직
-app.use("/api/changePw", changePw, sessionMiddleware); // 비밀번호 변경 로직
+app.use("api//recoverUserPw", recoverUserPw); // 비밀번호 찾기 로직
+app.use("api//certifyNumber", certifyNumber); // 인증번호 검증 로직
+app.use("/api/changePw", changePw); // 비밀번호 변경 로직
 app.use(researchOutput);
 app.use(naverLogin);
 app.use(myPage); //마이페이지 라우터
@@ -79,6 +80,7 @@ app.use(deleteMyPage); //* 마이페이지 게시글,댓글 삭제 라우터
 app.use(collaboration); // 사주팔자 라우터
 app.use(sajuResult); // 사주팔자 결과값
 app.use(profileUpdate); //마이프로필 업데이트 라우터
+app.use(userProfileveify); //* 마이페이지 진입시 jwt 토큰해독해서 유저정보 반환;
 
 //* 모듈화 후보 1 -> 댓글 추가 로직 => ORM 리팩토링
 app.post("/api/addcomment", verifyToken, async (req: any, res) => {
