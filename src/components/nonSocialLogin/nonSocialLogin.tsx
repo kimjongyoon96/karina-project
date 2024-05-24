@@ -1,10 +1,10 @@
 import React from "react";
 import { useState } from "react";
 import "./nonSocial.css";
-import validUserId from "../services/service";
-import validUserPw from "../services/vaildws";
-import validUserEmail from "../services/validEmail";
-import validUserNickName from "../services/validNick";
+import validUserId from "../../services/service";
+import validUserPw from "../../services/vaildws";
+import validUserEmail from "../../services/validEmail";
+import validUserNickName from "../../services/validNick";
 import { useNavigate } from "react-router-dom";
 import { error } from "console";
 const NonSocialLogin: React.FC = () => {

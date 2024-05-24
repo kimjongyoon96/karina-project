@@ -16,7 +16,7 @@ const router = express.Router();
 router.post("/api/userRegister", async (req: any, res) => {
   try {
     console.log(req.body, "클라이언트에서 보낸 바디");
-
+    const loginType = "nonSocial";
     const { userid, userpw, useremail, userNickName } = req.body;
     console.log(useremail, "이멜값을보자.");
 
@@ -28,6 +28,7 @@ router.post("/api/userRegister", async (req: any, res) => {
         userId: userid,
         useremail: useremail,
         userNickName: userNickName,
+        loginType: loginType,
       },
     });
 
@@ -40,7 +41,6 @@ router.post("/api/userRegister", async (req: any, res) => {
 
     const hashpw = await hashPassWord(userpw);
     //* loginType 설정, naver와 google과 구분되게
-    const loginType = "nonSocial";
 
     const newUser = userRepository.create({
       userId: userid,
@@ -50,7 +50,7 @@ router.post("/api/userRegister", async (req: any, res) => {
       loginType: loginType,
     });
     await userRepository.save(newUser);
-    req.session.userEmail = useremail; //* 회원가입 할때 세션에 이메일 저장
+    // req.session.userEmail = useremail; //* 회원가입 할때 세션에 이메일 저장
     return res
       .status(200)
       .json({ message: "회원가입이 성공적으로 이루어졌습니다." });

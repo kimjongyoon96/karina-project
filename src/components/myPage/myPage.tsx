@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthContextType, myWrite } from "../../types/contentType";
 import "./myPage.css";
 import WarningDeleteModal from "../customComponent/deleteModalForMyPage/warningDelete";
-import { response } from "express";
+import useAuthStore from "../../JustAnd/GlobalState";
 interface users {
   id: number;
   title: string;
@@ -38,33 +38,35 @@ const MyPage: React.FC<AuthContextType> = ({ jwtToken }) => {
   const [userinfoData, setUserInfoData] = useState("");
   const [activeSection, setActiveSection] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false); // default "닫힘"
+  const { jwtDecodingData, setJwtDecodingData } = useAuthStore(
+    (state) => state.jwtGlobal
+  );
   console.log(bringCommnets);
   console.log(bringWrites);
   console.log(bringLikes);
   console.table(bringLikes);
-  //* 마이페이지 진입시 모든 데이터를
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await fetch(
-  //         `${process.env.REACT_APP_API_URL}/api/usersData`,
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${jwtToken?.["token"]}`,
-  //           },
-  //         }
-  //       );
-  //       if (!response.ok) {
-  //         throw new Error("에러발생 비상상ㅇ태");
-  //       }
-  //       const data = await response.json();
-  //       console.log(data, "서버에서 준 유저JWT 해독 정보");
-  //     } catch (error) {
-  //       console.error(error, "에러가 발생했습니다.");
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_API_URL}/api/usersData`,
+          {
+            headers: {
+              Authorization: `${jwtDecodingData?.["token"]}`,
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error("에러발생 비상상ㅇ태");
+        }
+        const data = await response.json();
+        console.log(data, "서버에서 준 유저JWT 해독 정보");
+      } catch (error) {
+        console.error(error, "에러가 발생했습니다.");
+      }
+    };
+    fetchData();
+  }, []);
 
   const navigate = useNavigate();
   //* 내정보 수정 누를시 컴포넌트 이동
@@ -116,7 +118,7 @@ const MyPage: React.FC<AuthContextType> = ({ jwtToken }) => {
         `${process.env.REACT_APP_API_URL}/api/users?selected=${type}&page=${page}&limit=${limit}`,
         {
           headers: {
-            Authorization: `Bearer ${jwtToken?.["token"]}`,
+            Authorization: `${jwtDecodingData?.["token"]}`,
           },
         }
       );

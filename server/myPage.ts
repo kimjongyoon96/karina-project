@@ -11,8 +11,6 @@ import { userInfoData } from "../ORM/entity/userInfoEntity";
 import { userComment } from "../ORM/entity/userCommentsEntity";
 import { userLike } from "../ORM/entity/userLikeEntity";
 import { verifyToken } from "./jwt";
-import { or } from "sequelize";
-import { off } from "process";
 
 const router = express.Router();
 //* req.query 로직 처리 함수

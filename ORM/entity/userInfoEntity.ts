@@ -22,12 +22,7 @@ export class userInfoData {
   @Column({ type: "varchar", length: 255, nullable: true })
   userPassWord: string;
   //* //* social || non 구별
-  @Column({ type: "boolean", default: false })
-  nonSocial: boolean;
-  @Column({ type: "boolean", default: false })
-  naverLogin: boolean;
-  @Column({ type: "boolean", default: false })
-  googleLogin: boolean;
+
   @Column({ type: "varchar", default: false })
   loginType: string;
   //* 게시물 엔티티와 연결

@@ -11,7 +11,6 @@ import useAuthStore from "../../JustAnd/GlobalState";
 interface MaintentsProps {
   addToArray: (obj: karinaData) => void;
   setCategory: (category: string) => void;
-  jwtToken;
 }
 
 const WritePage: React.FC<MaintentsProps> = ({ addToArray, setCategory }) => {
@@ -131,7 +130,7 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray, setCategory }) => {
         body: formData,
 
         headers: {
-          "Who-AM-I": JSON.stringify(jwtDecodingData),
+          Authorization: `${jwtDecodingData?.["token"]}`,
         },
       });
 

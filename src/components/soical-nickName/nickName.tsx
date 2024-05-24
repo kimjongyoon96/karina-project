@@ -3,13 +3,17 @@ import { useState, useEffect } from "react";
 import "./nickNAme.css";
 import { AuthContextType } from "../../types/contentType";
 import { useAsyncValue, useNavigate } from "react-router-dom";
+import useAuthStore from "../../JustAnd/GlobalState";
 const Nickname: React.FC<AuthContextType> = ({ jwtToken }) => {
-  const [nickdName, setNickName] = useState("");
+  const [nickName, setNickName] = useState("");
+  const { jwtDecodingData, setJwtDecodingData } = useAuthStore(
+    (state) => state.jwtGlobal
+  );
+  console.log(jwtDecodingData, "닉네임 진입햇을때의 값입니다.");
+  console.log();
+  console.log(nickName, "닉네임 보낼것");
   const navigate = useNavigate();
-  //* 버튼 클릭 했을 때 실행 될 함수\ㅊ
-  useEffect(() => {
-    console.log(jwtToken, "닉네임에서의 JWt토큰의값입니다.");
-  }, [jwtToken]); // jwtToken이 변경될 때만 실행
+
   const inputNickName = async () => {
     try {
       const response = await fetch(
@@ -18,9 +22,9 @@ const Nickname: React.FC<AuthContextType> = ({ jwtToken }) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${jwtToken?.["token"]}`,
+            authorization: `${jwtDecodingData?.["token"]}`,
           },
-          body: JSON.stringify({ nickName: nickdName }),
+          body: JSON.stringify({ nickName: nickName }),
         }
       );
 
@@ -48,7 +52,7 @@ const Nickname: React.FC<AuthContextType> = ({ jwtToken }) => {
       <input
         type="text"
         className="nick-name-input"
-        value={nickdName}
+        value={nickName}
         onChange={handleChange}
       ></input>
 

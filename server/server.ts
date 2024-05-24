@@ -32,6 +32,7 @@ import collaboration from "./saju";
 import sajuResult from "./sajuResult/sajuResult";
 import profileUpdate from "./myProfileUpdate/myProfileUpdate";
 import userProfileveify from "./myProfileUpdate/myProfilejwtVerify";
+import userInfoDataForMyPage from "./myProfileUpdate/myInfoDataUpdate";
 // import { setupWebSocket } from "./socet";
 import { ormConnection } from "../ORM";
 import { userPost } from "../ORM/entity/userPostEntity";
@@ -62,7 +63,7 @@ const sessionMiddleware = session({
   saveUninitialized: true,
   cookie: { secure: false }, //* HTTPS를 사용하지 않는 경우 false로 설정
 });
-app.use(sessionMiddleware);
+
 app.use(registerApi); // 회원가입 라우터
 app.use(loginCheckApi); // 로그인 라우터
 app.use(recoverUserId); // 로그인 찾기 로직
@@ -81,20 +82,22 @@ app.use(collaboration); // 사주팔자 라우터
 app.use(sajuResult); // 사주팔자 결과값
 app.use(profileUpdate); //마이프로필 업데이트 라우터
 app.use(userProfileveify); //* 마이페이지 진입시 jwt 토큰해독해서 유저정보 반환;
-
+app.use(sessionMiddleware);
+app.use(userInfoDataForMyPage);
 //* 모듈화 후보 1 -> 댓글 추가 로직 => ORM 리팩토링
 app.post("/api/addcomment", verifyToken, async (req: any, res) => {
   try {
     //클라이언트로 부터 text,postuuid 받음
     const { text, postuuid } = req.body;
     //* jwt에서 유저이름 추출
-    const userInfo = req.user.userName;
-    console.log(req.user, "댓글 입력시 userInfo 뭐가오나");
+    const { userName, userEmail } = req.user;
+    console.log(userName, userEmail);
+
     //* 유저인포 엔티티에 접근
     const userInfoRepository = ormConnection.getRepository(userInfoData);
     //* jwt에서 추출한 user 이름과 동일한 엔티티가 존재하는지 찾음
     const userInfoDetail = await userInfoRepository.findOne({
-      where: { username: userInfo },
+      where: { username: userName, useremail: userEmail },
     });
     if (!userInfoDetail) {
       return res.status(404).json({ message: "닉네임이 없습니다." });
@@ -104,7 +107,7 @@ app.post("/api/addcomment", verifyToken, async (req: any, res) => {
     const UserComment = new userComment(); // 엔티티 클래스 선언
     UserComment.text = text;
     UserComment.postuuid = postuuid;
-    UserComment.username = userInfo;
+    UserComment.username = userName;
     UserComment.userNickName = userInfoDetail.userNickName;
 
     const userPostRepository = ormConnection.getRepository(userComment);
@@ -160,7 +163,6 @@ app.get("/api/viewComments/:postuuid", async (req: any, res) => {
   try {
     const { postuuid } = req.params;
     console.log(postuuid, "파라미터에서 추출한 UUID");
-    console.log("여기는 댓글을 보여주는 서버쪽 인데..");
 
     const comments = await ormConnection.getRepository(userComment).find({
       where: { postuuid: postuuid },
@@ -176,7 +178,7 @@ app.get("/api/viewComments/:postuuid", async (req: any, res) => {
 app.get("/api/viewLikes/:postuuid", verifyToken, async (req: any, res) => {
   try {
     const { postuuid } = req.params;
-    console.log(postuuid, "좋아요 갯구의 req.params 로직");
+    console.log(postuuid, "좋아요 갯수의 req.params 로직");
     const userid = req.user.userName;
     console.log(postuuid, userid, "여기는 무엇인가?");
 

@@ -13,7 +13,7 @@ const SignUp: React.FC = () => {
   const handleGoogleLogin = () => {
     window.location.href = `${process.env.REACT_APP_API_URL}/auth/google`;
   };
-  //* 장카설유 로그인
+  //* 장카설유 회원가입
   const jangkasulyoo = () => {
     navigate("/nonSocialLogin");
   };
@@ -35,7 +35,7 @@ const SignUp: React.FC = () => {
   };
   const [userInputId, setUserInputId] = useState<string>("");
   const [userInputPw, setUserInputPw] = useState("");
-
+  console.log(userInputId, userInputPw);
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {

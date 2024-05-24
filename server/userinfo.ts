@@ -1,4 +1,5 @@
 import axios from "axios";
+
 // 사용자 정보를 가져오는 함수를 별도로 정의
 export async function getUserInfo(accessToken) {
   const url =

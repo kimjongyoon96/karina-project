@@ -2,17 +2,23 @@ import React, { useState, useEffect } from "react";
 import { useActionData, useNavigate } from "react-router-dom";
 import "./updateprofile.css";
 import { AuthContextType } from "../../types/contentType";
+import useAuthStore from "../../JustAnd/GlobalState";
+import validateEmail from "../../services/validEmail";
 //* 마이프로필 수정하기 컴포넌트에 진입시, 반드시 회원이 소셜or논소셜인지 구분
 //* 구분을 하기 위해서, DB의 user_info_data를 활용할 계획인데
 //* verifyToken 을 생각해보자, 토큰검증은 해당 유저가 존재하는지를 파악 할 뿐이지, 그
-const UpdateProfile: React.FC<AuthContextType> = ({ jwtToken }) => {
+const UpdateProfile: React.FC = () => {
   const [inputEmail, setInputEmail] = useState("");
   const [sixNumber, setSixnumber] = useState("");
   const [verifySixNumber, setVerifySixNumber] = useState("");
   const [showVerification, setShowVerification] = useState(false);
   const [isBlocked, setIsBlocked] = useState(false);
   const [timeLeft, setTimeLeft] = useState(180);
+  const { jwtDecodingData, setJwtDecodingData } = useAuthStore(
+    (state) => state.jwtGlobal
+  );
   const navigate = useNavigate();
+  console.log(inputEmail);
   useEffect(() => {
     if (showVerification && timeLeft > 0) {
       const timer = setTimeout(() => {
@@ -23,78 +29,80 @@ const UpdateProfile: React.FC<AuthContextType> = ({ jwtToken }) => {
       setIsBlocked(true);
     }
   }, [showVerification, timeLeft]);
-
-  //* 인풋태그 값 서버 이메일 요청
-  const handleSendEmail = (e) => {
+  const handleEmail = (e) => {
     const value = e.target.value;
     setInputEmail(value);
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/emailForAuth`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${jwtToken?.["token"]}`,
-            },
-            body: JSON.stringify({
-              inputEmail: inputEmail,
-            }),
-          }
-        );
-        const data = await response.json();
-        if (!response.ok) {
-          return console.error(
-            "Error:",
-            "응답이 실패했습니다.",
-            response.status
-          );
-        }
-        setVerifySixNumber(data); //* 서버에서 클라이언트로 준 Data 즉 이메일값
-        setShowVerification(true);
-        setTimeLeft(180);
-        setIsBlocked(false);
-      } catch (error) {
-        console.error("에러가낫따", error);
-      }
-    };
-    fetchData();
   };
+  //* 이메일 인증 눌렀을때 실행되는 함수
+  const handleEmailSend = async (e) => {
+    e.preventDefault();
+    if (!validateEmail(inputEmail)) {
+      alert("유효한 이메일 주소를 입력하세요.");
+      return;
+    }
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/emailForAuth`,
+        {
+          method: "POST",
 
-  const handleVerifyEmailResult = (e) => {
+          headers: {
+            Authorization: `${jwtDecodingData?.["token"]}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userInputEmail: inputEmail }),
+        }
+      );
+      const data = await response.json();
+      if (!response.ok) {
+        return console.error("뭔가 문제가있습니다");
+      }
+      setVerifySixNumber(data);
+      setIsBlocked(false);
+      setShowVerification(true);
+      setTimeLeft(180);
+    } catch (error) {
+      console.error("이메일 인증 에러가 발생했습니다.", error);
+    }
+  };
+  const handleNumber = (e) => {
     const value = e.target.value;
     setSixnumber(value);
-    if (verifySixNumber === sixNumber) {
-      navigate("/userProfileUpdate");
+  };
+  const handleVerifyNumber = (e) => {
+    e.prventDefault();
+    if (sixNumber === verifySixNumber) {
+      navigate("/myInfoUpdate");
     } else {
-      console.error("인증번호가 일치하지 않습니다.");
+      alert("숫자가 동일하지 않습니다!");
     }
   };
   return (
     <main className="update-my-profile-box">
       <div className="update-box">
-        <h1>비밀번호를 입력하세요</h1>
-        <input
-          className="update-password-sector"
-          type="email"
-          value={inputEmail}
-          placeholder="이메일을 입력하세요"
-          onChange={(e) => setInputEmail(e.target.value)}
-        />
-        <button onClick={handleSendEmail}>입력</button>
+        <h1>내정보 수정위해 가입했던 이메일을 입력하세요</h1>
+        <form onSubmit={handleEmailSend}>
+          <input
+            className="update-password-sector"
+            type="email"
+            value={inputEmail}
+            placeholder="이메일을 입력하세요"
+            onChange={handleEmail}
+          />
+          <button type="submit">이메일 인증</button>
+        </form>
         {showVerification && !isBlocked && (
           <div>
-            <input
-              value={sixNumber}
-              type="text"
-              placeholder="이메일로 받은 인증번호를 입력하세요"
-              onChange={(e) => setSixnumber(e.target.value)}
-              disabled={isBlocked}
-            />
-            <button onClick={handleVerifyEmailResult} disabled={isBlocked}>
-              입력
-            </button>
+            <form onSubmit={handleVerifyNumber}>
+              <input
+                value={sixNumber}
+                type="number"
+                placeholder="이메일로 받은 인증번호를 입력하세요"
+                onChange={handleNumber}
+                disabled={isBlocked}
+              />
+              <button type="submit"></button>
+            </form>
             <p>
               남은 시간: {Math.floor(timeLeft / 60)}분 {timeLeft % 60}초
             </p>

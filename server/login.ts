@@ -9,7 +9,6 @@ import { nonSocialUserInfoData } from "../ORM/entity/nonSocialUserInfoEntity";
 import { hashPassWord, verifyPassword } from "../src/services/userPwHash";
 import jwt from "jsonwebtoken";
 import { userInfoData } from "../ORM/entity/userInfoEntity";
-
 const router = express.Router();
 const secretKey = process.env.JWT_SECRET_KEY;
 
@@ -17,12 +16,12 @@ router.post("/api/loginCheck", async (req: any, res) => {
   try {
     console.log(req.body, "로그인 클라이언트에서 보낸 바디");
     const { inputId, inputPw } = req.body;
-
     const loginType = "nonSocial";
     const userRepository = await ormConnection.getRepository(userInfoData);
     const existUser = await userRepository.findOne({
       where: {
         userId: inputId,
+        loginType: loginType,
       },
     });
     if (!existUser) {
@@ -33,9 +32,9 @@ router.post("/api/loginCheck", async (req: any, res) => {
       return res.status(401).json({ message: "비밀번호가 일치하지 않습니다." });
     }
     //* 여기까지 왔으면, DB에 정보가 있다고 판단, JWT 발급
-    const useremail = req.session.useremail;
+    // const useremail = req.session.useremail;
     const token = jwt.sign(
-      { userid: inputId, userEmail: useremail, loginType: loginType },
+      { userid: inputId, userEmail: existUser.useremail, loginType: loginType },
       secretKey,
       {
         expiresIn: "5h",

@@ -8,10 +8,12 @@ import RenderCompatibilityWithJksy from "./compatibilityToJangKaSulYoo/renderCom
 
 const MainContents: React.FC<MainContentsProps> = ({ myarray }) => {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState([]);
   //* 메뉴바 클릭시 변경되는 상태값 collabo JsutAnd로 받아옴.
   const { collaboClick } = useAuthStore((state) => state.isCollabo);
   const { collaboResult } = useAuthStore((state) => state.collaboResultData);
+
   console.log(collaboClick, collaboResult, "여기는 메인페이지 입니다.");
   console.log(collaboResult.includes("궁합")); // true 출력, 즉 궁합보기가 눌러짐
   console.log(myarray, "모든 게시물의 값");
@@ -39,7 +41,11 @@ const MainContents: React.FC<MainContentsProps> = ({ myarray }) => {
   const goToSecondMain = (uuid: string): void => {
     navigate(`/detail/${uuid}`);
   };
-
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+  });
   //* myarray는 최상위 컴포넌트에서 가져오는 모든 게시물의 값
   //* data는 특정 메뉴바의 page=1의 값
   //* 즉, myarray의 길이가 data의 길이보다 작다는것은, 게시물이 존재하지 않는다고 판단.

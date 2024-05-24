@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { karinaData, AuthContextType } from "../../types/contentType";
 import "./detailPage.css";
-import { type } from "os";
+import useAuthStore from "../../JustAnd/GlobalState";
 
 interface DetailProps extends AuthContextType {
   myArray: karinaData[];
@@ -27,7 +27,11 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
   const [recommendation, setRecommendation] = useState(0);
   const [totalLikes, setTotalLikes] = useState(0);
   const [hasLiked, setHasLiked] = useState(false);
+  const { jwtDecodingData, setJwtDecodingData } = useAuthStore(
+    (state) => state.jwtGlobal
+  );
 
+  console.log("세부페이지의 JWT값:", jwtDecodingData?.["token"]);
   //* 댓글 불러오기
   const fetchAllCommentView = async () => {
     // setCommentLoading(true);
@@ -64,9 +68,10 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
         `${process.env.REACT_APP_API_URL}/api/addcomment`,
         {
           method: "POST",
+
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${jwtToken?.["token"]}`,
+            Authorization: `${jwtDecodingData?.["token"]}`,
           },
           body: JSON.stringify({ text: commentText, postuuid: itemId }),
         }
@@ -96,7 +101,7 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
           method: "POST",
           headers: {
             "content-Type": "application/json",
-            Authorization: `Bearer ${jwtToken?.["token"]}`,
+            Authorization: `${jwtDecodingData?.["token"]}`,
           },
           body: JSON.stringify({ postuuid: itemId }),
         }
@@ -118,7 +123,7 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
         {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${jwtToken?.["token"]}`,
+            Authorization: `${jwtDecodingData?.["token"]}`,
           },
         }
       );

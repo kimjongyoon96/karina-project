@@ -17,7 +17,7 @@ import WritePage from "./components/writePage/writePage";
 import SignUp from "./components/signUp/signUp";
 import SerachRender from "./components/searchRendering/searchRendering";
 import Nickname from "./components/soical-nickName/nickName";
-import NonSocialLogin from "./nonSocialLogin/nonSocialLogin";
+import NonSocialLogin from "./components/nonSocialLogin/nonSocialLogin";
 import RecoverUserInfo from "./components/recoverUserInfo/recoverUserInfo";
 import FindUserPw from "./components/findUserPw/findUserPw";
 import MyPage from "./components/myPage/myPage";
@@ -25,6 +25,7 @@ import useAuthStore from "./JustAnd/GlobalState";
 // import AuthManager from "./containers/container";
 import UpdateProfile from "./components/updateProfile/updateProfile";
 import UserProfileUpdate from "./components/userProfileUpdate/userProfileUpdate";
+import MyInfoUpdate from "./components/myinfoUpdate/myInfoUpdate";
 const App: React.FC = () => {
   const [category, setCategory] = useState("");
   const [currentMenubar, setCurrentMenubar] = useState("");
@@ -50,7 +51,8 @@ const App: React.FC = () => {
     jwtDecodingData,
     "전역으로 설정한 값인데, 객체형태로 나와야하낟."
   );
-  console.log(jwtExpiredThing, jwtToken, "여기가 저스탠드");
+  console.log("헤더에 들어가는 jwt:", jwtDecodingData?.["token"]);
+
   //* 서치바 컴포넌트 조건부 렌더링
   const ShowSeachbar = () => {
     const location = useLocation();
@@ -136,26 +138,27 @@ const App: React.FC = () => {
     };
     fetchData();
   }, []);
-  // * 쿠키에 있는 JWT 가져오기
-  //* 쿠키에에 있는 JWT를 가져오되, 깐양이 추출되게 만든다.
 
+  //* 전역으로 관리할 JWT 인코딩 데이터 가져오는 함수
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(
           `${process.env.REACT_APP_API_URL}/auth/cookie`,
-
           {
+            method: "GET",
             credentials: "include",
           }
         );
-
+        if (!response.ok) {
+          console.log("auth/cookie로 요청한 데이터 가져오는데 실패했습니다.");
+        }
         const data = await response.json();
-        console.log(data, "전역으로 관리되는 토큰입니다.");
         setJwtDecodingData(data);
-        console.log(jwtToken, "전역으로 선언된 토큰");
+
+        console.log(data, "auth/cookie 요청한 req.cookie의 데이터입니다.");
       } catch (error) {
-        console.error("잘못된 fetch 데이터", error);
+        console.error(error, "auth/cookie 클라이언트 try문 에러");
       }
     };
     fetchData();
@@ -221,13 +224,9 @@ const App: React.FC = () => {
             path="myPage"
             element={<MyPage jwtToken={jwtToken} setJwtToken={setJwtToken} />}
           />
-          <Route
-            path="updateProfile"
-            element={
-              <UpdateProfile jwtToken={jwtToken} setJwtToken={setJwtToken} />
-            }
-          />
+          <Route path="updateProfile" element={<UpdateProfile />} />
           <Route path="userProfileUpdate" element={<UserProfileUpdate />} />
+          <Route path="myInfoUpdate" element={<MyInfoUpdate />} />
         </Routes>
         <ShowSeachbar />
 

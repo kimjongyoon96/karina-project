@@ -1,17 +1,32 @@
 // src/components/Header.tsx
-import React from "react";
+import React, { useState } from "react";
 import pageLogo from "../../assets/photo/pagelogo.png";
 import "./header.css";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../JustAnd/GlobalState";
+import LoadingModalViewComponent from "../customComponent/loadingComponent/loadindComponent";
 const Header: React.FC = () => {
   const Navigate = useNavigate();
   const { setAllertMessage } = useAuthStore((state) => state.alertState);
   const { jwtDecodingData, setJwtDecodingData } = useAuthStore(
     (state) => state.jwtGlobal
   );
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const handlebing = () => {
+    setIsLoading(true);
+
+    setTimeout(() => {
+      setIsLoading(false);
+      setIsLoaded(true);
+    }, 1000); // 2초 후에 로딩을 멈추고 결과를 표시합니다.
+  };
   return (
     <header className="header">
+      {isLoading && <LoadingModalViewComponent />}
+      <button className="mypage-btn" onClick={handlebing}>
+        리턴값 확인하기
+      </button>
       <button
         className="myPage-btn"
         onClick={() => {
