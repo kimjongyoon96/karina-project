@@ -9,7 +9,8 @@ export class userComment {
 
   @Column({ type: "character", length: 255 })
   username: string;
-
+  @Column({ type: "varchar", nullable: true })
+  userId: string;
   @Column({ type: "character", length: 255, nullable: true })
   userNickName: string;
   @Column({ type: "uuid" })

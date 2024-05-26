@@ -10,7 +10,8 @@ export class userLike {
 
   @Column({ type: "varchar", length: 255 })
   username: string;
-
+  @Column({ type: "varchar", nullable: true })
+  userId: string;
   @Column("uuid")
   postid: string;
 

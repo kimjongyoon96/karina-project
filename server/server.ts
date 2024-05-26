@@ -33,6 +33,7 @@ import sajuResult from "./sajuResult/sajuResult";
 import profileUpdate from "./myProfileUpdate/myProfileUpdate";
 import userProfileveify from "./myProfileUpdate/myProfilejwtVerify";
 import userInfoDataForMyPage from "./myProfileUpdate/myInfoDataUpdate";
+import myInfoUpdate from "./myProfileUpdate/myInfoUpdate";
 // import { setupWebSocket } from "./socet";
 import { ormConnection } from "../ORM";
 import { userPost } from "../ORM/entity/userPostEntity";
@@ -46,7 +47,7 @@ app.use(
   cors({
     origin: "http://localhost:3001",
     credentials: true,
-    methods: ["GET", "POST", "OPTIONS", "DELETE"],
+    methods: ["GET", "POST", "OPTIONS", "DELETE", "PATCH"],
   })
 );
 
@@ -84,20 +85,23 @@ app.use(profileUpdate); //마이프로필 업데이트 라우터
 app.use(userProfileveify); //* 마이페이지 진입시 jwt 토큰해독해서 유저정보 반환;
 app.use(sessionMiddleware);
 app.use(userInfoDataForMyPage);
+app.use(myInfoUpdate); // Patch 요청 내정보 수정 라우터
 //* 모듈화 후보 1 -> 댓글 추가 로직 => ORM 리팩토링
 app.post("/api/addcomment", verifyToken, async (req: any, res) => {
   try {
     //클라이언트로 부터 text,postuuid 받음
     const { text, postuuid } = req.body;
     //* jwt에서 유저이름 추출
-    const { userName, userEmail } = req.user;
-    console.log(userName, userEmail);
+    const { identifier, userEmail, loginType } = req.user;
 
     //* 유저인포 엔티티에 접근
     const userInfoRepository = ormConnection.getRepository(userInfoData);
     //* jwt에서 추출한 user 이름과 동일한 엔티티가 존재하는지 찾음
     const userInfoDetail = await userInfoRepository.findOne({
-      where: { username: userName, useremail: userEmail },
+      where:
+        loginType === "nonSocial"
+          ? { userId: identifier, useremail: userEmail }
+          : { username: identifier, useremail: userEmail },
     });
     if (!userInfoDetail) {
       return res.status(404).json({ message: "닉네임이 없습니다." });
@@ -107,7 +111,10 @@ app.post("/api/addcomment", verifyToken, async (req: any, res) => {
     const UserComment = new userComment(); // 엔티티 클래스 선언
     UserComment.text = text;
     UserComment.postuuid = postuuid;
-    UserComment.username = userName;
+    UserComment.username =
+      loginType === "nonSocial"
+        ? userInfoDetail.userId
+        : userInfoDetail.username;
     UserComment.userNickName = userInfoDetail.userNickName;
 
     const userPostRepository = ormConnection.getRepository(userComment);
@@ -129,24 +136,34 @@ app.post("/api/addcomment", verifyToken, async (req: any, res) => {
 app.post("/api/like", verifyToken, async (req: any, res) => {
   try {
     const { postuuid } = req.body;
-    const userinfo = req.user.userName;
+    const { identifier, userEmail, loginType } = req.user;
 
     console.log(postuuid, "포스트유유아이디");
-    console.log(userinfo, "받은 유저의이름");
+    console.log(identifier, "좋아요 할때 아이디 혹은 유저이름값");
 
     const findUserInfo = ormConnection.getRepository(userInfoData);
-    const userInfoMatch = findUserInfo.findOne({
-      where: { username: userinfo },
+    const userInfoMatch = await findUserInfo.findOne({
+      where:
+        loginType === "nonSocial"
+          ? { userId: identifier, useremail: userEmail }
+          : { username: identifier, useremail: userEmail },
     });
     if (!userInfoMatch) {
       return res
         .status(404)
-        .json({ message: "좋아요를 위한 사용자가 없습니다." });
+        .json({ message: "좋아요를 위한 유저 정보가 존재하지 않습니다." });
     }
 
     const UserLike = new userLike();
     UserLike.postid = postuuid;
-    UserLike.username = userinfo;
+
+    if (loginType === "nonSocial") {
+      UserLike.userId = identifier; // non소셜 로그인 아이디 문자열
+      console.log("nonSocial 로그인:", UserLike.userId);
+    } else {
+      UserLike.username = identifier; // 소셜 로그인
+      console.log("socialLogin:", UserLike.username);
+    }
 
     const userPostRepository = ormConnection.getRepository(userLike);
     await userPostRepository.save(UserLike);
@@ -179,8 +196,7 @@ app.get("/api/viewLikes/:postuuid", verifyToken, async (req: any, res) => {
   try {
     const { postuuid } = req.params;
     console.log(postuuid, "좋아요 갯수의 req.params 로직");
-    const userid = req.user.userName;
-    console.log(postuuid, userid, "여기는 무엇인가?");
+    const { identifier, userEmail, loginType } = req.user;
 
     //* 전체 좋아요 수
     const totalLikesCount = await ormConnection
@@ -190,12 +206,16 @@ app.get("/api/viewLikes/:postuuid", verifyToken, async (req: any, res) => {
       .getCount();
 
     // 현재 사용자가 좋아요를 눌렀는지 확인합니다.
+    const whereConditon =
+      loginType === "nonSocial"
+        ? { userId: identifier, useremail: userEmail }
+        : { username: identifier, useremail: userEmail };
     const userLikeCount = await ormConnection
       .getRepository(userLike)
       .createQueryBuilder("like")
       .where("like.postid = :postid AND like.username = :username", {
         postid: postuuid,
-        username: userid,
+        username: whereConditon,
       })
       .getCount();
 
@@ -258,7 +278,7 @@ app.get("/auth/google/redirect", async (req: any, res) => {
 
     const userName = userInfo.names[0].displayName;
     const userEmail = userInfo.emailAddresses[0].value;
-    const loginType = "google";
+    const loginType = "GOOGLE";
     // 여기까지는 동일한 적용(회원유무 상관없이)0
 
     // 로그인 하는 인간이 DB에 있는지 확인 로직
@@ -284,7 +304,12 @@ app.get("/auth/google/redirect", async (req: any, res) => {
 
     // JWT 토큰 생성 => 유저이름, 유저이메일, 유저 로그인타입
     const token = jwt.sign(
-      { userName: userName, userEmail: userEmail, loginType: loginType },
+      {
+        userName: userName,
+        userid: undefined,
+        userEmail: userEmail,
+        loginType: loginType,
+      },
       secretKey,
       { expiresIn: "5h" }
     );

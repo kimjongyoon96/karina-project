@@ -20,15 +20,18 @@ const helperParmas = (query) => {
   const offset = (page - 1) * limit; //* 지점, page가 2,limit이
   return { page, limit, offset };
 };
-//* 유저가 쓴 사용자의 이름을 가져오는 함수입니다.
+
+//* 유저가 쓴 글을 불러오는 함수
 const getmyWirte = async (req, res) => {
-  const { userName } = req.user;
-  console.log("신청한넘 이름", userName);
+  const { loginType, userEmail, identifier } = req.user;
   const { page, limit, offset } = helperParmas(req.query);
   try {
     const userInfo = ormConnection.getRepository(userInfoData);
     const userExsist = await userInfo.findOne({
-      where: { username: userName },
+      where:
+        loginType === "nonSocial"
+          ? { userId: identifier, useremail: userEmail }
+          : { username: identifier, useremail: userEmail },
     });
     if (!userExsist) {
       return res
@@ -36,28 +39,37 @@ const getmyWirte = async (req, res) => {
         .json({ message: "아무런 게시글도 존재하지 않습니다." });
     }
     const postRepository = ormConnection.getRepository(userPost);
+    // const whereCondition =loginType==="nonSocial"?{userId:identifier}:{username:identifier}
     const [posts, total] = await postRepository.findAndCount({
       where: { socialUser: userExsist },
       skip: offset,
       take: limit,
     });
     if (!posts || posts.length === 0) {
-      res.status(404).josn({ messgae: "아무런 게시글도 존재하지않습니다." });
+      return res
+        .status(404)
+        .json({ messgae: "아무런 게시글도 존재하지않습니다." });
     }
-    res.status(200).json({ posts, total });
+    return res.status(200).json({ posts, total });
   } catch (error) {
     console.error(error, "유저 게시물 fetch 에러입니다. 코드를 확인하세요");
-    res.status(500).json({ message: "글쓰기 데이터 불러오기 에러입니다." });
+    return res
+      .status(500)
+      .json({ message: "글쓰기 데이터 불러오기 에러입니다." });
   }
 };
 //* 내가 쓴 댓글 가져오는 함수입니다.
 const getMyCommnets = async (req, res) => {
-  const { userName } = req.user;
+  const { identifier, userEmail, loginType } = req.user;
   const { page, limit, offset } = helperParmas(req.query);
   try {
     const userinfo = ormConnection.getRepository(userComment);
+    const whereCondition =
+      loginType === "nonSocial"
+        ? { userId: identifier }
+        : { username: identifier };
     const [commnets, total] = await userinfo.findAndCount({
-      where: { username: userName }, // 어떤 넘거를
+      where: whereCondition, // 어떤 넘거를
       select: ["userNickName", "text", "postuuid", "commentid"], //뭐를
       skip: offset, //* 건너뛸거 skip 10은 10개 건너뛴다
       take: limit, //* limit이 10개면 10개 가져오겠다.
@@ -74,12 +86,16 @@ const getMyCommnets = async (req, res) => {
 //* 좋아요 한거 가져오는 함수
 const getMyLikes = async (req, res) => {
   try {
-    const { username } = req.user;
+    const { identifier, userEmail, loginType } = req.user;
     const { page, limit, offset } = helperParmas(req.query);
 
     const userLikes = ormConnection.getRepository(userLike);
+    const whereCondition =
+      loginType === "nonSocial"
+        ? { userId: identifier }
+        : { username: identifier };
     const [likes, total] = await userLikes.findAndCount({
-      where: { username: username },
+      where: whereCondition,
       relations: ["post"],
       skip: offset,
       take: limit,

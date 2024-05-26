@@ -15,24 +15,22 @@ const randomNumberFunction = () => {
 router.post("/api/emailForAuth", verifyToken, async (req: any, res) => {
   const { userInputEmail } = req.body;
   console.log(userInputEmail, "이메일전송 값 뭐가나오나");
-  const { userName, userEmail, loginType } = req.user;
+  const { identifier, userEmail, loginType } = req.user;
   console.log(
-    userName,
+    identifier,
     userEmail,
     loginType,
-    "유저의이름과 로그인 수단입니다."
+    "유저정보와 로그인 수단입니다."
   );
-  console.log(userEmail, "비밀번호");
 
   const randomNumber = randomNumberFunction();
   try {
-    const userRepository = ormConnection.getRepository(userInfoData);
+    const userRepository = ormConnection.getRepository(userInfoData); //* 이메일을 보내기 위해서 유저를 찾습니다.
     const findUser = userRepository.findOne({
-      where: {
-        useremail: userEmail,
-        username: userName,
-        loginType: loginType,
-      },
+      where:
+        loginType === "nonSocial"
+          ? { userId: identifier, useremail: userEmail } //* loginType이 논소셜이면 해당 userId와 이메일을 참조하여 인풋값과 비교하여 찾습니다.
+          : { username: identifier, useremail: userEmail }, //* 만일 False일 경우, 유저이름과 해당 이메일을 비교하여 유저를 찾습니다.
     });
     if (!findUser) {
       return res

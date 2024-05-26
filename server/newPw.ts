@@ -6,7 +6,7 @@ import { hashPassWord } from "../src/services/userPwHash";
 import { ormConnection } from "../ORM";
 import { getRepository } from "typeorm";
 import { nonSocialUserInfoData } from "../ORM/entity/nonSocialUserInfoEntity";
-
+import { userInfoData } from "../ORM/entity/userInfoEntity";
 const router = express.Router();
 router.post("/api/changePw", async (req: any, res) => {
   try {
@@ -19,11 +19,11 @@ router.post("/api/changePw", async (req: any, res) => {
     // }
     const hashPw = await hashPassWord(usernewPw); // 해싱한 새로운 유저 비밀번호
     console.log("test1");
-    const userRepository = ormConnection.getRepository(nonSocialUserInfoData);
+    const userRepository = ormConnection.getRepository(userInfoData);
 
     const existUser = await userRepository.findOne({
       where: {
-        userid: req.session.authUserId,
+        userId: req.session.authUserId,
       },
     });
     console.log("test2");

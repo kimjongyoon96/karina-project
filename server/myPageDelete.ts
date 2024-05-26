@@ -19,17 +19,22 @@ const router = express.Router();
 //* type이 나의댓글이면 A , 나의 게시글이면 B
 //* type에 따라서 동적으로 결과를 발현시킨다.
 router.delete("/api/deleteMyPage", verifyToken, async (req: any, res) => {
-  const { userName } = req.user;
+  const { identifier, userEmail, loginType } = req.user;
   const { selected, infoSelected } = req.query;
   try {
     if (selected === "myWrite") {
       console.log("내게시물삭제");
       const myRepository = ormConnection.getRepository(userInfoData);
       const findMe = await myRepository.findOne({
-        where: { username: userName },
+        where:
+          loginType === "nonSocial"
+            ? { userId: identifier, useremail: userEmail }
+            : { username: identifier, useremail: userEmail },
       });
       if (!findMe) {
-        return res.status(404).json({ message: "삭제를 연결 유저가 존재안함" });
+        return res
+          .status(404)
+          .json({ message: "게시물 하기 위한 유저 정보가 없습니다." });
       }
       const postRepository = ormConnection.getRepository(userPost);
       const findPost = await postRepository.findOne({
@@ -44,7 +49,12 @@ router.delete("/api/deleteMyPage", verifyToken, async (req: any, res) => {
       res.status(200).json({ message: "나의 게시물 삭제가 완료되었습니다." });
     } else if (selected === "myComments") {
       const myRepository = ormConnection.getRepository(userInfoData);
-      const findMe = myRepository.findOne({ where: { username: userName } });
+      const findMe = myRepository.findOne({
+        where:
+          loginType === "nonSocial"
+            ? { userId: identifier, useremail: userEmail }
+            : { username: identifier, useremail: userEmail },
+      });
       if (!findMe) {
         return res
           .status(404)

@@ -20,14 +20,30 @@ export const verifyToken = (req, res, next) => {
       }
       console.log(decoded, "디코딩 된 데이터입니다.");
 
-      const { userName, userEmail, loginType } = decoded;
+      const { userid, userName, userEmail, loginType } = decoded; //* 소셜로그인은 userid가 undefinded, 논소셜은 userName이 undefinded
 
-      if (!userName || !userEmail || !loginType) {
+      if (loginType === "nonSocial" && !userid) {
         return res
           .status(500)
-          .json({ message: "jwt 해석한 값중 어떤 값이 존재하지 않습니다." });
+          .json({ messgae: "논소셜 로그인인데 userid가 존재하지 않습니다." });
       }
-      req.user = decoded;
+      if ((loginType === "NAVER" || loginType === "GOOGLE") && !userName) {
+        return res.status(500).json({
+          message:
+            "네이버 로그인 혹은 구글 로그인 임에도 불구하고 userName이 없습니다.",
+        });
+      }
+      if (!loginType && !userEmail) {
+        return res
+          .status(500)
+          .json({ message: "검증하기 위한 이메일과 로그인타입이 없습니다." });
+      }
+
+      req.user = {
+        userEmail,
+        loginType,
+        identifier: loginType === "nonSocial" ? userid : userName, //* 로그인 타입이 nonsocial이면 identifier가 true 즉 userid, false이면 identifier가 userName
+      };
       next();
     });
   }

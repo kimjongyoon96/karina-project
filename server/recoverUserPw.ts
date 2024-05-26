@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 import { ormConnection } from "../ORM";
 import { getRepository } from "typeorm";
-import { nonSocialUserInfoData } from "../ORM/entity/nonSocialUserInfoEntity";
+import { userInfoData } from "../ORM/entity/userInfoEntity";
 import { hashPassWord, verifyPassword } from "../src/services/userPwHash";
 import generateNumber from "../src/services/generateRandom";
 import eamilsend from "./emailSend";
@@ -17,10 +17,10 @@ router.post("/api/recoverPw", async (req: any, res) => {
     //1. 인풋 값 받는다.
     const { inputUserEmail, inputUserId } = req.body;
 
-    const userRepository = ormConnection.getRepository(nonSocialUserInfoData);
+    const userRepository = ormConnection.getRepository(userInfoData);
     const existUser = await userRepository.findOne({
       where: {
-        userid: inputUserId,
+        userId: inputUserId,
       },
     });
     if (!existUser) {

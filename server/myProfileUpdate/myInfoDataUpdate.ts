@@ -5,8 +5,8 @@ import { userInfoData } from "../../ORM/entity/userInfoEntity";
 const router = express.Router();
 
 router.post("/api/usersInfo", verifyToken, async (req: any, res) => {
-  const { userName, userEmail, loginType } = req.user; // jwt 토큰값
-  console.log(userName, userEmail, loginType);
+  const { identifier, userEmail, loginType } = req.user; // jwt 토큰값
+  console.log("api/usersInfo의 값:", identifier, userEmail, loginType);
 
   try {
     const isUserExgist = ormConnection.getRepository(userInfoData);
@@ -16,11 +16,10 @@ router.post("/api/usersInfo", verifyToken, async (req: any, res) => {
         .json({ message: "DB에 연결하는데에 실패했습니다." });
     }
     const findUserInfo = await isUserExgist.findOne({
-      where: {
-        username: userName,
-        useremail: userEmail,
-        loginType: loginType,
-      },
+      where:
+        loginType === "nonSocial"
+          ? { userId: identifier, useremail: userEmail }
+          : { username: identifier, useremail: userEmail },
     });
     if (!findUserInfo) {
       return res
@@ -29,11 +28,14 @@ router.post("/api/usersInfo", verifyToken, async (req: any, res) => {
     }
     //* 조건에 맞는 데이터를 해당 엔티티에서 추출
     const userResponse = {
-      userName: findUserInfo.username,
+      username: findUserInfo.username,
       userId: findUserInfo.userId,
-      userEmail: findUserInfo.useremail,
-      userPw: findUserInfo.userPassWord,
+      useremail: findUserInfo.useremail,
+      userPassWord: findUserInfo.userPassWord,
+      userNickName: findUserInfo.userNickName,
+      loginType: findUserInfo.loginType,
     };
+    console.log("마이페이지 DB값 정보", userResponse);
     return res.status(200).json(userResponse);
   } catch (error) {
     console.error(error, "/api/usersInfo 라우터 에러입니다.");

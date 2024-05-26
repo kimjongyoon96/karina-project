@@ -73,7 +73,12 @@ router.get("/callback", async (req, res) => {
     }
     //* JWT 토큰 정의
     const tokenForJwt = jwt.sign(
-      { userName: name, userEmail: email, loginType: loginType },
+      {
+        userName: name,
+        userid: undefined,
+        userEmail: email,
+        loginType: loginType,
+      },
       secretKey,
       { expiresIn: "5h" }
     );

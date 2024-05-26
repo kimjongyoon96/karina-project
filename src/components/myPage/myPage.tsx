@@ -41,32 +41,35 @@ const MyPage: React.FC<AuthContextType> = ({ jwtToken }) => {
   const { jwtDecodingData, setJwtDecodingData } = useAuthStore(
     (state) => state.jwtGlobal
   );
+  console.log("마이페이지에서의 값", jwtDecodingData);
   console.log(bringCommnets);
   console.log(bringWrites);
   console.log(bringLikes);
   console.table(bringLikes);
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/usersData`,
-          {
-            headers: {
-              Authorization: `${jwtDecodingData?.["token"]}`,
-            },
+      if (jwtDecodingData) {
+        try {
+          const response = await fetch(
+            `${process.env.REACT_APP_API_URL}/api/usersData`,
+            {
+              headers: {
+                Authorization: `${jwtDecodingData?.["token"]}`,
+              },
+            }
+          );
+          if (!response.ok) {
+            throw new Error("에러발생 비상상ㅇ태");
           }
-        );
-        if (!response.ok) {
-          throw new Error("에러발생 비상상ㅇ태");
+          const data = await response.json();
+          console.log(data, "서버에서 준 유저JWT 해독 정보");
+        } catch (error) {
+          console.error(error, "에러가 발생했습니다.");
         }
-        const data = await response.json();
-        console.log(data, "서버에서 준 유저JWT 해독 정보");
-      } catch (error) {
-        console.error(error, "에러가 발생했습니다.");
       }
     };
     fetchData();
-  }, []);
+  }, [jwtDecodingData]);
 
   const navigate = useNavigate();
   //* 내정보 수정 누를시 컴포넌트 이동

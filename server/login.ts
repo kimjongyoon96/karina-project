@@ -34,7 +34,12 @@ router.post("/api/loginCheck", async (req: any, res) => {
     //* 여기까지 왔으면, DB에 정보가 있다고 판단, JWT 발급
     // const useremail = req.session.useremail;
     const token = jwt.sign(
-      { userid: inputId, userEmail: existUser.useremail, loginType: loginType },
+      {
+        userid: inputId,
+        userName: undefined,
+        userEmail: existUser.useremail,
+        loginType: loginType,
+      },
       secretKey,
       {
         expiresIn: "5h",

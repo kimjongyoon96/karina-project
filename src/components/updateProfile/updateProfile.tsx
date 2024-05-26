@@ -54,6 +54,7 @@ const UpdateProfile: React.FC = () => {
         }
       );
       const data = await response.json();
+      console.log(data, "입력해야 하는 값");
       if (!response.ok) {
         return console.error("뭔가 문제가있습니다");
       }
@@ -70,11 +71,15 @@ const UpdateProfile: React.FC = () => {
     setSixnumber(value);
   };
   const handleVerifyNumber = (e) => {
-    e.prventDefault();
-    if (sixNumber === verifySixNumber) {
+    e.preventDefault();
+    const trimmedSixNumber = String(sixNumber).trim();
+    const trimmedVerifySixNumber = String(verifySixNumber).trim();
+    if (trimmedSixNumber === trimmedVerifySixNumber) {
+      setIsBlocked(true);
       navigate("/myInfoUpdate");
+      console.log("숫자가 일치합니다!");
     } else {
-      alert("숫자가 동일하지 않습니다!");
+      console.log("숫자가 일치하지 않습니다!");
     }
   };
   return (
@@ -100,6 +105,7 @@ const UpdateProfile: React.FC = () => {
                 placeholder="이메일로 받은 인증번호를 입력하세요"
                 onChange={handleNumber}
                 disabled={isBlocked}
+                maxLength={6}
               />
               <button type="submit"></button>
             </form>

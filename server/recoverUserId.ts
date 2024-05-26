@@ -6,7 +6,7 @@ dotenv.config({ path: path.resolve(__dirname, "../.env") });
 import eamilsend from "./emailSend";
 import { ormConnection } from "../ORM";
 import { getRepository } from "typeorm";
-import { nonSocialUserInfoData } from "../ORM/entity/nonSocialUserInfoEntity";
+import { userInfoData } from "../ORM/entity/userInfoEntity";
 import { hashPassWord, verifyPassword } from "../src/services/userPwHash";
 import jwt from "jsonwebtoken";
 
@@ -16,7 +16,7 @@ router.post("/api/recoverId", async (req, res) => {
   try {
     console.log(req.body, "클라이언트가 서버로 보낸 회원정보찾기");
     const { inputEmail } = req.body;
-    const userRepository = ormConnection.getRepository(nonSocialUserInfoData);
+    const userRepository = ormConnection.getRepository(userInfoData);
     const existUser = await userRepository.findOne({
       where: {
         useremail: inputEmail,
@@ -29,7 +29,7 @@ router.post("/api/recoverId", async (req, res) => {
         from: `${process.env.GOOGLE_ID}`,
         to: `${inputEmail}`,
         subject: "당신의 아이디를 보내드립니다.",
-        text: `귀하의 아이디는 ${existUser.userid} 입니다.`,
+        text: `귀하의 아이디는 ${existUser.userId} 입니다.`,
       });
       if (emailResult.success) {
         console.log("Notification sent successfully");

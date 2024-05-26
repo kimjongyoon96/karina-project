@@ -12,6 +12,7 @@ import { userPost } from "../ORM/entity/userPostEntity";
 import { userLike } from "../ORM/entity/userLikeEntity";
 import { userInfoData } from "../ORM/entity/userInfoEntity";
 import { userComment } from "../ORM/entity/userCommentsEntity";
+
 const router = express.Router();
 const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
 const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
@@ -47,23 +48,19 @@ router.post(
   ]),
   async (req: any, res) => {
     try {
-      const jwtDecodingDataHeader = req.headers["Who-AM-I"];
-      console.log(jwtDecodingDataHeader);
-      if (jwtDecodingDataHeader) {
-        return res.status(200).json({ message: "잘받음" });
-      }
+      const { userEmail, loginType, identifier } = req.user;
       const userRepository = ormConnection.getRepository(userInfoData); //* 유저정보 가져옴
-      // const user = await userRepository.findOne({
-      //   where: { username: userName, useremail: userEmail },
-      // });
-      // console.log(user, "뭐가나오나보자");
-      // if (!user) {
-      //   console.log(
-      //     `User not found with userId: ${userName} and useremail: ${userEmail}`
-      //   );
-      //   return res.status(404).json({ message: "사용자 찾을수가 없어" });
-      // }
-      // console.log(user, "조회된 사용자 정보");
+      const user = await userRepository.findOne({
+        where:
+          loginType === "nonSocial"
+            ? { userId: identifier, useremail: userEmail }
+            : { username: identifier, useremail: userEmail },
+      });
+      if (!user) {
+        console.log("업로드 하기 위한 유저정보가 존재하지 않습니다.");
+        return res.status(404).json({ message: "사용자 찾을수가 없어" });
+      }
+      console.log(user, "조회된 사용자 정보");
       const UserPost = new userPost();
       UserPost.uuid = req.body.id;
       UserPost.menubar = req.body.menubar;
@@ -72,7 +69,7 @@ router.post(
       UserPost.photos = req.files["photos"].map((photo) => photo.location);
 
       //* 유저와 게시물 연결
-      // UserPost.socialUser = user; //
+      UserPost.socialUser = user; //
       const userPostRepository = ormConnection.getRepository(userPost);
       await userPostRepository.save(UserPost);
       console.log(UserPost, "업로드한것입니다.");

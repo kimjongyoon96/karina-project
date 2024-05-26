@@ -15,19 +15,21 @@ const router = express();
 router.post("/api/addNickName", verifyToken, async (req: any, res) => {
   try {
     const { nickName } = req.body; //* 닉네임 클라이언트 인풋태그
-    const userInfoDataed = req.user;
-    const { userName, userEmail } = userInfoDataed;
-    console.log(userInfoDataed, "유저의 정보가 들어있어야한다.");
-    console.log(nickName, userInfoDataed, "각각 닉네임과 유저이름(JWT)");
+    const { userEmail, identifier, loginType } = req.user;
 
-    if (!nickName || !userName) {
-      return res.status(400).json({ message: "닉네임과 유저이름이 없어요" });
+    if (!nickName || !identifier) {
+      return res
+        .status(400)
+        .json({ message: "닉네임과 유저인포가 존재하지 않습니다." });
     }
     //* 유저인포 데이타를 불러옴니다
     const userentity = await ormConnection.getRepository(userInfoData);
-    //* jwt 페이로드에 추출한 유저이름에 맞는 테이블을 찾습니다.
+
     const User = await userentity.findOne({
-      where: { username: userName, useremail: userEmail },
+      where:
+        loginType === "nonSocial"
+          ? { userId: identifier, useremail: userEmail }
+          : { username: identifier, useremail: userEmail },
     });
     //* 유저가 있다면, 닉네임컬럼에 닉네임을 저장합니다.
     if (User) {
