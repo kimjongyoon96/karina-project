@@ -75,7 +75,7 @@ router.post(
       console.log(UserPost, "업로드한것입니다.");
 
       res.status(200).json({
-        message: "제출햇을때 주는 서버의 은총",
+        message: "정상적으로 게시물이 업로드 되었습니다.",
         data: { UserPost },
       });
     } catch (error) {

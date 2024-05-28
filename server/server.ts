@@ -34,12 +34,12 @@ import profileUpdate from "./myProfileUpdate/myProfileUpdate";
 import userProfileveify from "./myProfileUpdate/myProfilejwtVerify";
 import userInfoDataForMyPage from "./myProfileUpdate/myInfoDataUpdate";
 import myInfoUpdate from "./myProfileUpdate/myInfoUpdate";
-// import { setupWebSocket } from "./socet";
-import { ormConnection } from "../ORM";
-import { userPost } from "../ORM/entity/userPostEntity";
-import { userLike } from "../ORM/entity/userLikeEntity";
-import { userInfoData } from "../ORM/entity/userInfoEntity";
-import { userComment } from "../ORM/entity/userCommentsEntity";
+import jwtExpired from "./jwtTokenExpired";
+import addComment from "./addComments";
+import addLike from "./addLike";
+import viewComments from "./viewComments";
+import viewLikes from "./viewLikes";
+import googleLogin from "./googleLogin";
 
 const app = express();
 //* cors 에러방지 미들웨어
@@ -51,7 +51,6 @@ app.use(
   })
 );
 
-const secretKey = process.env.JWT_SECRET_KEY;
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -71,8 +70,8 @@ app.use(recoverUserId); // 로그인 찾기 로직
 app.use("api//recoverUserPw", recoverUserPw); // 비밀번호 찾기 로직
 app.use("api//certifyNumber", certifyNumber); // 인증번호 검증 로직
 app.use("/api/changePw", changePw); // 비밀번호 변경 로직
-app.use(researchOutput);
-app.use(naverLogin);
+app.use(researchOutput); //* 검색결과 라우터
+app.use(naverLogin); //* 네이버 로그인 라우터
 app.use(myPage); //마이페이지 라우터
 app.use(fileUpload); //* 파일 업로드 라우터
 app.use(cookieParserRouter); //* 쿠키 읽기 라우터
@@ -86,278 +85,17 @@ app.use(userProfileveify); //* 마이페이지 진입시 jwt 토큰해독해서 
 app.use(sessionMiddleware);
 app.use(userInfoDataForMyPage);
 app.use(myInfoUpdate); // Patch 요청 내정보 수정 라우터
-//* 모듈화 후보 1 -> 댓글 추가 로직 => ORM 리팩토링
-app.post("/api/addcomment", verifyToken, async (req: any, res) => {
-  try {
-    //클라이언트로 부터 text,postuuid 받음
-    const { text, postuuid } = req.body;
-    //* jwt에서 유저이름 추출
-    const { identifier, userEmail, loginType } = req.user;
+app.use(jwtExpired); // jwtExpired 검증로직
+app.use(addComment); // 디테일 페이지 글쓰기 라우터
+app.use(addLike); // 좋아요 로직
+app.use(viewComments); // 쓴 댓글 보기
+app.use(viewLikes); // 좋아요 한 숫자 보기 로직
+app.use(googleLogin);
 
-    //* 유저인포 엔티티에 접근
-    const userInfoRepository = ormConnection.getRepository(userInfoData);
-    //* jwt에서 추출한 user 이름과 동일한 엔티티가 존재하는지 찾음
-    const userInfoDetail = await userInfoRepository.findOne({
-      where:
-        loginType === "nonSocial"
-          ? { userId: identifier, useremail: userEmail }
-          : { username: identifier, useremail: userEmail },
-    });
-    if (!userInfoDetail) {
-      return res.status(404).json({ message: "닉네임이 없습니다." });
-    }
-    console.log(userInfoDetail.userNickName, "닉네임");
-
-    const UserComment = new userComment(); // 엔티티 클래스 선언
-    UserComment.text = text;
-    UserComment.postuuid = postuuid;
-    UserComment.username =
-      loginType === "nonSocial"
-        ? userInfoDetail.userId
-        : userInfoDetail.username;
-    UserComment.userNickName = userInfoDetail.userNickName;
-
-    const userPostRepository = ormConnection.getRepository(userComment);
-    await userPostRepository.save(UserComment);
-    const userNickName = userInfoDetail?.["userNickName"];
-    res.status(200).json({
-      message: "댓글 작성이 완료되었습니다.",
-      userNickName: userNickName, //* 닉네임을 클라이언트로 보낸다.
-    });
-  } catch (error) {
-    console.error("댓글 작성 에러가 발생했습니다.:", error);
-    if (!res.headersSent) {
-      res.status(500).send("전송 실패");
-    }
-  }
-});
-
-//* 좋아요 로직
-app.post("/api/like", verifyToken, async (req: any, res) => {
-  try {
-    const { postuuid } = req.body;
-    const { identifier, userEmail, loginType } = req.user;
-
-    console.log(postuuid, "포스트유유아이디");
-    console.log(identifier, "좋아요 할때 아이디 혹은 유저이름값");
-
-    const findUserInfo = ormConnection.getRepository(userInfoData);
-    const userInfoMatch = await findUserInfo.findOne({
-      where:
-        loginType === "nonSocial"
-          ? { userId: identifier, useremail: userEmail }
-          : { username: identifier, useremail: userEmail },
-    });
-    if (!userInfoMatch) {
-      return res
-        .status(404)
-        .json({ message: "좋아요를 위한 유저 정보가 존재하지 않습니다." });
-    }
-
-    const UserLike = new userLike();
-    UserLike.postid = postuuid;
-
-    if (loginType === "nonSocial") {
-      UserLike.userId = identifier; // non소셜 로그인 아이디 문자열
-      console.log("nonSocial 로그인:", UserLike.userId);
-    } else {
-      UserLike.username = identifier; // 소셜 로그인
-      console.log("socialLogin:", UserLike.username);
-    }
-
-    const userPostRepository = ormConnection.getRepository(userLike);
-    await userPostRepository.save(UserLike);
-    res.status(200).json({ message: "추천이 정상적으로 되었습니다." });
-  } catch (error) {
-    console.error("에러가 발생, 좋아요 로직 이상 서버", error);
-    if (!res.headersSent) {
-      res.status(500).send("전송 실패");
-    }
-  }
-});
-//* 모듈화 후보 3 -> 댓글 보기 로직 => ORM 리팩토링
-app.get("/api/viewComments/:postuuid", async (req: any, res) => {
-  try {
-    const { postuuid } = req.params;
-    console.log(postuuid, "파라미터에서 추출한 UUID");
-
-    const comments = await ormConnection.getRepository(userComment).find({
-      where: { postuuid: postuuid },
-      select: ["userNickName", "text"],
-    });
-    res.status(200).json(comments);
-  } catch (error) {
-    console.error("댓글 불러오는데 에러났다", error);
-    res.status(500).json({ message: "댓글을 불러올수 없습니다." });
-  }
-});
-//* 모듈화 후보 4 -> 좋아요 보기 로직 => ORM 리팩터링
-app.get("/api/viewLikes/:postuuid", verifyToken, async (req: any, res) => {
-  try {
-    const { postuuid } = req.params;
-    console.log(postuuid, "좋아요 갯수의 req.params 로직");
-    const { identifier, userEmail, loginType } = req.user;
-
-    //* 전체 좋아요 수
-    const totalLikesCount = await ormConnection
-      .getRepository(userLike)
-      .createQueryBuilder("like")
-      .where("like.postid = :postid", { postid: postuuid })
-      .getCount();
-
-    // 현재 사용자가 좋아요를 눌렀는지 확인합니다.
-    const whereConditon =
-      loginType === "nonSocial"
-        ? { userId: identifier, useremail: userEmail }
-        : { username: identifier, useremail: userEmail };
-    const userLikeCount = await ormConnection
-      .getRepository(userLike)
-      .createQueryBuilder("like")
-      .where("like.postid = :postid AND like.username = :username", {
-        postid: postuuid,
-        username: whereConditon,
-      })
-      .getCount();
-
-    res.json({
-      totalLikes: totalLikesCount,
-      userLiked: userLikeCount, // 좋아요 수가 0보다 크면 현재 사용자가 좋아요를 누른 것으로 간주합니다.
-    });
-  } catch (error) {
-    console.error(" 좋아요 서버 에러 확인 하라", error);
-    return res.status(500).json({ message: "좋아요 에러입니다," });
-  }
-});
-
-// 사용자를 Google 로그인 페이지로 리디렉션하는 경로
-const client_id = process.env.CLIENT_ID;
-const redirect_uri = `${process.env.REACT_APP_API_URL}/auth/google/redirect`;
-const response_type = "code";
-const scope =
-  "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email";
-const access_type = "offline";
-const prompt = "consent";
-if (
-  !client_id ||
-  !redirect_uri ||
-  !response_type ||
-  !scope ||
-  !access_type ||
-  !prompt
-) {
-  throw new Error("google 로그인 parmas 에서 뭔가 잘못되었어.");
-}
-app.get("/auth/google", (req, res) => {
-  const oauth2Endpoint = "https://accounts.google.com/o/oauth2/v2/auth";
-  const params = {
-    client_id,
-    redirect_uri,
-    response_type,
-    scope,
-    access_type,
-    prompt,
-  };
-  const queryString = new URLSearchParams(params).toString();
-  const authUrl = `${oauth2Endpoint}?${queryString}`;
-  res.redirect(authUrl);
-});
-
-// Google로부터 리디렉션된 후 `authorization code`를 받아 처리하는 경로
-app.get("/auth/google/redirect", async (req: any, res) => {
-  const { code } = req.query;
-  console.log(code, "여기가 코드입니다.");
-
-  try {
-    const { access_token, refresh_token } =
-      await exchangeCodeForAccessToken(code);
-    console.log("Access Token:", access_token);
-    console.log("Refresh Token:", refresh_token);
-
-    const userInfo = await getUserInfo(access_token);
-    console.log(userInfo, "유저인포 나와라!");
-
-    const userName = userInfo.names[0].displayName;
-    const userEmail = userInfo.emailAddresses[0].value;
-    const loginType = "GOOGLE";
-    // 여기까지는 동일한 적용(회원유무 상관없이)0
-
-    // 로그인 하는 인간이 DB에 있는지 확인 로직
-    const useregist = await ormConnection.getRepository(userInfoData);
-
-    let user = await useregist.findOne({
-      where: { useremail: userEmail, loginType: loginType },
-    });
-
-    if (!user) {
-      // DB에 사용자가 없으면 새로 추가
-      const User = new userInfoData();
-      User.username = userName;
-      User.useremail = userEmail;
-      User.loginType = loginType;
-      await useregist.save(User);
-
-      // 새로 추가된 사용자 정보를 가져옴
-      user = await useregist.findOne({
-        where: { useremail: userEmail, loginType: loginType },
-      });
-    }
-
-    // JWT 토큰 생성 => 유저이름, 유저이메일, 유저 로그인타입
-    const token = jwt.sign(
-      {
-        userName: userName,
-        userid: undefined,
-        userEmail: userEmail,
-        loginType: loginType,
-      },
-      secretKey,
-      { expiresIn: "5h" }
-    );
-    console.log(token, "내가 발행한 유저의 토큰입니다.");
-    console.log(user?.userNickName, "유저닉네임이 있는가?");
-    if (!user?.userNickName || user.userNickName === "defaultNickName") {
-      res.cookie("token", token, { httpOnly: true, secure: false });
-      return res.redirect(`${process.env.CLIENT_API_URL}/addNickName`); //닉네임 없으면 닉네임 추가 컴포넌트로 리다이렉트
-    }
-    //* 닉네임 있는 경우 바로 토큰 발급
-    res.cookie("token", token, { httpOnly: true, secure: false });
-    return res.redirect(`${process.env.CLIENT_API_URL}`); // 클라이언트 페이지로 리디렉션
-  } catch (error) {
-    console.error("Error handling OAuth callback:", error);
-    res.status(500).send("구글 로그인 문제가 있습니다");
-  }
-});
-app.delete("/deleteMyTable", async (req: any, res) => {
-  const { myName } = req.query;
-  console.log(myName, "쿼리문이 뭐가오는지보자");
-  try {
-    const myData = ormConnection.getRepository(userInfoData);
-
-    const userToDelete = await myData.find({ where: { username: myName } });
-    console.log(userToDelete, "dd");
-    if (userToDelete.length === 0) {
-      return res.status(404).json({ message: "데이터가 없습니다." });
-    }
-    await myData.remove(userToDelete);
-    return res.status(200).json({ messgae: "정상적으로 삭제되었습니다" });
-  } catch (error) {
-    return res.status(500).json({ message: "서버쪽 에러가 발생했습니다." });
-  }
-});
-
-app.delete("/deleteTable", async (req: any, res) => {
-  const { query } = req.query;
-  console.log(query);
-  try {
-    const myCommnet = ormConnection.getRepository(userComment);
-    const userDelete = await myCommnet.findOne({ where: { username: query } });
-    if (userDelete) {
-      await myCommnet.remove(userDelete);
-      return res.status(200).json({ message: "잘햇따." });
-    }
-  } catch (error) {
-    res.status(500).json({ message: "아무것도 삭제할것이 없습니다." });
-  }
+//* 쿠키 http 통신에 의해서 삭제하는 로직
+app.post("/auth/clearCookie", (req, res) => {
+  res.clearCookie("token", { path: "/" });
+  return res.status(200).json({ message: "쿠키가 잘 삭제되었습니다." });
 });
 
 //* 모든 요청에 대한 HTML 반환

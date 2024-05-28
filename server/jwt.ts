@@ -15,8 +15,8 @@ export const verifyToken = (req, res, next) => {
       if (err) {
         console.log(err, "JWT 토큰을 검증하는데 오류가 있습니다.");
         return res
-          .status(403)
-          .json({ message: "JWT 토큰 검증도중 에러가 발생했습니다." });
+          .status(401)
+          .json({ message: "jwt 토큰이 만료되었습니다. 다시 로그인하세요" });
       }
       console.log(decoded, "디코딩 된 데이터입니다.");
 

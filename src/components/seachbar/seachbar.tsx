@@ -6,36 +6,31 @@ import { response } from "express";
 import { Template } from "webpack";
 import useAuthStore from "../../JustAnd/GlobalState";
 import Modal from "../customComponent/signModalComponent/signModalForJwtExpired";
-interface SearchBarProps extends AuthContextType {
-  myArray: karinaData[];
-  matchedItems: karinaData[]; // 선택적 속성으로 추가
-  setMatchedItems: Dispatch<SetStateAction<karinaData[]>>;
-  setMyInputData: (string) => void;
-  myInputData: string;
-}
-const SeachBar: React.FC<SearchBarProps> = ({
-  jwtToken,
-  myArray,
-  matchedItems,
-  setMatchedItems,
-  setMyInputData,
-  myInputData,
-}) => {
+
+const SeachBar: React.FC = () => {
   const [tempInput, setTempInput] = useState(""); // 검색 결과 임시데이터
   const { jwtDecodingData } = useAuthStore((state) => state.jwtGlobal);
-  const [showModal, setShowModal] = useState(false);
+  const { setAllertMessage, showAlertMessage, setConfirmAction, hideAlert } =
+    useAuthStore((state) => state.alertState);
+  const { researchInputData, setReserchInputData } = useAuthStore(
+    (state) => state.researchInputGlobal
+  );
+  console.log(researchInputData, "검색전역상태");
   //* 글쓰기 컴포넌트로 이동 함수
   const navigate = useNavigate();
   const goToSecondMain = (): void => {
-    if (jwtDecodingData) {
+    if (jwtDecodingData !== null) {
       navigate("/write");
     } else {
-      setShowModal(true);
+      setAllertMessage("로그인 하셔야 글쓰기가 가능합니다. 로그인 하시겠어요?");
+      showAlertMessage();
+      setConfirmAction(() => {
+        hideAlert();
+        navigate("/signUp");
+      });
     }
   };
-  const handleCloseModal = () => {
-    setShowModal(false);
-  };
+
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
       handleSearch();
@@ -49,7 +44,7 @@ const SeachBar: React.FC<SearchBarProps> = ({
     setTempInput(e.target.value); // 사용자 입력을 임시 상태에 저장
   };
   const handleSearch = () => {
-    setMyInputData(tempInput); // 검색 버튼 클릭 시 최상위 컴포넌트의 상태 업데이트
+    setReserchInputData(tempInput);
     goToSearchRendering();
   };
   //* 검색결과 렌더링 Usenavigate
@@ -67,12 +62,6 @@ const SeachBar: React.FC<SearchBarProps> = ({
       <button className="writebox" onClick={goToSecondMain}>
         글쓰기
       </button>
-      {showModal && (
-        <Modal
-          message="로그인 하셔야 글쓰기가 가능합니다."
-          onClose={handleCloseModal}
-        />
-      )}
     </div>
   );
 };

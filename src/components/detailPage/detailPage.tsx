@@ -1,37 +1,47 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { karinaData, AuthContextType } from "../../types/contentType";
 import "./detailPage.css";
 import useAuthStore from "../../JustAnd/GlobalState";
+import { useNavigate } from "react-router-dom";
 
-interface DetailProps extends AuthContextType {
-  myArray: karinaData[];
-}
 type Comment = {
   userNickName: string;
   text: string;
 };
-const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
+const DetailComponent: React.FC = () => {
+  const navigate = useNavigate();
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [commentText, setCommentText] = useState("");
+  const [totalLikes, setTotalLikes] = useState(0);
+  const [hasLiked, setHasLiked] = useState(false);
+  const { jwtDecodingData } = useAuthStore((state) => state.jwtGlobal);
+  const { setAllertMessage, showAlertMessage, setConfirmAction, hideAlert } =
+    useAuthStore((state) => state.alertState);
+  console.log("세부페이지의 JWT값:", jwtDecodingData?.["token"]);
+  const { mainContentsData } = useAuthStore(
+    (state) => state.mainContentsGlobal
+  );
   const { uuid } = useParams<{ uuid: string }>();
 
   const itemId = uuid !== undefined ? uuid : null;
-  console.log(itemId);
+  console.log("해당 게시물의 UUID의 값:", itemId); //* 여기까지 MyArray 필요없음
 
   //* itemId가 null이 아니면 배열에서 uuid가 일치하는 것 찾음
-  const post = itemId !== null ? myArray.find((p) => p.uuid === itemId) : null;
+  const post =
+    itemId !== null ? mainContentsData.find((p) => p.uuid === itemId) : null;
   console.table(post);
 
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [commentText, setCommentText] = useState("");
-  const [commentLoading, setCommentLoading] = useState(false);
-  const [recommendation, setRecommendation] = useState(0);
-  const [totalLikes, setTotalLikes] = useState(0);
-  const [hasLiked, setHasLiked] = useState(false);
-  const { jwtDecodingData, setJwtDecodingData } = useAuthStore(
-    (state) => state.jwtGlobal
-  );
+  const handleModal = () => {
+    if (!jwtDecodingData) {
+      setAllertMessage("로그인 하셔야 댓글쓰기 가능합니다. 로그인 하시겠어요?");
+      showAlertMessage();
+      setConfirmAction(() => {
+        hideAlert();
+        navigate("/signUp");
+      });
+    }
+  };
 
-  console.log("세부페이지의 JWT값:", jwtDecodingData?.["token"]);
   //* 댓글 불러오기
   const fetchAllCommentView = async () => {
     // setCommentLoading(true);
@@ -94,6 +104,15 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
   };
   //* 추천 눌렀을때 실행되는 함수
   const handleLike = async () => {
+    if (!jwtDecodingData) {
+      setAllertMessage("로그인 하셔야 좋아요  가능합니다. 로그인 하시겠어요?");
+      showAlertMessage();
+      setConfirmAction(() => {
+        hideAlert();
+        navigate("/signUp");
+      });
+    }
+
     try {
       const response = await fetch(
         `${process.env.REACT_APP_API_URL}/api/like`,
@@ -169,8 +188,13 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
           <input
             type="text"
             value={commentText} // 현재 텍스트값과 상태의 동기화
-            onChange={(e) => setCommentText(e.target.value)} // 이벤트핸들러의.이벤트가 발생한 요소 즉 인풋 . 인풋필드의 현재값
-            placeholder="댓글을 작성 하세요.."
+            onChange={(e) => setCommentText(e.target.value)} // 이벤트핸들러의.이벤트가 발생한 요소 즉 인풋 .
+            placeholder={
+              jwtDecodingData !== null
+                ? "댓글을 작성 하세요."
+                : "로그인 시 댓글작성 가능합니다."
+            }
+            onFocus={handleModal}
           ></input>
           <button type="submit">제출</button>
         </form>

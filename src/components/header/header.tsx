@@ -7,30 +7,62 @@ import useAuthStore from "../../JustAnd/GlobalState";
 import LoadingModalViewComponent from "../customComponent/loadingComponent/loadindComponent";
 const Header: React.FC = () => {
   const Navigate = useNavigate();
-  const { setAllertMessage } = useAuthStore((state) => state.alertState);
-  const { jwtDecodingData, setJwtDecodingData } = useAuthStore(
-    (state) => state.jwtGlobal
-  );
+  const { setAllertMessage, showAlertMessage, setConfirmAction, hideAlert } =
+    useAuthStore((state) => state.alertState);
+  const { jwtDecodingData } = useAuthStore((state) => state.jwtGlobal);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
-  const handlebing = () => {
-    setIsLoading(true);
 
-    setTimeout(() => {
-      setIsLoading(false);
-      setIsLoaded(true);
-    }, 1000); // 2초 후에 로딩을 멈추고 결과를 표시합니다.
+  const fetchData = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/auth/clearCookie`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("로그아웃 시 토큰 없애버리기 실패");
+      }
+      const data = await response.json();
+      if (data.satus === 200) {
+        setAllertMessage("정말 로그아웃 하시겠어요?");
+        showAlertMessage();
+        setConfirmAction(() => {
+          Navigate("/");
+        });
+      }
+      console.log("로그아웃 성공: 쿠키가 삭제되었습니다.");
+    } catch (error) {
+      console.error("로그아웃 비동기 에러:", error);
+    }
+  };
+
+  const gotoPage = () => {
+    if (jwtDecodingData) {
+      Navigate("/myPage");
+    } else {
+      setAllertMessage(
+        "로그인 하셔야 마이페이지 이동이 가능합니다. 로그인 하시겠어요?"
+      );
+      showAlertMessage();
+      setConfirmAction(() => {
+        hideAlert();
+        Navigate("/signUp");
+      });
+    }
   };
   return (
     <header className="header">
-      {isLoading && <LoadingModalViewComponent />}
+      {/* {isLoading && <LoadingModalViewComponent />}
       <button className="mypage-btn" onClick={handlebing}>
         리턴값 확인하기
-      </button>
+      </button> */}
       <button
         className="myPage-btn"
         onClick={() => {
-          Navigate("myPage");
+          gotoPage();
         }}
       >
         마이페이지
@@ -43,7 +75,7 @@ const Header: React.FC = () => {
         src={pageLogo}
         alt="Page Logo"
       />
-      {jwtDecodingData ? (
+      {!jwtDecodingData ? (
         <button
           className="loginButton"
           onClick={() => {
@@ -57,8 +89,7 @@ const Header: React.FC = () => {
         <button
           className="logoutButton"
           onClick={() => {
-            console.log("로그아웃 버튼 눌림");
-            Navigate("SignUp");
+            fetchData;
           }}
         >
           로그아웃

@@ -35,7 +35,7 @@ const useAuthStore = create<AuthStated>((set) => ({
         },
       })),
   },
-  //* 알림 컴포넌트 전역상태
+  //* 알람 모달 전역 상태, 이거 가져다가 쓰자.
   alertState: {
     alertMessage: "",
     showAlert: false,
@@ -47,11 +47,26 @@ const useAuthStore = create<AuthStated>((set) => ({
           showAlert: true,
         },
       })),
+    showAlertMessage: () =>
+      set((state) => ({
+        alertState: {
+          ...state.alertState,
+          showAlert: true,
+        },
+      })),
+
     hideAlert: () =>
       set((state) => ({
         alertState: {
           ...state.alertState,
           showAlert: false,
+        },
+      })),
+    setConfirmAction: (action: () => void) =>
+      set((state) => ({
+        alertState: {
+          ...state.alertState,
+          confirmAction: action,
         },
       })),
   },
@@ -63,6 +78,36 @@ const useAuthStore = create<AuthStated>((set) => ({
         jwtGlobal: {
           ...state.jwtGlobal,
           jwtDecodingData: jwtData,
+        },
+      })),
+  },
+  mainContentsGlobal: {
+    mainContentsData: [],
+    setMainContentsData: (mainData) =>
+      set((state) => ({
+        mainContentsGlobal: {
+          ...state.mainContentsGlobal,
+          mainContentsData: mainData,
+        },
+      })),
+  },
+  mainMountRenderData: {
+    mainMountData: [],
+    setMainMountData: (mountData) =>
+      set((state) => ({
+        mainMountRenderData: {
+          ...state.mainMountRenderData,
+          mainMountData: mountData,
+        },
+      })),
+  },
+  researchInputGlobal: {
+    researchInputData: "",
+    setReserchInputData: (inputData) =>
+      set((state) => ({
+        researchInputGlobal: {
+          ...state.researchInputGlobal,
+          researchInputData: inputData,
         },
       })),
   },

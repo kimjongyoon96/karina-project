@@ -1,16 +1,4 @@
 // //* 쥬스탄드 상태 타입 설정
-// export interface justAndTokenExpired {
-//   a: "forJwtExpired";
-//   jwtExpired: boolean | null;
-//   setJwtExpired: (isExpired: boolean) => void;
-// }
-
-// export interface justAndIscollabo {
-//   b: "forCollabo";
-//   iscollabo: string;
-//   setIsCollabo: (collabo: string) => void;
-// }
-// export interface AuthState extends justAndTokenExpired, justAndIscollabo {}
 
 export interface AuthStated {
   jwtExpired: {
@@ -30,10 +18,27 @@ export interface AuthStated {
     alertMessage: string;
     setAllertMessage: (result: string) => void;
     showAlert: boolean;
+    showAlertMessage: () => void;
     hideAlert: () => void;
+    confirmAction?: () => void;
+    setConfirmAction: (action: () => void) => void;
   };
   jwtGlobal: {
     jwtDecodingData: string | null | object;
     setJwtDecodingData: (jwtData: string | null | object) => void;
+  };
+
+  mainContentsGlobal: {
+    mainContentsData: Array<any>;
+    setMainContentsData: (mainData: Array<any>) => void;
+  };
+
+  researchInputGlobal: {
+    researchInputData: string;
+    setReserchInputData: (inputData) => void;
+  };
+  mainMountRenderData: {
+    mainMountData: Array<any>;
+    setMainMountData: (mountData: Array<any>) => void;
   };
 }

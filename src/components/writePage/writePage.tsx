@@ -8,12 +8,8 @@ import useAuthStore from "../../JustAnd/GlobalState";
 
 // 상위 컴포넌트로부터, MaintentsProps 인터페이스를 통해, prop을 받는다.
 // addToArray라는 함수는, obj라는 인자를 받고, obj는 karinadata이다.
-interface MaintentsProps {
-  addToArray: (obj: karinaData) => void;
-  setCategory: (category: string) => void;
-}
 
-const WritePage: React.FC<MaintentsProps> = ({ addToArray, setCategory }) => {
+const WritePage: React.FC = () => {
   const navigate = useNavigate();
   const myUUID = uuidv4();
   const [title, setTitle] = useState("");
@@ -121,7 +117,7 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray, setCategory }) => {
     });
     console.log(object, "여기가 폼데이터값입니다.");
     // 서버의 엔드포인트 URL
-    const url = `${process.env.REACT_APP_API_URL}/api/upload`;
+    const url = `${process.env.REACT_APP_API_URL}/api/upload?`;
 
     try {
       // fetch API를 사용하여 서버로 POST 요청을 보냄
@@ -138,7 +134,6 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray, setCategory }) => {
       const responseData = await response.json();
       console.log(responseData.data.menubar);
 
-      addToArray(responseData.data);
       navigate("/");
     } catch (error) {
       console.error("Error sending data to the server:", error);
@@ -162,7 +157,6 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray, setCategory }) => {
         onChange={(e) => {
           const newMenubar = e.target.value;
           setMenubar(newMenubar);
-          setCategory(newMenubar); // 추가된 부분
         }}
       >
         <option value="" disabled selected>

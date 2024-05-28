@@ -80,7 +80,7 @@ router.get("/callback", async (req, res) => {
         loginType: loginType,
       },
       secretKey,
-      { expiresIn: "5h" }
+      { expiresIn: "1m" }
     );
     console.log(tokenForJwt, "네이버 로그인시 발행되는 JWT 토큰입니다.");
     res.cookie("token", tokenForJwt, { httpOnly: true, secure: false });

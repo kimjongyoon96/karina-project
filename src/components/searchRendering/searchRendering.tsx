@@ -3,16 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { karinaData } from "../../types/contentType";
 import { match } from "assert";
 import "./searchRenderring.css";
+import useAuthStore from "../../JustAnd/GlobalState";
 
-interface searchProps {
-  matchedItems: karinaData[]; // 상태 올려치기로 얻은 상태값(검색결과)
-  myInputData: string;
-}
-const SearchRendering: React.FC<searchProps> = ({
-  matchedItems,
-  myInputData,
-}) => {
+const SearchRendering: React.FC = () => {
   const navigate = useNavigate();
+  const { researchInputData } = useAuthStore(
+    (state) => state.researchInputGlobal
+  );
+  console.log(researchInputData, "렌더링 결과에서의 검색결과 전역");
   const limit = 8;
   const [items, setItems] = useState<karinaData[]>([]);
   const [page, setPage] = useState(1); // 페이지 번호 상태
@@ -36,7 +34,7 @@ const SearchRendering: React.FC<searchProps> = ({
   const fetchItems = async (page) => {
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/research?search=${myInputData}&page=${page}&limit=${limit}`
+        `${process.env.REACT_APP_API_URL}/api/research?search=${researchInputData}&page=${page}&limit=${limit}`
       );
       if (!response.ok) {
         throw new Error(`Http 에러났다. status ${response.status}`);
