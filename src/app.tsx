@@ -6,7 +6,6 @@ import {
   Routes,
   useLocation,
 } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 import { karinaData, AuthContextType } from "./types/contentType";
 import Header from "./components/header/header"; // Header 컴포넌트 임포트
 import Menubar from "./components/menubar/menubar";
@@ -31,17 +30,10 @@ import Modal from "./components/customComponent/signModalComponent/signModalForJ
 import Alert from "./components/customComponent/signModalComponent/signModalComponent";
 import FetchAndNavigate from "./components/immitationApp";
 const App: React.FC = () => {
-  const [category, setCategory] = useState("");
   const [currentMenubar, setCurrentMenubar] = useState("");
   const [currentPage, setCurrentPage] = useState("");
   console.log(currentPage, "클릭한페이지의값");
   const [myArray, setMyArray] = useState<karinaData[]>([]); //전시바구니
-  const [innocenceArray, setMyInnocenceArray] = useState<karinaData[]>([]); //빨강바구니
-  const [cuteArray, setMyCuteArray] = useState<karinaData[]>([]); // 파란바구니
-  const [sexyArray, setMySexyArray] = useState<karinaData[]>([]);
-  const [dailyArray, setMyDailyArray] = useState<karinaData[]>([]); // 초록바구니
-  const [matchedItems, setMatchedItems] = useState<karinaData[]>([]);
-  const [myInputData, setMyInputData] = useState("");
 
   const { jwtDecodingData } = useAuthStore((state) => state.jwtGlobal); //* authStore JWT전역
   console.log(
@@ -64,31 +56,6 @@ const App: React.FC = () => {
     return null;
   };
 
-  //* 배열추가 함수, write 컴포넌트에서 사용
-  // const addToArray = (obj: karinaData) => {
-  //   switch (category) {
-  //     case "jang":
-  //       if (obj.menubar === category)
-  //         setMyInnocenceArray([...innocenceArray, obj]);
-
-  //       break;
-  //     case "karina":
-  //       if (obj.menubar === category) setMyCuteArray([...cuteArray, obj]);
-  //       console.log("addToArray 테스트:", cuteArray, myArray);
-  //       break;
-  //     case "sulyoon":
-  //       if (obj.menubar === category) setMySexyArray([...sexyArray, obj]);
-
-  //       break;
-  //     case "yoona":
-  //       if (obj.menubar === category) setMyDailyArray([...dailyArray, obj]);
-
-  //       break;
-  //     default:
-  //       console.log("없는 카테고리 입니다.");
-  //   }
-  // };
-
   //* 장원영 메뉴바를 포함한 데이터를 가진 배열을 replaceArray의 매개변수에 할당
   //* replaceArray의 매개변수는 arrayToRest, 이것은 setMyArray의 상태
   //* 즉, 최종적으로 setMyArray에 장원영 데이터가 포함, 이것은 MyArray의 값이 장원영인 상태
@@ -96,27 +63,6 @@ const App: React.FC = () => {
   const replaceArray = (arrayToReset: any[]) => {
     setMyArray(arrayToReset);
   };
-  //* 1. 페이지가 마운트 되었을때 모든 게시물을 가져온다.
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await fetch(
-  //         `${process.env.REACT_APP_API_URL}/api/karina/`
-  //       );
-  //       const data = await response.json();
-  //       console.log("메인페이지 useEffect 발생:", data);
-  //       setMyArray(data); //* myArray
-
-  //       setMyInnocenceArray(data.filter((item) => item.menubar === "jang"));
-  //       setMyCuteArray(data.filter((item) => item.menubar === "karina"));
-  //       setMyDailyArray(data.filter((item) => item.menubar === "sulyoon"));
-  //       setMySexyArray(data.filter((item) => item.menubar === "yoona"));
-  //     } catch (error) {
-  //       console.error("뭔가 잘못되었다", error);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
 
   return (
     <Router>
@@ -124,24 +70,10 @@ const App: React.FC = () => {
         <FetchAndNavigate /> //* 기존 UseEffect 쿠키 로직 모듈화
         <Alert />
         <Header />
-        <Menubar
-        // replaceArray={replaceArray}
-        // setCurrentMenubar={setCurrentMenubar}
-        />
+        <Menubar />
         <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                <MainContens
-                  category={category}
-                  myarray={myArray}
-                  matchedItems={matchedItems}
-                />
-                {/* <AuthManager /> */}
-              </>
-            }
-          />
+          <Route path="/" element={<MainContens />} />
+          <Route path="/menubar/:selectedMenubar" element={<MainContens />} />
           <Route path="/write" element={<WritePage />} />
           <Route path="/searchRender" element={<SerachRender />} />
           <Route path="/detail/:uuid" element={<DetailPage />} />

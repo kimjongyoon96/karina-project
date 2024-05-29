@@ -18,7 +18,7 @@ const MainContents: React.FC<MainContentsProps> = () => {
   const { mainMountData, setMainMountData } = useAuthStore(
     (state) => state.mainMountRenderData
   );
-
+  console.log("콜라보 클릭 눌러졌을때의 값:", collaboClick);
   //* 바로 특정 메뉴바 메인페이지 마운트
   useEffect(() => {
     const fetchData = async () => {
@@ -44,12 +44,12 @@ const MainContents: React.FC<MainContentsProps> = () => {
   const goToSecondMain = (uuid: string): void => {
     navigate(`/detail/${uuid}`);
   };
-
-  const itemsToRneders =
+  //* mainContentsData의 길이가 0이다 즉, 메뉴바를 사용자가 클릭하지 않았다.
+  const itemsToRender =
     isFirst && mainContentsData.length === 0 ? mainMountData : mainContentsData;
   // const itemsToRender =
   //   mainContentsData.length < data.length ? mainContentsData : data;
-  console.log(itemsToRneders, "myarray가 data보다 작은경우 Myarray");
+  console.log(itemsToRender, "myarray가 data보다 작은경우 Myarray");
   const miniComponentRender = () => {
     if (collaboClick === "collabo" && !collaboResult) {
       return <CompatiWithJangKaSuYoo />;
@@ -59,23 +59,26 @@ const MainContents: React.FC<MainContentsProps> = () => {
     }
     return null;
   };
+
   return (
     <main className="mainContents">
-      {collaboClick !== "collabo" &&
-        itemsToRneders.length > 0 &&
-        itemsToRneders.slice(0, 16).map((item) => (
-          <li
-            key={item.uuid}
-            className="content"
-            onClick={() => goToSecondMain(item.uuid)}
-          >
-            <img className="mainThumbNail" src={item.photosumnail} />
-            <h1>{item.title}</h1>
-          </li>
-        ))}
-      {miniComponentRender()}
+      {collaboClick !== "collabo"
+        ? itemsToRender.length > 0 &&
+          itemsToRender.slice(0, 16).map((item) => (
+            <li
+              key={item.uuid}
+              className="content"
+              onClick={() => goToSecondMain(item.uuid)}
+            >
+              <img className="mainThumbNail" src={item.photosumnail} />
+              <h1>제목: {item.title}</h1>
+              <h2>글쓴이: {item.userNickName}</h2>
+            </li>
+          ))
+        : miniComponentRender()}
     </main>
   );
 };
-
+//* collaboCick이 콜라보가 아닐때는 ture => 메뉴바 클릭이벤트, 눌러졌다면 minicomponents 렌더링
+//
 export default MainContents;

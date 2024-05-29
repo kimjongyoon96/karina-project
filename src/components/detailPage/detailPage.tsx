@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import "./detailPage.css";
 import useAuthStore from "../../JustAnd/GlobalState";
 import { useNavigate } from "react-router-dom";
+import { it } from "node:test";
 
 type Comment = {
   userNickName: string;
@@ -17,20 +18,26 @@ const DetailComponent: React.FC = () => {
   const { jwtDecodingData } = useAuthStore((state) => state.jwtGlobal);
   const { setAllertMessage, showAlertMessage, setConfirmAction, hideAlert } =
     useAuthStore((state) => state.alertState);
-  console.log("세부페이지의 JWT값:", jwtDecodingData?.["token"]);
   const { mainContentsData } = useAuthStore(
     (state) => state.mainContentsGlobal
   );
+  const { mainMountData } = useAuthStore((state) => state.mainMountRenderData);
   const { uuid } = useParams<{ uuid: string }>();
 
   const itemId = uuid !== undefined ? uuid : null;
   console.log("해당 게시물의 UUID의 값:", itemId); //* 여기까지 MyArray 필요없음
 
   //* itemId가 null이 아니면 배열에서 uuid가 일치하는 것 찾음
+  // const post =
+  //   itemId !== null ? mainContentsData.find((p) => p.uuid === itemId) : null;
+  // console.table(post);
   const post =
-    itemId !== null ? mainContentsData.find((p) => p.uuid === itemId) : null;
-  console.table(post);
-
+    itemId !== null
+      ? (mainContentsData
+          ? mainContentsData.find((p) => p.uuid === itemId)
+          : null) ||
+        (mainMountData ? mainMountData.find((p) => p.uuid === itemId) : null)
+      : null;
   const handleModal = () => {
     if (!jwtDecodingData) {
       setAllertMessage("로그인 하셔야 댓글쓰기 가능합니다. 로그인 하시겠어요?");
@@ -134,7 +141,7 @@ const DetailComponent: React.FC = () => {
       console.error("추천 에러가 발생했따리", "error");
     }
   };
-  //* 추천 가져오는 함수
+  //* 내가 좋아요를 했는지 알려주는 함수(로그인을 해야 작동)
   const fetchBringdLikes = async () => {
     try {
       const response = await fetch(
@@ -148,7 +155,7 @@ const DetailComponent: React.FC = () => {
       );
       if (response.ok) {
         const data = await response.json();
-        setTotalLikes(data.totalLikes);
+
         setHasLiked(data.userLiked > 0);
       } else {
         throw new Error("문제가있다.");
@@ -157,10 +164,26 @@ const DetailComponent: React.FC = () => {
       console.log("좋아요 불러오기 실패");
     }
   };
+  //* 좋아요 개수를 가져오는 함수
+  const viewTotalLikes = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/totalViewLikes/${itemId}`
+      );
+      if (!response.ok) {
+        console.log("좋아요를 가져오는데에 에러가 발생했습니다.");
+      }
+      const data = await response.json();
+      setTotalLikes(data.totalLikes);
+    } catch (error) {
+      throw new Error("좋아요를 몇개 했는지 불러오는데 실패했습니다.");
+    }
+  };
   //* detail 페이지 진입시 실행
   useEffect(() => {
     fetchAllCommentView(); // 댓글 불러오기
-    fetchBringdLikes(); // 좋아요 가져오기
+    fetchBringdLikes(); //내가 좋아요 했는지 확인
+    viewTotalLikes();
   }, []);
 
   return (

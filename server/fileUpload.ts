@@ -67,7 +67,7 @@ router.post(
       UserPost.title = req.body.title;
       UserPost.photosumnail = req.files["photoSumnail"][0].location;
       UserPost.photos = req.files["photos"].map((photo) => photo.location);
-
+      UserPost.userNickName = user.userNickName;
       //* 유저와 게시물 연결
       UserPost.socialUser = user; //
       const userPostRepository = ormConnection.getRepository(userPost);

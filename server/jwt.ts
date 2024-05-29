@@ -2,9 +2,9 @@ import jwt from "jsonwebtoken";
 const secretKey = process.env.JWT_SECRET_KEY;
 
 export const verifyToken = (req, res, next) => {
-  console.log(" 클라이언트의 headers", req.headers);
+  // console.log(" 클라이언트의 headers", req.headers);
   const token = req.headers["authorization"];
-  console.log("verifyToken에서 token의 값:", token);
+  // console.log("verifyToken에서 token의 값:", token);
   if (!token) {
     console.log("토큰검증 함수에서 토큰이 없습니다.");
     return res

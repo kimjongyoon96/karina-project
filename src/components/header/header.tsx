@@ -26,13 +26,14 @@ const Header: React.FC = () => {
         throw new Error("로그아웃 시 토큰 없애버리기 실패");
       }
       const data = await response.json();
-      if (data.satus === 200) {
-        setAllertMessage("정말 로그아웃 하시겠어요?");
-        showAlertMessage();
-        setConfirmAction(() => {
-          Navigate("/");
-        });
-      }
+      console.log("로그아웃 눌렀을때 data:", data.status);
+      // if (data.message === "쿠키가 잘 삭제되었습니다.") {
+      //   setAllertMessage("정말 로그아웃 하시겠어요?");
+      //   showAlertMessage();
+      //   setConfirmAction(() => {
+      //     Navigate("/");
+      //   });
+      // }
       console.log("로그아웃 성공: 쿠키가 삭제되었습니다.");
     } catch (error) {
       console.error("로그아웃 비동기 에러:", error);
@@ -89,7 +90,13 @@ const Header: React.FC = () => {
         <button
           className="logoutButton"
           onClick={() => {
-            fetchData;
+            setAllertMessage("정말 로그아웃 하시겠어요?");
+            showAlertMessage();
+            setConfirmAction(() => {
+              fetchData();
+              hideAlert();
+              Navigate("/signUp");
+            });
           }}
         >
           로그아웃

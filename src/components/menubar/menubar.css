@@ -8,7 +8,7 @@
 }
 
 .menubar-container > ul {
-  background-color: #0fbbaf; /* 배경색 */
+  background-color: #42d538; /* 배경색 */
   padding: 10px; /* 패딩 */
   text-align: center; /* 텍스트 가운데 정렬 */
   border: 1px solid #ddd; /* 테두리 */
@@ -29,4 +29,24 @@
 
 .button:hover {
   background-color: gray; /* 마우스 오버 시 배경색 변경 */
+}
+.sparkle {
+  position: relative;
+  overflow: hidden;
+}
+
+.sparkle::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: gold;
+  transform: skewX(-25deg);
+  transition: left 0.5s ease-in-out;
+}
+
+.sparkle:hover::before {
+  left: 125%;
 }

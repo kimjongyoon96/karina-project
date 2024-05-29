@@ -33,7 +33,6 @@ router.get("/api/viewLikes/:postuuid", verifyToken, async (req: any, res) => {
       .getCount();
 
     res.json({
-      totalLikes: totalLikesCount,
       userLiked: userLikeCount, // 좋아요 수가 0보다 크면 현재 사용자가 좋아요를 누른 것으로 간주합니다.
     });
   } catch (error) {

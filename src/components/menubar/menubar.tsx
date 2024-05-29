@@ -16,15 +16,6 @@ const Menubar: React.FC = () => {
   );
 
   console.log(mainContentsData, "메뉴바 클릭할때마다 바뀌어야 하는 전역변수");
-  // const handleMenubar = (menubar) => {
-  //   setCurrentMenubar(menubar);
-
-  //   fetch(`${process.env.REACT_APP_API_URL}/api/karina?menubar=${menubar}`)
-  //     .then((response) => response.json())
-  //     .then((data) => replaceArray(data))
-  //     .catch((error) => console.error("Error fetching data:", error))
-  //     .finally(() => console.log(`${menubar}가 눌러졌군..`));
-  // };
 
   const handleMenubar = (menubar) => {
     const fetchData = async () => {
@@ -50,7 +41,9 @@ const Menubar: React.FC = () => {
       <ul onClick={() => handleMenubar("jang")}>장원영</ul>
 
       <ul onClick={() => handleMenubar("karina")}>카리나</ul>
-      <ul onClick={() => handleCollabo("collabo")}>나와장카설유</ul>
+      <ul className="sparkle" onClick={() => handleCollabo("collabo")}>
+        나와장카설유
+      </ul>
       <ul onClick={() => handleMenubar("sulyoon")}>설윤</ul>
       <ul onClick={() => handleMenubar("yoona")}>유나</ul>
     </nav>
