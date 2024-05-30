@@ -9,6 +9,7 @@ import { getRepository } from "typeorm";
 import { nonSocialUserInfoData } from "../ORM/entity/nonSocialUserInfoEntity";
 import { userInfoData } from "../ORM/entity/userInfoEntity";
 import jwt from "jsonwebtoken";
+import { userLike } from "../ORM/entity/userLikeEntity";
 
 const router = express();
 
@@ -35,9 +36,18 @@ router.get("/api/karina", async (req: any, res) => {
       take,
       skip,
     });
+    // const posts = await userPostRepository
+    //   .createQueryBuilder("post")
+    //   .leftJoinAndSelect("post.socialUser", "socialUser")
+    //   .leftJoinAndSelect("post.comments", "comments")
+    //   .loadRelationCountAndMap("post.likeCount", "post.like")
+    //   .where(whereConditions)
+    //   .take(take)
+    //   .skip(skip)
+    //   .getMany();
 
-    res.status(200).json(posts);
-    // console.log(posts, "페이지네이션 결과값");
+    console.log("쿼리빌더 적용 데이터", posts);
+    return res.status(200).json(posts);
   } catch (err) {
     console.error(err);
     res.status(500).send("게시물을 가져오는데 실패했습니다.");

@@ -30,10 +30,8 @@ import Modal from "./components/customComponent/signModalComponent/signModalForJ
 import Alert from "./components/customComponent/signModalComponent/signModalComponent";
 import FetchAndNavigate from "./components/immitationApp";
 const App: React.FC = () => {
-  const [currentMenubar, setCurrentMenubar] = useState("");
   const [currentPage, setCurrentPage] = useState("");
   console.log(currentPage, "클릭한페이지의값");
-  const [myArray, setMyArray] = useState<karinaData[]>([]); //전시바구니
 
   const { jwtDecodingData } = useAuthStore((state) => state.jwtGlobal); //* authStore JWT전역
   console.log(
@@ -48,21 +46,38 @@ const App: React.FC = () => {
     if (
       location.pathname !== "/write" &&
       !location.pathname.startsWith("/detail") &&
-      !location.pathname.startsWith("/SignUp")
+      !location.pathname.startsWith("/SignUp") &&
+      !location.pathname.startsWith("/nonSocialLogin")
     ) {
       return <SeachBar />;
     }
 
     return null;
   };
+  // const ShowMenubar = () => {
+  //   const location = useLocation();
+  //   if (!location.pathname.startsWith("/nonSocialLogin")) {
+  //     return <Menubar />;
+  //   }
+  // };
 
+  const ShowPagiNation = () => {
+    const location = useLocation();
+    if (
+      !location.pathname.startsWith("/nonSocialLogin") &&
+      !location.pathname.startsWith("/detail") &&
+      !location.pathname.startsWith("/SignUp")
+    ) {
+      return <Number />;
+    }
+  };
   //* 장원영 메뉴바를 포함한 데이터를 가진 배열을 replaceArray의 매개변수에 할당
   //* replaceArray의 매개변수는 arrayToRest, 이것은 setMyArray의 상태
   //* 즉, 최종적으로 setMyArray에 장원영 데이터가 포함, 이것은 MyArray의 값이 장원영인 상태
   //* 최종적으로 myArray의 상태를 공유하는 메인컴포넌트에서 이값을 통해서 렌더링 한다.
-  const replaceArray = (arrayToReset: any[]) => {
-    setMyArray(arrayToReset);
-  };
+  // const replaceArray = (arrayToReset: any[]) => {
+  //   setMyArray(arrayToReset);
+  // };
 
   return (
     <Router>
@@ -73,7 +88,8 @@ const App: React.FC = () => {
         <Menubar />
         <Routes>
           <Route path="/" element={<MainContens />} />
-          <Route path="/menubar/:selectedMenubar" element={<MainContens />} />
+          <Route path="/menubar/:menubar" element={<MainContens />} />
+          <Route path="collabo/:collabo" element={<MainContens />} />
           <Route path="/write" element={<WritePage />} />
           <Route path="/searchRender" element={<SerachRender />} />
           <Route path="/detail/:uuid" element={<DetailPage />} />
@@ -88,12 +104,7 @@ const App: React.FC = () => {
           <Route path="myInfoUpdate" element={<MyInfoUpdate />} />
         </Routes>
         <ShowSeachbar />
-        <Number
-          replaceArray={replaceArray}
-          setCurrentPage={setCurrentPage}
-          currentMenubar={currentMenubar}
-          currentPage={currentPage}
-        />
+        <ShowPagiNation />
       </div>
     </Router>
   );

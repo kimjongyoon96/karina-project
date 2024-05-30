@@ -41,4 +41,9 @@ export interface AuthStated {
     mainMountData: Array<any>;
     setMainMountData: (mountData: Array<any>) => void;
   };
+
+  pagiNationMenubar: {
+    numberData: number | string | null | undefined;
+    setNumberData: (number: number | string | undefined) => void;
+  };
 }

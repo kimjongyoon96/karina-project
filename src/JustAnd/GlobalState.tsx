@@ -70,7 +70,7 @@ const useAuthStore = create<AuthStated>((set) => ({
         },
       })),
   },
-
+  //* jwt 전역 상태
   jwtGlobal: {
     jwtDecodingData: null,
     setJwtDecodingData: (jwtData) =>
@@ -81,6 +81,7 @@ const useAuthStore = create<AuthStated>((set) => ({
         },
       })),
   },
+  //* 메뉴바에 종속되는 렌더링 데이터 상태
   mainContentsGlobal: {
     mainContentsData: [],
     setMainContentsData: (mainData) =>
@@ -91,6 +92,7 @@ const useAuthStore = create<AuthStated>((set) => ({
         },
       })),
   },
+  //* 초기 메인 컨텐츠 렌더링 상태
   mainMountRenderData: {
     mainMountData: [],
     setMainMountData: (mountData) =>
@@ -101,6 +103,7 @@ const useAuthStore = create<AuthStated>((set) => ({
         },
       })),
   },
+  //* 검색 인풋값 전역 상태
   researchInputGlobal: {
     researchInputData: "",
     setReserchInputData: (inputData) =>
@@ -108,6 +111,16 @@ const useAuthStore = create<AuthStated>((set) => ({
         researchInputGlobal: {
           ...state.researchInputGlobal,
           researchInputData: inputData,
+        },
+      })),
+  },
+  pagiNationMenubar: {
+    numberData: null,
+    setNumberData: (number) =>
+      set((state) => ({
+        pagiNationMenubar: {
+          ...state.pagiNationMenubar,
+          numberData: number,
         },
       })),
   },

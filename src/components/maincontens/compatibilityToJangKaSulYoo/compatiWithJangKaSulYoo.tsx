@@ -26,6 +26,8 @@ const CompatiWithJangKaSuYoo: React.FC = () => {
   const [userSelected, setUserSelected] = useState<string>("");
   const [saveData, setSaveData] = useState<typeModule | null>(null);
   const [bringImage, setBringImage] = useState("");
+  const [isInputSaved, setIsInputSaved] = useState(false);
+
   console.log(saveData, "모든 최종적인 값들입니다.");
   const { collaboResult, setCollaboResult } = useAuthStore(
     (state) => state.collaboResultData
@@ -38,6 +40,7 @@ const CompatiWithJangKaSuYoo: React.FC = () => {
 
   const handleInputSave = () => {
     setFinalName(inputName);
+    setIsInputSaved(true);
   };
   const handleImage = (newMenubar) => {
     setBringImage(newMenubar);
@@ -99,84 +102,85 @@ const CompatiWithJangKaSuYoo: React.FC = () => {
   return (
     <main className="compatibility-box">
       <h1>장카설유 궁합보기!</h1>
-
-      <section className="left-input-user-section">
-        <h2>이름을 입력하세요</h2>
-        <input
-          type="text"
-          className="user-name-input"
-          placeholder="이름을 입력하세요"
-          value={inputName}
-          onChange={handleInputChange}
-        ></input>
-        <button onClick={handleInputSave}>입력!</button>
-        <select
-          className="sex-select"
-          value={sex}
-          onChange={(e) => {
-            const selectSex = e.target.value;
-            setSex(selectSex);
-          }}
-        >
-          <option value="" disabled selected>
-            성별을 선택하세요
-          </option>
-          <option value="male">남성</option>
-          <option value="female">여성</option>
-        </select>
-        <select
-          className="menubar-select"
-          value={menubar}
-          onChange={(e) => {
-            const newMenubar = e.target.value;
-            setMenubar(newMenubar);
-          }}
-        >
-          <option value="" disabled selected>
-            당신의 띠를 고르세요!
-          </option>
-          <option value="mouse">쥐띠</option>
-          <option value="cow">소띠</option>
-          <option value="tiger">호랑이띠</option>
-          <option value="rabbit">토끼띠</option>
-          <option value="mouse">쥐띠</option>
-          <option value="dragon">용띠</option>
-          <option value="snake">뱀띠</option>
-          <option value="horse">말띠</option>
-          <option value="sheep">양띠</option>
-          <option value="monkey">원숭이띠</option>
-          <option value="chicken">닭띠</option>
-          <option value="dog">개띠</option>
-          <option value="pig">돼지띠</option>
-        </select>
-      </section>
-      <section className="right-select-jakasulyoo">
-        <h2>대상을 선택하세요</h2>
-        <select
-          className="menubar-select-right"
-          value={userSelected}
-          onChange={(e) => {
-            const newMenubar = e.target.value;
-            setUserSelected(newMenubar);
-            handleImage(newMenubar);
-          }}
-        >
-          <option value="" disabled selected>
-            누구와 궁합을 보시겠어요?
-          </option>
-          <option value="jang">장원영</option>
-          <option value="karina">카리나</option>
-          <option value="sul">설윤</option>
-          <option value="yuna">유나</option>
-        </select>
-      </section>
+      <div className="sections-container">
+        <div className="input-section-wrapper">
+          <section className="input-user-section">
+            <h2>이름을 입력하세요</h2>
+            <input
+              type="text"
+              className="user-name-input"
+              placeholder="이름을 입력하세요"
+              value={inputName}
+              onChange={handleInputChange}
+            />
+            <button onClick={handleInputSave} disabled={isInputSaved}>
+              입력
+            </button>
+            <select
+              className="sex-select"
+              value={sex}
+              onChange={(e) => {
+                const selectSex = e.target.value;
+                setSex(selectSex);
+              }}
+            >
+              <option value="" disabled selected>
+                성별을 선택하세요
+              </option>
+              <option value="male">남성</option>
+              <option value="female">여성</option>
+            </select>
+            <select
+              className="menubar-select"
+              value={menubar}
+              onChange={(e) => {
+                const newMenubar = e.target.value;
+                setMenubar(newMenubar);
+              }}
+            >
+              <option value="" disabled selected>
+                당신의 띠를 고르세요!
+              </option>
+              <option value="mouse">쥐띠</option>
+              <option value="cow">소띠</option>
+              <option value="tiger">호랑이띠</option>
+              <option value="rabbit">토끼띠</option>
+              <option value="dragon">용띠</option>
+              <option value="snake">뱀띠</option>
+              <option value="horse">말띠</option>
+              <option value="sheep">양띠</option>
+              <option value="monkey">원숭이띠</option>
+              <option value="chicken">닭띠</option>
+              <option value="dog">개띠</option>
+              <option value="pig">돼지띠</option>
+            </select>
+          </section>
+          <section className="select-target-section">
+            <h2>대상을 선택하세요</h2>
+            <select
+              className="menubar-select-right"
+              value={userSelected}
+              onChange={(e) => {
+                const newMenubar = e.target.value;
+                setUserSelected(newMenubar);
+                handleImage(newMenubar);
+              }}
+            >
+              <option value="" disabled selected>
+                누구와 궁합을 보시겠어요?
+              </option>
+              <option value="jang">장원영</option>
+              <option value="karina">카리나</option>
+              <option value="sul">설윤</option>
+              <option value="yuna">유나</option>
+            </select>
+          </section>
+        </div>
+        <section className="right-gif-box">{renderImage()}</section>
+      </div>
       <button className="submit-button" onClick={fetchForCollabo}>
         궁합보기
       </button>
-      <section className="right-gif-box">
-        {/* {bringImage === "jang"} */}
-        {renderImage()}
-      </section>
     </main>
   );
 };

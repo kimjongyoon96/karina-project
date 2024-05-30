@@ -7,6 +7,7 @@ const RecoverUserInfo: React.FC = () => {
   const [userId, setUserId] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [userEmailForPw, setUserEmailForPw] = useState("");
+  const [nonExgistId, setNonExgistId] = useState(false);
   const navigate = useNavigate();
 
   const handleUserFindId = async (e) => {
@@ -26,6 +27,7 @@ const RecoverUserInfo: React.FC = () => {
           }),
         }
       );
+
       const data = await response.json();
       console.log(data, "서버에서 보낸 값");
     } catch (error) {
@@ -50,6 +52,9 @@ const RecoverUserInfo: React.FC = () => {
           }),
         }
       );
+      if (!response.ok) {
+        setNonExgistId(true);
+      }
       const data = await response.json();
       console.log(data, "비밀번호 받은 내용");
       if ((data.sucess = true)) {
@@ -89,6 +94,11 @@ const RecoverUserInfo: React.FC = () => {
                 onChange={(e) => setUserId(e.target.value)}
                 placeholder="아이디를 입력하세요"
               />
+              {nonExgistId && (
+                <p className="error-message">
+                  가입한 아이디가 존재하지 않습니다.
+                </p>
+              )}
               <input
                 type="email"
                 value={userEmailForPw}

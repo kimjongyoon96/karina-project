@@ -57,9 +57,9 @@ const SeachBar: React.FC = () => {
         onChange={handleChange} // 입력 시 handleChange 함수 호출
         onKeyPress={handleKeyPress}
       ></input>
-      <button className="button-search" onClick={handleSearch}></button>
+      <button className="search-button" onClick={handleSearch}></button>
 
-      <button className="writebox" onClick={goToSecondMain}>
+      <button className="write-button" onClick={goToSecondMain}>
         글쓰기
       </button>
     </div>

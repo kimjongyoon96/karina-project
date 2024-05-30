@@ -129,7 +129,8 @@ const NonSocialLogin: React.FC = () => {
 
   return (
     <div className="non-social-login-box">
-      <form onSubmit={handleSubmit}>
+      <h1>장카설유 회원가입 하기</h1>
+      <form onSubmit={handleSubmit} className="non-social-form-box">
         <div className="input-group">
           <input
             type="text"

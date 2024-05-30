@@ -1,0 +1,16 @@
+.render-comatibility-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.render-comatibility-box h1 {
+  align-self: center;
+}
+
+.render-comatibility-box h2 {
+  align-self: flex-start;
+}
+
+.render-comatibility-box div {
+  align-self: flex-end;
+}

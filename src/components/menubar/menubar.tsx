@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./menubar.css";
 import useAuthStore from "../../JustAnd/GlobalState";
+import { useNavigate } from "react-router-dom";
 
 //* 클릭이벤트가 발생하면, handleMenubar 함수가 실행되고, 매개변수로 전달된 문자열이  setCurrentMenubar의 상태로 저장된다 즉, click "jang" => currentMenubar==="jang"
 //* 매개변수로 받은 문자열로 해당 쿼리문을 포함한 요청을 서버로 보낸다 즉 "장원영 메뉴바에 해당하는 데이터를 가져온다."
@@ -15,26 +16,29 @@ const Menubar: React.FC = () => {
     (state) => state.mainContentsGlobal
   );
 
-  console.log(mainContentsData, "메뉴바 클릭할때마다 바뀌어야 하는 전역변수");
-
+  const navigate = useNavigate();
   const handleMenubar = (menubar) => {
-    const fetchData = async () => {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/karina?menubar=${menubar}&page=1&limit=10`
-      );
-      if (!response.ok) {
-        throw new Error("에러가 발생했습니다.");
-      }
-      const data = await response.json();
-      console.log(data);
-      setMainContentsData(data);
-      //* 여기에 상태변경 함수를 넣어서 전역으로 관리하자.
-    };
-    fetchData();
+    navigate(`/menubar/${menubar}`);
+    //   const fetchData = async () => {
+    //     const response = await fetch(
+    //       `${process.env.REACT_APP_API_URL}/api/karina?menubar=${menubar}&page=1&limit=10`
+    //     );
+    //     if (!response.ok) {
+    //       throw new Error("에러가 발생했습니다.");
+    //     }
+    //     const data = await response.json();
+    //     console.log(data);
+    //     setMainContentsData(data);
+    //     //* 여기에 상태변경 함수를 넣어서 전역으로 관리하자.
+    //   };
+    //   fetchData();
+    // };
+    // const handleCollabo = (collabo: string) => {
+    //   setCollaboClick(collabo);
+    //   console.log(collabo, "콜라보레이션");
   };
-  const handleCollabo = (collabo: string) => {
-    setCollaboClick(collabo);
-    console.log(collabo, "콜라보레이션");
+  const handleCollabo = (collabo) => {
+    navigate(`/collabo/${collabo}`);
   };
   return (
     <nav className="menubar-container">

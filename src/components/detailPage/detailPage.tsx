@@ -190,14 +190,25 @@ const DetailComponent: React.FC = () => {
     <div className="detailPage">
       {post ? (
         <div className="detailPageContents">
-          <h1>{post.title}</h1>
-          {post.photos.map((photo, index) => (
-            <img key={index} src={photo} alt={`Photo ${index}`} />
-          ))}
+          <div className="detailPage-headLine">
+            <h1>제목:{post.title}</h1>
+            <h2>작성자:{post.userNickName}</h2>
+          </div>
+          <div className="detailPage-renderImage">
+            {post.photos.map((photo, index) => (
+              <img key={index} src={photo} alt={`Photo ${index}`} />
+            ))}
+          </div>
         </div>
       ) : (
         <p>게시물을 찾을 수 없습니다.</p>
       )}
+      <div className="recommendationBox">
+        <h3>추천수: {totalLikes}</h3>
+        <button onClick={handleLike} disabled={hasLiked}>
+          {hasLiked ? "좋아요됌" : "좋아요"}
+        </button>
+      </div>
       <div className="commentBox">
         <ul>
           {comments.map((comment, index) => (
@@ -214,19 +225,13 @@ const DetailComponent: React.FC = () => {
             onChange={(e) => setCommentText(e.target.value)} // 이벤트핸들러의.이벤트가 발생한 요소 즉 인풋 .
             placeholder={
               jwtDecodingData !== null
-                ? "댓글을 작성 하세요."
+                ? "댓글을 작성 하실수 있습니다."
                 : "로그인 시 댓글작성 가능합니다."
             }
             onFocus={handleModal}
           ></input>
           <button type="submit">제출</button>
         </form>
-      </div>
-      <div className="recommendationBox">
-        <h3>추천수: {totalLikes}</h3>
-        <button onClick={handleLike} disabled={hasLiked}>
-          {hasLiked ? "좋아요됌" : "좋아요"}
-        </button>
       </div>
     </div>
   );

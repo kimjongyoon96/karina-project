@@ -4,8 +4,7 @@ import "./signUp.css";
 import { AuthContextType } from "../../types/contentType";
 import { useNavigate } from "react-router-dom";
 import { encrypt, decrypt } from "../../services/cryptoForState";
-import navertag from "../../assets/photo/naver.png";
-
+import googleBtn from "../../assets/photo/web_neutral_sq_ctn@1x.png";
 const SignUp: React.FC = () => {
   const navigate = useNavigate();
 
@@ -32,6 +31,9 @@ const SignUp: React.FC = () => {
       redirectURI
     )}&state=${rawState}`;
     window.location.href = naverLoginUrl;
+  };
+  const handleFindId = () => {
+    navigate("/recoverUser");
   };
   const [userInputId, setUserInputId] = useState<string>("");
   const [userInputPw, setUserInputPw] = useState("");
@@ -69,44 +71,60 @@ const SignUp: React.FC = () => {
   return (
     <div className="signup-container">
       <div className="login-box">
-        <h1 className="loginTitle">Karina Gallery</h1>
+        <h1 className="loginTitle">장카설유</h1>
         <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            value={userInputId}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setUserInputId(e.target.value)
-            }
-            placeholder="아이디를 입력하세요"
-          ></input>
-          <input
-            type="password"
-            value={userInputPw}
-            onChange={(e) => setUserInputPw(e.target.value)}
-            placeholder="비밀번호를 입력하세요"
-          ></input>
+          <div className="input-group">
+            <label htmlFor="userId">ID</label>
+            <input
+              id="userId"
+              type="text"
+              value={userInputId}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setUserInputId(e.target.value)
+              }
+              placeholder="아이디를 입력하세요"
+            />
+          </div>
+          <div className="input-group">
+            <label htmlFor="userPw">PW</label>
+            <input
+              id="userPw"
+              type="password"
+              value={userInputPw}
+              onChange={(e) => setUserInputPw(e.target.value)}
+              placeholder="비밀번호를 입력하세요"
+            />
+          </div>
           <button type="submit" className="submit-btn">
             로그인하기
           </button>
         </form>
-        <button className="google-login-btn" onClick={handleGoogleLogin}>
-          구글로 로그인하기
-        </button>
-        <button className="naver-login-btn" onClick={handleNaverLogin}>
-          <img
-            height="50"
-            src="http://static.nid.naver.com/oauth/small_g_in.PNG"
-          />
-        </button>
-        <button className="nomal-login-btn" onClick={jangkasulyoo}>
-          장카설유 회원가입 하기
-        </button>
-        <div className="recovery-options">
-          <button className="find-id-btn" onClick={handleGoogleLogin}>
-            ID 찾기
+        <div className="login-buttons-container">
+          <button
+            className="google-login-btn"
+            onClick={handleGoogleLogin}
+            aria-label="Google 로그인"
+          >
+            <img height="50" src={googleBtn} alt="Google 로그인 버튼" />
           </button>
-          <button className="find-pw-btn" onClick={handleGoogleLogin}>
-            PW 찾기
+          <button
+            className="naver-login-btn"
+            onClick={handleNaverLogin}
+            aria-label="Naver 로그인"
+          >
+            <img
+              height="50"
+              src="http://static.nid.naver.com/oauth/small_g_in.PNG"
+              alt="Naver 로그인 버튼"
+            />
+          </button>
+          <button className="nomal-login-btn" onClick={jangkasulyoo}>
+            장카설유 회원가입 하기
+          </button>
+        </div>
+        <div className="recovery-options">
+          <button className="find-id-btn" onClick={handleFindId}>
+            ID/PW 찾기
           </button>
         </div>
       </div>

@@ -1,30 +1,44 @@
 import React, { useEffect } from "react";
 import "./movepage.css"; // CSS 파일 임포트
 import { karinaData } from "../../types/contentType";
-interface movementProps {
-  replaceArray: (arrayToReset: any[]) => void;
-  setCurrentPage: (currentPage: string) => void;
-  currentMenubar: string;
-  currentPage: string;
-}
-const Number: React.FC<movementProps> = ({
-  replaceArray,
-  setCurrentPage,
-  currentMenubar,
-  currentPage,
-}) => {
-  const handleCurrentPage = (page) => {
-    setCurrentPage(page);
-  };
-  useEffect(() => {
-    const fetchData = fetch(
-      `${process.env.REACT_APP_API_URL}/api/karina?menubar=${currentMenubar}&page=${currentPage}`
-    )
-      .then((response) => response.json())
-      .then((data) => replaceArray(data))
-      .catch((error) => console.error("movement component error:", error));
-  }, [currentPage]);
+import useAuthStore from "../../JustAnd/GlobalState";
+import { useParams } from "react-router-dom";
 
+const Number: React.FC = ({}) => {
+  const handleCurrentPage = (page) => {
+    setNumberData(page);
+  };
+
+  const { numberData, setNumberData } = useAuthStore(
+    (state) => state.pagiNationMenubar
+  );
+  //* 메임 마운트가 null이면 누른거고, 아니면 초기화면이라고 인지
+  //* mainMountData에서 menubar 추출, mainContentsData에서 menubar 추출
+  //* 실질적으로, 현재 필요한 데이터는 현재의 메뉴바가 무엇인지 밖에 없다.
+  //* 메인 컨텐츠에서, 실질적으로
+  // useEffect(() => {
+  //   const fetchData = fetch(
+  //     `${process.env.REACT_APP_API_URL}/api/karina?menubar=${currentMenubar}&page=${currentPage}`
+  //   )
+  //     .then((response) => response.json())
+  //     .then((data) => replaceArray(data))
+  //     .catch((error) => console.error("movement component error:", error));
+  // }, [currentPage]);
+  // const menubar = !menubarData ? "jang" : menubarData;
+  // console.log(menubar, "삼항연산자 사용해서 데이터 검증");
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         `${process.env.REACT_APP_API_URL}/api/karina?menubar=${menubar}&page=${currentMenubar}`
+  //       );
+  //       const data = await response.json();
+  //     } catch (error) {
+  //       console.error(error, "페이지네이션 에러가 발생했습니다.");
+  //     }
+  //     fetchData();
+  //   };
+  // }, [currentMenubar]);
   return (
     <div className="number-container">
       <button className="page-button" onClick={() => handleCurrentPage("1")}>

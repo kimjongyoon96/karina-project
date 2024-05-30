@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import useAuthStore from "../../../../JustAnd/GlobalState";
 import Confetti from "react-confetti";
-
+import "./renderCompatibility.css";
 //* 렌더링할 사주팔자의 결과값은 모두 전역상태로 가져온다.
 //* 문자열 을 쪼개서, 그 값을 바인딩하고, 그 값에 해당하는 gif를 C에 맞게 렌더링한다.
 //* 이를 위해서, useEffect를 사용해서 gif를 s3버킷에 있는 URL꾸러미를 가져온다.
