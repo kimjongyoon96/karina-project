@@ -27,7 +27,7 @@ interface BringData {
   likes?: users[];
   total?: number;
 }
-const MyPage: React.FC<AuthContextType> = ({ jwtToken }) => {
+const MyPage: React.FC<AuthContextType> = () => {
   //* 내가 쓴글, 내가 쓴 댓글, 내가 좋아요 한 게시물
   //* 내 정보 수정 => 닉네임 수정
   const [bringData, setData] = useState<BringData | null>(null);
@@ -41,11 +41,13 @@ const MyPage: React.FC<AuthContextType> = ({ jwtToken }) => {
   const { jwtDecodingData, setJwtDecodingData } = useAuthStore(
     (state) => state.jwtGlobal
   );
+  const [userName, setUserName] = useState("");
   console.log("마이페이지에서의 값", jwtDecodingData);
   console.log(bringCommnets);
   console.log(bringWrites);
   console.log(bringLikes);
   console.table(bringLikes);
+  console.log(userinfoData);
   useEffect(() => {
     const fetchData = async () => {
       if (jwtDecodingData) {
@@ -62,6 +64,8 @@ const MyPage: React.FC<AuthContextType> = ({ jwtToken }) => {
             throw new Error("에러발생 비상상ㅇ태");
           }
           const data = await response.json();
+          setUserInfoData(data.identifier);
+
           console.log(data, "서버에서 준 유저JWT 해독 정보");
         } catch (error) {
           console.error(error, "에러가 발생했습니다.");
@@ -156,15 +160,16 @@ const MyPage: React.FC<AuthContextType> = ({ jwtToken }) => {
   //*
   return (
     <main className="mypage-box">
+      <div className="mypage-signature">
+        <h1>my page 입니다.</h1>
+      </div>
       <section className="mypage-header">
-        <div className="mypage-signature">
-          <p>my page</p>
+        <div className="mypage-client-nickName">
+          <h2>안녕하세요 {userinfoData}님</h2>
         </div>
         <div className="mypage-navigation-myinfo">
           <p onClick={handleNavigateMyInfo}>내정보 수정하기</p>
         </div>
-        <div className="mypage-client-photo"></div>
-        <div className="mypage-client-nickName"></div>
       </section>
       <section className="mypage-select-uitag">
         <div className="mypage-container">
@@ -175,75 +180,77 @@ const MyPage: React.FC<AuthContextType> = ({ jwtToken }) => {
         </div>
       </section>
       <section className="mypage-selected-render">
-        <div className="mypage-render-box">
-          <div className="mypage-render-box-myWrite">
-            {activeSection === "myWriteUl" && bringWrites
-              ? bringWrites.posts?.slice(0, 8).map((post) => (
-                  <div key={post.id}>
-                    <h2>{post.title}</h2>
-                    <h2>{post.menubar}</h2>
-
+        <div className="mypage-render-box-myWrite">
+          {activeSection === "myWriteUl" && bringWrites
+            ? bringWrites.posts?.slice(0, 8).map((post) => (
+                <div className="post-container" key={post.id}>
+                  <div className="post-header">
+                    <h2>제목:{post.title}</h2>
+                    <h2>카테고리:{post.menubar}</h2>
+                  </div>
+                  <div className="post-body">
                     <img src={post.photosumnail} />
+
                     <button
                       className="delete-btn-myWrite"
                       onClick={() => handleDeleteType()}
                     >
                       삭제
                     </button>
-                    {isModalOpen && (
-                      <WarningDeleteModal
-                        message="이 댓글을 삭제하겟습니까?"
-                        onConfirm={() => handleModalConfirm("myWrite", post.id)}
-                        onCancel={handleModalCancle}
-                      />
-                    )}
                   </div>
-                ))
-              : "어떠한 게시글도 없다."}
-          </div>
+                  {isModalOpen && (
+                    <WarningDeleteModal
+                      message="이 댓글을 삭제하겟습니까?"
+                      onConfirm={() => handleModalConfirm("myWrite", post.id)}
+                      onCancel={handleModalCancle}
+                    />
+                  )}
+                </div>
+              ))
+            : "어떠한 게시글도 없다."}
+        </div>
 
-          <div className="mypage-render-box-myComments">
-            {activeSection === "myCommentsUl" &&
-            bringCommnets?.commnets &&
-            bringCommnets.commnets.length > 0
-              ? bringCommnets.commnets.slice(0, 8).map((comment) => (
-                  <div>
-                    <h2>{comment.text}</h2>
-                    <h2>{comment.userNickName}</h2>
-                    <h3>{comment.commentid}</h3>
-                    <button
-                      className="delete-btn-myComments"
-                      onClick={() => handleDeleteType()}
-                    >
-                      삭제
-                    </button>
-                    {isModalOpen && (
-                      <WarningDeleteModal
-                        message="이 댓글을 삭제하겟습니까?"
-                        onConfirm={() =>
-                          handleModalConfirm("myComments", comment.commentid)
-                        }
-                        onCancel={handleModalCancle}
-                      />
-                    )}
-                  </div>
-                ))
-              : "어떠한 댓글도 없습니다."}
-          </div>
+        <div className="mypage-render-box-myComments">
+          {activeSection === "myCommentsUl" &&
+          bringCommnets?.commnets &&
+          bringCommnets.commnets.length > 0
+            ? bringCommnets.commnets.slice(0, 8).map((comment) => (
+                <div>
+                  <h2>{comment.text}</h2>
+                  <h2>{comment.userNickName}</h2>
+                  <h3>{comment.commentid}</h3>
+                  <button
+                    className="delete-btn-myComments"
+                    onClick={() => handleDeleteType()}
+                  >
+                    삭제
+                  </button>
+                  {isModalOpen && (
+                    <WarningDeleteModal
+                      message="이 댓글을 삭제하겟습니까?"
+                      onConfirm={() =>
+                        handleModalConfirm("myComments", comment.commentid)
+                      }
+                      onCancel={handleModalCancle}
+                    />
+                  )}
+                </div>
+              ))
+            : "어떠한 댓글도 없습니다."}
+        </div>
 
-          <div className="mypage-render-box-myLikes">
-            {activeSection === "myLikesUl" &&
-            bringLikes?.likes &&
-            bringLikes.likes.length > 0
-              ? bringLikes.likes.slice(0, 8).map((like) => (
-                  <div key={like.likeid}>
-                    <h2>{like.username}</h2>
-                    <div>{like.postid}</div>
-                    <div>{like.creationdate}</div>
-                  </div>
-                ))
-              : "어떠한 좋아요도 안했다."}
-          </div>
+        <div className="mypage-render-box-myLikes">
+          {activeSection === "myLikesUl" &&
+          bringLikes?.likes &&
+          bringLikes.likes.length > 0
+            ? bringLikes.likes.slice(0, 8).map((like) => (
+                <div key={like.likeid}>
+                  <h2>{like.username}</h2>
+                  <div>{like.postid}</div>
+                  <div>{like.creationdate}</div>
+                </div>
+              ))
+            : "어떠한 좋아요도 안했다."}
         </div>
       </section>
     </main>

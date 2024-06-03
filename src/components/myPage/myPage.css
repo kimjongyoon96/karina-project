@@ -1,26 +1,51 @@
+.mypage-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.mypage-signature {
+  display: flex;
+  justify-content: center;
+}
+
+.mypage-header {
+  display: flex;
+}
+
 .mypage-container {
-  display: flex; /* Flexbox 레이아웃 사용 */
-  justify-content: space-around; /* 각 항목 사이에 균등한 간격을 두어 배치 */
-  align-items: center; /* 세로 축 중앙 정렬 */
-  padding: 20px; /* 패딩으로 내부 여백 제공 */
+  display: flex;
+  justify-content: space-between;
+}
+.post-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px; /* 각 포스트 간의 간격 */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+.post-header {
+  display: flex;
+  justify-content: space-between; /* 제목과 카테고리를 같은 열에 배치 */
+  margin-bottom: 10px;
+}
+.post-body {
+  display: flex;
+  align-items: center;
 }
 
-.menuItem {
-  cursor: pointer; /* 마우스 오버시 포인터 모양 변경 */
-  padding: 10px; /* 패딩으로 클릭 영역 확장 */
-  list-style: none; /* 기본 목록 스타일 제거 */
-}
-
-.mypage-container:hover {
-  background-color: aliceblue;
+.post-body img {
+  margin-right: 20px; /* 이미지와 버튼 사이의 간격 */
 }
 .delete-btn-myWrite {
-  background-color: red;
-  width: 100px;
-  height: 100px;
+  padding: 5px 10px;
+  background-color: #ff5c5c;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
 }
-.delete-btn-myComments {
-  background-color: blue;
-  width: 100px;
-  height: 100px;
+
+.delete-btn-myWrite:hover {
+  background-color: #ff1c1c;
 }

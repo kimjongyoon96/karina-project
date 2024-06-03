@@ -28,6 +28,7 @@ const WritePage: React.FC = () => {
   const [compressedImages, setCompressedImages] = useState<File[]>([]);
   const { jwtDecodingData } = useAuthStore((state) => state.jwtGlobal);
   const [errors, setErrors] = useState<Errors>({});
+  const [isValiable, setIsValiable] = useState(true);
   console.log(compressedImages, "여기에 blob 객체가 나와야돼!!");
   const validateForm = () => {
     const newErrors: Errors = {};
@@ -37,7 +38,9 @@ const WritePage: React.FC = () => {
     if (photos.length === 0) newErrors.photos = "사진을 업로드해주세요";
     return newErrors;
   };
-
+  const handleRemove = () => {
+    setIsValiable(false);
+  };
   const handlePhotoSumnailChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -195,7 +198,18 @@ const WritePage: React.FC = () => {
           onChange={handlePhotoSumnailChange}
         />
         <div className="photos-Thumnail-preview">
-          <img src={photoSumnail} />
+          {isValiable && (
+            <div className="thumbnail-container">
+              <img
+                src={photoSumnail}
+                className="thumbnail-image"
+                alt="thumbnail"
+              />
+              <button className="close-button" onClick={handleRemove}>
+                X
+              </button>
+            </div>
+          )}
         </div>
         <input
           type="file"

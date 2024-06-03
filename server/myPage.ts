@@ -59,6 +59,7 @@ const getmyWirte = async (req, res) => {
   }
 };
 //* 내가 쓴 댓글 가져오는 함수입니다.
+//* 내가 쓴 댓글을 가져오면서, 쓴 게시글의 렌더링 img 도 같이 보낸다.
 const getMyCommnets = async (req, res) => {
   const { identifier, userEmail, loginType } = req.user;
   const { page, limit, offset } = helperParmas(req.query);
@@ -77,6 +78,7 @@ const getMyCommnets = async (req, res) => {
     if (!commnets || commnets.length === 0) {
       return res.status(404).json({ message: "댓글이 없습니다." });
     }
+    console.log(total, commnets);
     return res.status(200).json({ total, commnets });
   } catch (error) {
     console.error(error, "댓글 로직에 문제가 있습니다.");

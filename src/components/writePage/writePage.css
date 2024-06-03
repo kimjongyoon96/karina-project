@@ -39,8 +39,8 @@
 }
 
 .photo-thumbnail {
-  width: 200px;
-  height: 200px;
+  width: 150px;
+  height: 150px;
   object-fit: cover; /* 이미지 비율 유지하며 요소에 맞춤 */
   border-radius: 4px;
 }
@@ -58,4 +58,35 @@
 
 .submit-button:hover {
   background-color: #0056b3;
+}
+
+.close-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-button:hover {
+  background-color: darkred;
+}
+
+.thumbnail-container {
+  position: relative; /* 상대적인 위치를 사용하여 자식 요소를 기준으로 위치 지정 */
+  display: inline-block;
+}
+
+.thumbnail-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
 }

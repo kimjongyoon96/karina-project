@@ -83,23 +83,33 @@ const UpdateProfile: React.FC = () => {
     }
   };
   return (
-    <main className="update-my-profile-box">
-      <div className="update-box">
-        <h1>내정보 수정위해 가입했던 이메일을 입력하세요</h1>
-        <form onSubmit={handleEmailSend}>
-          <input
-            className="update-password-sector"
-            type="email"
-            value={inputEmail}
-            placeholder="이메일을 입력하세요"
-            onChange={handleEmail}
-          />
-          <button type="submit">이메일 인증</button>
-        </form>
+    <main className="profile-update">
+      <div className="profile-update__box">
+        <h1 className="profile-update__title">
+          내정보 수정위해 가입했던 이메일을 입력하세요
+        </h1>
+        <div className="profile-update__section">
+          <form className="profile-update__form" onSubmit={handleEmailSend}>
+            <input
+              className="profile-update__input"
+              type="email"
+              value={inputEmail}
+              placeholder="이메일을 입력하세요"
+              onChange={handleEmail}
+            />
+            <button className="profile-update__button" type="submit">
+              이메일 인증
+            </button>
+          </form>
+        </div>
         {showVerification && !isBlocked && (
-          <div>
-            <form onSubmit={handleVerifyNumber}>
+          <div className="profile-update__section">
+            <form
+              className="profile-update__verification-form"
+              onSubmit={handleVerifyNumber}
+            >
               <input
+                className="profile-update__verification-input"
                 value={sixNumber}
                 type="number"
                 placeholder="이메일로 받은 인증번호를 입력하세요"
@@ -107,15 +117,23 @@ const UpdateProfile: React.FC = () => {
                 disabled={isBlocked}
                 maxLength={6}
               />
-              <button type="submit"></button>
+              <button
+                className="profile-update__verification-button"
+                type="submit"
+              >
+                {" "}
+                제출
+              </button>
             </form>
-            <p>
+            <p className="profile-update__timer">
               남은 시간: {Math.floor(timeLeft / 60)}분 {timeLeft % 60}초
             </p>
           </div>
         )}
         {isBlocked && (
-          <p>시간 초과로 입력이 차단되었습니다. 다시 시도해 주세요.</p>
+          <p className="profile-update__error">
+            시간 초과로 입력이 차단되었습니다. 다시 시도해 주세요.
+          </p>
         )}
       </div>
     </main>

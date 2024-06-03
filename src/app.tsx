@@ -47,7 +47,9 @@ const App: React.FC = () => {
       location.pathname !== "/write" &&
       !location.pathname.startsWith("/detail") &&
       !location.pathname.startsWith("/SignUp") &&
-      !location.pathname.startsWith("/nonSocialLogin")
+      !location.pathname.startsWith("/nonSocialLogin") &&
+      !location.pathname.startsWith("/myPage") &&
+      !location.pathname.startsWith("/UpdateProfile")
     ) {
       return <SeachBar />;
     }
@@ -66,7 +68,10 @@ const App: React.FC = () => {
     if (
       !location.pathname.startsWith("/nonSocialLogin") &&
       !location.pathname.startsWith("/detail") &&
-      !location.pathname.startsWith("/SignUp")
+      !location.pathname.startsWith("/SignUp") &&
+      !location.pathname.startsWith("/myPage") &&
+      !location.pathname.startsWith("/UpdateProfile") &&
+      !location.pathname.startsWith("/write")
     ) {
       return <Number />;
     }
@@ -82,7 +87,7 @@ const App: React.FC = () => {
   return (
     <Router>
       <div>
-        <FetchAndNavigate /> //* 기존 UseEffect 쿠키 로직 모듈화
+        <FetchAndNavigate />
         <Alert />
         <Header />
         <Menubar />
