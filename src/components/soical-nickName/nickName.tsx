@@ -1,10 +1,9 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import "./nickNAme.css";
-import { AuthContextType } from "../../types/contentType";
 import { useAsyncValue, useNavigate } from "react-router-dom";
 import useAuthStore from "../../JustAnd/GlobalState";
-const Nickname: React.FC<AuthContextType> = ({ jwtToken }) => {
+const Nickname: React.FC = () => {
   const [nickName, setNickName] = useState("");
   const { jwtDecodingData, setJwtDecodingData } = useAuthStore(
     (state) => state.jwtGlobal

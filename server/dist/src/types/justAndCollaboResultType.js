@@ -1,0 +1,1 @@
+//# sourceMappingURL=justAndCollaboResultType.js.map

@@ -3,4 +3,6 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-CMD ["npx", "nodemon", "--exec", "ts-node", "./server/server.ts"]
+RUN npm run build
+CMD ["npx", "nodemon", "--exec", "node", "dist/server/server.js"]
+
