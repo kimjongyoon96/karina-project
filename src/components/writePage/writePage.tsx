@@ -1,40 +1,46 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { karinaData } from "../../types/contentType";
+import { karinaData, AuthContextType } from "../../types/contentType";
 import "./writePage.css";
 import { v4 as uuidv4 } from "uuid";
 import imageCompression from "browser-image-compression";
+import useAuthStore from "../../JustAnd/GlobalState";
 
 // 상위 컴포넌트로부터, MaintentsProps 인터페이스를 통해, prop을 받는다.
 // addToArray라는 함수는, obj라는 인자를 받고, obj는 karinadata이다.
-interface MaintentsProps {
-  addToArray: (obj: karinaData) => void;
-  setCategory: (category: string) => void;
+interface Errors {
+  title?: string;
+  menubar?: string;
+  photoSumnail?: string;
+  photos?: string;
 }
-
-const WritePage: React.FC<MaintentsProps> = ({ addToArray, setCategory }) => {
+const WritePage: React.FC = () => {
   const navigate = useNavigate();
   const myUUID = uuidv4();
   const [title, setTitle] = useState("");
   const [menubar, setMenubar] = useState(""); // 기본값 설정
   const [photoSumnail, setPhotoSumnail] = useState(""); // 대표 이미지 URL 상태
-  const [photos, setPhotos] = useState<string[]>([]); // <sting[]> 을 해줌으로서, 문자열배열 즉, photos가 문자열 배열을 상태로 관리할것을 명시한다.
+  const [photos, setPhotos] = useState<string[]>([]);
   console.log(photos, "여기는 변경된 사진의 상태변경함수");
   const [compressedFile, setCompressedPhotoSumnail] = useState<File | null>(
     null
   );
   const [compressedImages, setCompressedImages] = useState<File[]>([]);
+  const { jwtDecodingData } = useAuthStore((state) => state.jwtGlobal);
+  const [errors, setErrors] = useState<Errors>({});
+  const [isValiable, setIsValiable] = useState(true);
   console.log(compressedImages, "여기에 blob 객체가 나와야돼!!");
-  //   const handlePhotoSumnailChange = (
-  //     event: React.ChangeEvent<HTMLInputElement> // event는 React.ChangeEvent<HTMLInputElement>타입이다. input요소의 변경 이벤트이며, 사용자가 파일을 업로드할때 발생하는 이벤트정보이다.
-  //   ) => {
-  //     if (event.target.files && event.target.files[0]) {
-
-  //       // envet는 객체, target은 발생한 DOM요소(<input>), files는 선택한 파일(여러개라 배열형태)
-  //       setPhotoSumnail(URL.createObjectURL(event.target.files[0])); // 객체의 DOM요소의 파일에 대한 URL을 생성한다. 브라우저 메모리에 있는 파일에 대한 URL이다.
-  //     }
-  //     // console.log(event.target.files)=> FileList {0: File, length: 1}
-  //   };
+  const validateForm = () => {
+    const newErrors: Errors = {};
+    if (!title.trim()) newErrors.title = "제목을 입력해주세요";
+    if (!menubar.trim()) newErrors.menubar = "게시판을 선택해주세요";
+    if (!photoSumnail) newErrors.photoSumnail = "썸네일을 업로드해주세요";
+    if (photos.length === 0) newErrors.photos = "사진을 업로드해주세요";
+    return newErrors;
+  };
+  const handleRemove = () => {
+    setIsValiable(false);
+  };
   const handlePhotoSumnailChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -75,7 +81,7 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray, setCategory }) => {
         maxWidthOrHeight: 1280,
         useWebWorker: true,
       };
-
+      console.log("imageCompresiion Check");
       try {
         // 각 이미지 파일을 압축하고 Blob URL 생성
         const compressedFiles = await Promise.all(
@@ -102,7 +108,13 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray, setCategory }) => {
   };
 
   //* 핸들함수 작동 => addToArray 함수 작동 => 카테고리에 맞는
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
     const newKarinaData: karinaData = {
       uuid: myUUID,
       menubar: menubar,
@@ -127,22 +139,25 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray, setCategory }) => {
       object[key] = value;
     });
     console.log(object, "여기가 폼데이터값입니다.");
+
     // 서버의 엔드포인트 URL
-    const url = `${process.env.REACT_APP_API_URL}/api/upload`;
+    const url = `${process.env.REACT_APP_API_URL}/api/upload?`;
 
     try {
       // fetch API를 사용하여 서버로 POST 요청을 보냄
       const response = await fetch(url, {
         method: "POST",
-        body: formData, // FormData 객체를 body로 설정
+        body: formData,
+
+        headers: {
+          Authorization: `${jwtDecodingData?.["token"]}`,
+        },
       });
 
       if (!response.ok) throw new Error(`Error: ${response.status}`);
       const responseData = await response.json();
       console.log(responseData.data.menubar);
 
-      // 성공 처리 로직 (예: 상태 초기화, 사용자에게 알림 등)
-      addToArray(responseData.data);
       navigate("/");
     } catch (error) {
       console.error("Error sending data to the server:", error);
@@ -151,59 +166,72 @@ const WritePage: React.FC<MaintentsProps> = ({ addToArray, setCategory }) => {
   };
 
   return (
-    <div className="container">
-      <input
-        type="text"
-        className="title-input"
-        placeholder="제목"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
-
-      <select
-        className="menubar-select"
-        value={menubar}
-        onChange={(e) => {
-          const newMenubar = e.target.value;
-          setMenubar(newMenubar);
-          setCategory(newMenubar); // 추가된 부분
-        }}
-      >
-        <option value="" disabled selected>
-          메뉴바를 선택하세요
-        </option>
-        <option value="innocence">청순카리나</option>
-        <option value="cute">큐트카리나</option>
-        <option value="sexy">섹시카리나</option>
-        <option value="daily">일상카리나</option>
-      </select>
-
-      <input
-        type="file"
-        className="photo-thumbnail-input"
-        onChange={handlePhotoSumnailChange}
-      />
-
-      <input
-        type="file"
-        className="photos-input"
-        multiple
-        onChange={handlePhotosChange}
-      />
-      {/* 사용자가 선택한 사진들을 보여주는 부분 */}
-      <div className="photos-preview">
-        {photos.map((photoUrl, index) => (
-          <img
-            key={index}
-            src={photoUrl}
-            alt={`선택한 사진 ${index + 1}`}
-            className="photo-thumbnail"
-          />
-        ))}
-      </div>
-      <button className="submit-button" onClick={handleSubmit}>
-        등록
-      </button>
+    <div className="write-container">
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          className="title-input"
+          placeholder="제목"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        .
+        <select
+          className="menubar-select"
+          value={menubar}
+          onChange={(e) => {
+            const newMenubar = e.target.value;
+            setMenubar(newMenubar);
+          }}
+        >
+          <option value="" disabled selected>
+            게시판을 선택하세요
+          </option>
+          <option value="jang">장원영</option>
+          <option value="karina">카리나</option>
+          <option value="sulyoon">설윤</option>
+          <option value="yoona">유나</option>
+        </select>
+        <input
+          type="file"
+          className="photo-thumbnail-input"
+          onChange={handlePhotoSumnailChange}
+        />
+        <div className="photos-Thumnail-preview">
+          {isValiable && (
+            <div className="thumbnail-container">
+              <img
+                src={photoSumnail}
+                className="thumbnail-image"
+                alt="thumbnail"
+              />
+              <button className="close-button" onClick={handleRemove}>
+                X
+              </button>
+            </div>
+          )}
+        </div>
+        <input
+          type="file"
+          className="photos-input"
+          multiple
+          onChange={handlePhotosChange}
+        />
+        {/* 사용자가 선택한 사진들을 보여주는 부분 */}
+        <div className="photos-preview">
+          {photos.map((photoUrl, index) => (
+            <img
+              key={index}
+              src={photoUrl}
+              alt={`선택한 사진 ${index + 1}`}
+              className="photo-thumbnail"
+            />
+          ))}
+        </div>
+        <button type="submit" className="submit-button">
+          등록
+        </button>
+      </form>
     </div>
   );
 };

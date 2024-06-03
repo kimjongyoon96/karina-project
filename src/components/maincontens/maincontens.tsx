@@ -1,92 +1,111 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useActionData, useNavigate } from "react-router-dom";
 import "./maincontens.css";
 import { MainContentsProps } from "./maincomponent";
-import { karinaData } from "../../types/contentType";
-
-const MainContents: React.FC<MainContentsProps> = ({ category, myarray }) => {
+import useAuthStore from "../../JustAnd/GlobalState";
+import CompatiWithJangKaSuYoo from "./compatibilityToJangKaSulYoo/compatiWithJangKaSulYoo";
+import RenderCompatibilityWithJksy from "./compatibilityToJangKaSulYoo/renderCompatibility/renderCompatibility";
+import { useParams } from "react-router-dom";
+const MainContents: React.FC = () => {
   const navigate = useNavigate();
-  const [data, setData] = useState([]);
-  console.log(myarray, "메인컨텐츠의 유동적으로 바뀌어야하는것.");
-  //* 바로 특정 메뉴바 메인페이지 마운트
+  const { collabo } = useParams<{ collabo: string }>(); // 콜라보 파라미터 따로처리
+  //* 메뉴바 클릭시 변경되는 상태값 collabo JsutAnd로 받아옴.
+  const { collaboClick } = useAuthStore((state) => state.isCollabo);
+  const { collaboResult } = useAuthStore((state) => state.collaboResultData);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isFirst, setIsFirst] = useState(false);
+  const { mainContentsData, setMainContentsData } = useAuthStore(
+    (state) => state.mainContentsGlobal
+  );
+  const { mainMountData, setMainMountData } = useAuthStore(
+    (state) => state.mainMountRenderData
+  );
+  const { numberData } = useAuthStore((state) => state.pagiNationMenubar);
+  const { menubar } = useParams<{ menubar: string }>();
+  console.log(
+    mainMountData,
+    menubar,
+    mainContentsData,
+    numberData,
+    "초기값 렌더링값"
+  );
+  const pageNumber = !numberData ? 1 : numberData;
+  //* useParmas로 받은 메뉴바를 가지고 쿼리스트링으로 사용
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/karina?menubar=innocence&page=1`
+          `${process.env.REACT_APP_API_URL}/api/karina?menubar=${menubar}&page=${pageNumber}`
         );
         if (!response.ok) {
           throw new Error(`Error: ${response.status}`);
         }
         const data = await response.json();
-        setData(data); // 로드된 데이터를 상태에 저장
+        console.log(data, "메뉴바 눌렀을때 변화하는 렌더링 데이터");
+        setMainContentsData(data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
     fetchData();
-  }, []);
-
+  }, [menubar, pageNumber]);
+  //* 초기에 장원영으로 고정된 렌더링 데이터
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_API_URL}/api/karina?menubar=jang&page=${pageNumber}`
+        );
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log(data, "메뉴바 눌렀을때 변화하는 렌더링 데이터");
+        setMainMountData(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, [pageNumber]);
   const goToSecondMain = (uuid: string): void => {
     navigate(`/detail/${uuid}`);
   };
-  const renderContent = (item: karinaData): React.ReactNode => {
-    switch (category) {
-      case "innocence":
-        if (item.menubar === category) {
-          return <div>청순카리나 관련 컨텐츠</div>;
-        }
-        break;
-      case "cute":
-        if (item.menubar === "cute") {
-          return <div>큐트카리나 관련 컨텐츠</div>;
-        }
-        break;
-      case "sexy":
-        if (item.menubar === "sexy") {
-          return <div>섹시카리나 관련 컨텐츠</div>;
-        }
-        break;
-      case "daily":
-        if (item.menubar === "daily") {
-          return <div>일상카리나 관련 컨텐츠</div>;
-        }
-        break;
-      default:
-        return <div>기본 컨텐츠</div>;
-    }
-  };
+  //* 초기 렌더링 상태를 menubar가 undefined라 가정, 즉 아무것도 눌러지지 않았을때 초기데이터
+  const itemsToRender =
+    menubar === undefined ? mainMountData : mainContentsData;
 
-  //* 검색결과가 있으면 검색결과 상태 렌더링 아니면, 원래 배열 렌더링
-  //* myarray =변화하는값  data =초기
-  const itemsToRender = myarray.length < data.length ? myarray : data;
   return (
     <main className="mainContents">
-      {itemsToRender.length > 0 &&
-        itemsToRender.slice(0, 12).map((item, index) => (
-          <li
-            key={item.uuid}
-            className={`contents${index + 1}`}
-            onClick={() => goToSecondMain(item.uuid)}
-          >
-            <img className="mainThumbNail" src={item.photosumnail} />
-            <h1>{item.title}</h1>
-
-            {renderContent(item)}
-          </li>
-        ))}
+      {collabo ? (
+        collaboResult ? (
+          <RenderCompatibilityWithJksy />
+        ) : (
+          <CompatiWithJangKaSuYoo />
+        )
+      ) : (
+        <>
+          {itemsToRender.length > 0 ? (
+            itemsToRender.slice(0, 16).map((item) => (
+              <li
+                key={item.uuid}
+                className="content"
+                onClick={() => goToSecondMain(item.uuid)}
+              >
+                <img className="mainThumbNail" src={item.photosumnail} />
+                <h1>제목: {item.title}</h1>
+                <h2>글쓴이: {item.userNickName}</h2>
+              </li>
+            ))
+          ) : (
+            <div>아무런 데이터도 없습니다.</div>
+          )}
+        </>
+      )}
     </main>
   );
 };
-
+//* collaboCick이 콜라보가 아닐때는 ture => 메뉴바 클릭이벤트, 눌러졌다면 minicomponents 렌더링
+//
 export default MainContents;
-
-// 1. 메인컨텐츠 컴포넌트의 props의 타입은 category, 스트링이다.
-// 2. 메인컨텐츠는 함수형컴포넌트(React.FC)이며, MainContensProps를 부모컴포넌트로 부터 받는다.
-// 3. 받은 프롭스를 구조분해할당을 통해, category라는 매개변수를 받을수있게된다.
-
-// </li>
-//       <li className="contents9" onClick={goToSecondMain}>
-//         {renderContent()}
-//       </li> */}

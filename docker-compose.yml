@@ -6,19 +6,23 @@ services:
       - "4000:4000"
     volumes:
       - .:/app
+      - /app/node_modules
     working_dir: /app
-    command: npx nodemon ./server/sever.js
+    command: /bin/sh -c "npm install && npx nodemon --exec ts-node ./server/server.ts"
     depends_on:
       - db
-  
+    environment:
+      - NODE_ENV=development
+
   webpack-dev-server:
     image: node
     ports:
       - "3001:3001"
     volumes:
       - .:/app
+      - /app/node_modules
     working_dir: /app
-    command: npm start
+    command: /bin/sh -c "npm install && npm start"
     environment:
       - NODE_ENV=development
   db:
@@ -26,8 +30,6 @@ services:
     environment:
       POSTGRES_PASSWORD: dkrlaos1
       POSTGRES_USER: kimjongyoon
-      POSTGRES_DB: karina
+      POSTGRES_DB: postgres
     ports:
       - "5432:5432"
-    volumes:
-      - ./backup.sql:/docker-entrypoint-initdb.d/backup.sql

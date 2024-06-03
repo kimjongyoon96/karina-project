@@ -1,32 +1,58 @@
 import React, { useState } from "react";
 import "./menubar.css";
-import { karinaData } from "../../types/contentType";
-// MenubarProps 타입 정의
-interface MenubarProps {
-  replaceArray: (arrayToReset: any[]) => void;
-  setCurrentMenubar: (currentMenubar: string) => void;
-}
+import useAuthStore from "../../JustAnd/GlobalState";
+import { useNavigate } from "react-router-dom";
 
-function Menubar({ replaceArray, setCurrentMenubar }) {
+//* 클릭이벤트가 발생하면, handleMenubar 함수가 실행되고, 매개변수로 전달된 문자열이  setCurrentMenubar의 상태로 저장된다 즉, click "jang" => currentMenubar==="jang"
+//* 매개변수로 받은 문자열로 해당 쿼리문을 포함한 요청을 서버로 보낸다 즉 "장원영 메뉴바에 해당하는 데이터를 가져온다."
+//* 그값은, 필시 json 형태의 장원영 메뉴바 키를 가진 데이터일것이고, 그것을 replacceArray 매개변수 전달
+//* replaceArray 함수는 최상위 컴포넌트에 존재한다.
+//* 그렇다면 기존 로직을 이용해서,
+const Menubar: React.FC = () => {
+  const { collaboClick, setCollaboClick } = useAuthStore(
+    (state) => state.isCollabo
+  );
+  const { mainContentsData, setMainContentsData } = useAuthStore(
+    (state) => state.mainContentsGlobal
+  );
+
+  const navigate = useNavigate();
   const handleMenubar = (menubar) => {
-    setCurrentMenubar(menubar);
-
-    fetch(`${process.env.REACT_APP_API_URL}/api/karina?menubar=${menubar}`)
-      .then((response) => response.json())
-      .then((data) => replaceArray(data))
-      .catch((error) => console.error("Error fetching data:", error))
-      .finally(() => console.log(`${menubar}가 눌러졌군..`));
+    navigate(`/menubar/${menubar}`);
+    //   const fetchData = async () => {
+    //     const response = await fetch(
+    //       `${process.env.REACT_APP_API_URL}/api/karina?menubar=${menubar}&page=1&limit=10`
+    //     );
+    //     if (!response.ok) {
+    //       throw new Error("에러가 발생했습니다.");
+    //     }
+    //     const data = await response.json();
+    //     console.log(data);
+    //     setMainContentsData(data);
+    //     //* 여기에 상태변경 함수를 넣어서 전역으로 관리하자.
+    //   };
+    //   fetchData();
+    // };
+    // const handleCollabo = (collabo: string) => {
+    //   setCollaboClick(collabo);
+    //   console.log(collabo, "콜라보레이션");
+  };
+  const handleCollabo = (collabo) => {
+    navigate(`/collabo/${collabo}`);
   };
   return (
-    <nav className="cute">
-      <ul onClick={() => handleMenubar("innocence")}>청순카리나</ul>
+    <nav className="menubar-container">
+      <ul onClick={() => handleMenubar("jang")}>장원영</ul>
 
-      <ul onClick={() => handleMenubar("cute")}>큐트카리나</ul>
-      <ul onClick={() => handleMenubar("sexy")}>섹시카리나</ul>
-      <ul onClick={() => handleMenubar("daily")}>일상카리나</ul>
+      <ul onClick={() => handleMenubar("karina")}>카리나</ul>
+      <ul className="sparkle" onClick={() => handleCollabo("collabo")}>
+        나와장카설유
+      </ul>
+      <ul onClick={() => handleMenubar("sulyoon")}>설윤</ul>
+      <ul onClick={() => handleMenubar("yoona")}>유나</ul>
     </nav>
   );
-}
+};
 
 export default Menubar;
 

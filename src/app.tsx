@@ -1,5 +1,5 @@
 // src/App.tsx
-import React, { useState, useEffect, createContext, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -16,196 +16,100 @@ import DetailPage from "./components/detailPage/detailPage";
 import WritePage from "./components/writePage/writePage";
 import SignUp from "./components/signUp/signUp";
 import SerachRender from "./components/searchRendering/searchRendering";
-import { response } from "express";
-
+import Nickname from "./components/soical-nickName/nickName";
+import NonSocialLogin from "./components/nonSocialLogin/nonSocialLogin";
+import RecoverUserInfo from "./components/recoverUserInfo/recoverUserInfo";
+import FindUserPw from "./components/findUserPw/findUserPw";
+import MyPage from "./components/myPage/myPage";
+import useAuthStore from "./JustAnd/GlobalState";
+// import AuthManager from "./containers/container";
+import UpdateProfile from "./components/updateProfile/updateProfile";
+import UserProfileUpdate from "./components/userProfileUpdate/userProfileUpdate";
+import MyInfoUpdate from "./components/myinfoUpdate/myInfoUpdate";
+import Modal from "./components/customComponent/signModalComponent/signModalForJwtExpired";
+import Alert from "./components/customComponent/signModalComponent/signModalComponent";
+import FetchAndNavigate from "./components/immitationApp";
 const App: React.FC = () => {
-  const [category, setCategory] = useState("");
-  const [currentMenubar, setCurrentMenubar] = useState("");
   const [currentPage, setCurrentPage] = useState("");
   console.log(currentPage, "클릭한페이지의값");
-  const [jwtToken, setJwtToken] = useState<string | null>(null);
-  const [myArray, setMyArray] = useState<karinaData[]>([]); //전시바구니
-  const [innocenceArray, setMyInnocenceArray] = useState<karinaData[]>([]); //빨강바구니
-  const [cuteArray, setMyCuteArray] = useState<karinaData[]>([]); // 파란바구니
-  const [sexyArray, setMySexyArray] = useState<karinaData[]>([]);
-  const [dailyArray, setMyDailyArray] = useState<karinaData[]>([]); // 초록바구니
-  const [matchedItems, setMatchedItems] = useState<karinaData[]>([]);
-  const [myInputData, setMyInputData] = useState("");
-  console.log(myInputData, "실시간업데이트되스난되는");
-  const authContextValue: AuthContextType = { jwtToken, setJwtToken };
 
+  const { jwtDecodingData } = useAuthStore((state) => state.jwtGlobal); //* authStore JWT전역
+  console.log(
+    jwtDecodingData,
+    "전역으로 설정한 값인데, 객체형태로 나와야하낟."
+  );
+  console.log("헤더에 들어가는 jwt:", jwtDecodingData?.["token"]);
+  //* 서치바 컴포넌트 조건부 렌더링
   const ShowSeachbar = () => {
     const location = useLocation();
 
     if (
       location.pathname !== "/write" &&
       !location.pathname.startsWith("/detail") &&
-      !location.pathname.startsWith("/SignUp")
+      !location.pathname.startsWith("/SignUp") &&
+      !location.pathname.startsWith("/nonSocialLogin") &&
+      !location.pathname.startsWith("/myPage") &&
+      !location.pathname.startsWith("/UpdateProfile")
     ) {
-      return (
-        <SeachBar
-          jwtToken={jwtToken}
-          setJwtToken={setJwtToken}
-          myArray={myArray}
-          matchedItems={matchedItems}
-          setMatchedItems={setMatchedItems}
-          setMyInputData={setMyInputData}
-          myInputData={myInputData}
-        />
-      );
+      return <SeachBar />;
     }
 
     return null;
   };
+  // const ShowMenubar = () => {
+  //   const location = useLocation();
+  //   if (!location.pathname.startsWith("/nonSocialLogin")) {
+  //     return <Menubar />;
+  //   }
+  // };
 
-  //* 배열추가 함수, write 컴포넌트에서 사용
-  const addToArray = (obj: karinaData) => {
-    switch (category) {
-      case "innocence":
-        if (obj.menubar === category)
-          setMyInnocenceArray([...innocenceArray, obj]);
-
-        break;
-      case "cute":
-        if (obj.menubar === category) setMyCuteArray([...cuteArray, obj]);
-        // console.log(myArray);
-        // console.log("디버깅용");
-        break;
-      case "sexy":
-        if (obj.menubar === category) setMySexyArray([...cuteArray, obj]);
-
-        break;
-      case "daily":
-        if (obj.menubar === category) setMyDailyArray([...dailyArray, obj]);
-
-        break;
-      default:
-        console.log("없는 카테고리 입니다.");
+  const ShowPagiNation = () => {
+    const location = useLocation();
+    if (
+      !location.pathname.startsWith("/nonSocialLogin") &&
+      !location.pathname.startsWith("/detail") &&
+      !location.pathname.startsWith("/SignUp") &&
+      !location.pathname.startsWith("/myPage") &&
+      !location.pathname.startsWith("/UpdateProfile") &&
+      !location.pathname.startsWith("/write")
+    ) {
+      return <Number />;
     }
   };
+  //* 장원영 메뉴바를 포함한 데이터를 가진 배열을 replaceArray의 매개변수에 할당
+  //* replaceArray의 매개변수는 arrayToRest, 이것은 setMyArray의 상태
+  //* 즉, 최종적으로 setMyArray에 장원영 데이터가 포함, 이것은 MyArray의 값이 장원영인 상태
+  //* 최종적으로 myArray의 상태를 공유하는 메인컴포넌트에서 이값을 통해서 렌더링 한다.
+  // const replaceArray = (arrayToReset: any[]) => {
+  //   setMyArray(arrayToReset);
+  // };
 
-  // 빨강=>파랑을 전시바구니로 옮기는 로직
-  // 옮기는 로직이니, 전시
-  const replaceArray = (arrayToReset: any[]) => {
-    setMyArray(arrayToReset);
-    // console.log(arrayToReset);
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/karina/`
-        );
-        const data = await response.json();
-        console.log(data);
-        setMyArray(data);
-
-        setMyInnocenceArray(
-          data.filter((item) => item.menubar === "innocence")
-        );
-        setMyCuteArray(data.filter((item) => item.menubar === "cute"));
-        setMyDailyArray(data.filter((item) => item.menubar === "daily"));
-        setMySexyArray(data.filter((item) => item.menubar === "sexy"));
-      } catch (error) {
-        console.error("뭔가 잘못되었다", error);
-      }
-    };
-    fetchData();
-  }, []);
-
-  // useEffect(() => {
-  //   fetch(`${process.env.REACT_APP_API_URL}/api/karina?menubar=innocence`)
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       replaceArray(data);
-  //     })
-  //     .catch((error) => console.error("Error fetching data:", error));
-  // }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/auth/cookie`,
-          {
-            credentials: "same-origin",
-          }
-        );
-        if (!response.ok) {
-          // throw new Error("서버가 이상해");
-        }
-        const data = await response.json();
-        setJwtToken(data);
-
-        console.log(data.token, "내가받은 JWT 토큰입니다.");
-      } catch (error) {
-        console.error("잘못된 fetch 데이터", error);
-      }
-    };
-    fetchData();
-  }, []);
-  // const isSignUpPage = location.pathname === "/signUp";
-
-  // if (isSignUpPage) {
-  //   return <SignUp />;
-  // }
   return (
     <Router>
       <div>
-        <Header {...authContextValue} />
-        <Menubar
-          replaceArray={replaceArray}
-          setCurrentMenubar={setCurrentMenubar}
-        />
-
+        <FetchAndNavigate />
+        <Alert />
+        <Header />
+        <Menubar />
         <Routes>
-          <Route
-            path="/"
-            element={
-              <MainContens
-                category={category}
-                myarray={myArray}
-                matchedItems={matchedItems}
-              />
-            }
-          />
-          <Route
-            path="/write"
-            element={
-              <WritePage addToArray={addToArray} setCategory={setCategory} />
-            }
-          />
-          <Route
-            path="/searchRender"
-            element={
-              <SerachRender
-                matchedItems={matchedItems}
-                myInputData={myInputData}
-              />
-            }
-          />
-          <Route
-            path="/detail/:uuid"
-            element={
-              <DetailPage
-                myArray={myArray}
-                jwtToken={jwtToken}
-                setJwtToken={setJwtToken}
-              />
-            }
-          />
+          <Route path="/" element={<MainContens />} />
+          <Route path="/menubar/:menubar" element={<MainContens />} />
+          <Route path="collabo/:collabo" element={<MainContens />} />
+          <Route path="/write" element={<WritePage />} />
+          <Route path="/searchRender" element={<SerachRender />} />
+          <Route path="/detail/:uuid" element={<DetailPage />} />
           <Route path="signUp" element={<SignUp />} />
+          <Route path="addNickName" element={<Nickname />} />
+          <Route path="nonSocialLogin" element={<NonSocialLogin />} />
+          <Route path="recoverUser" element={<RecoverUserInfo />} />
+          <Route path="findUserPw" element={<FindUserPw />} />
+          <Route path="myPage" element={<MyPage />} />
+          <Route path="updateProfile" element={<UpdateProfile />} />
+          <Route path="userProfileUpdate" element={<UserProfileUpdate />} />
+          <Route path="myInfoUpdate" element={<MyInfoUpdate />} />
         </Routes>
         <ShowSeachbar />
-        {/* <SeachBar {...authContextValue} /> */}
-
-        <Number
-          replaceArray={replaceArray}
-          setCurrentPage={setCurrentPage}
-          currentMenubar={currentMenubar}
-          currentPage={currentPage}
-        />
+        <ShowPagiNation />
       </div>
     </Router>
   );

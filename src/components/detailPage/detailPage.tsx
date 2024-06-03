@@ -1,51 +1,79 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { karinaData, AuthContextType } from "../../types/contentType";
 import "./detailPage.css";
-import { type } from "os";
+import useAuthStore from "../../JustAnd/GlobalState";
+import { useNavigate } from "react-router-dom";
+import { it } from "node:test";
 
-interface DetailProps extends AuthContextType {
-  myArray: karinaData[];
-}
 type Comment = {
-  username: string;
+  userNickName: string;
   text: string;
 };
-const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
+const DetailComponent: React.FC = () => {
+  const navigate = useNavigate();
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [commentText, setCommentText] = useState("");
+  const [totalLikes, setTotalLikes] = useState(0);
+  const [hasLiked, setHasLiked] = useState(false);
+  const { jwtDecodingData } = useAuthStore((state) => state.jwtGlobal);
+  const { setAllertMessage, showAlertMessage, setConfirmAction, hideAlert } =
+    useAuthStore((state) => state.alertState);
+  const { mainContentsData } = useAuthStore(
+    (state) => state.mainContentsGlobal
+  );
+  const { mainMountData } = useAuthStore((state) => state.mainMountRenderData);
   const { uuid } = useParams<{ uuid: string }>();
 
   const itemId = uuid !== undefined ? uuid : null;
-  // console.log(itemId);
+  console.log("해당 게시물의 UUID의 값:", itemId); //* 여기까지 MyArray 필요없음
 
-  // 문자열 id를 숫자로 변환하고, 해당하는 게시물을 찾습니다.
-  const post = itemId !== null ? myArray.find((p) => p.uuid === itemId) : null;
+  //* itemId가 null이 아니면 배열에서 uuid가 일치하는 것 찾음
+  // const post =
+  //   itemId !== null ? mainContentsData.find((p) => p.uuid === itemId) : null;
+  // console.table(post);
+  const post =
+    itemId !== null
+      ? (mainContentsData
+          ? mainContentsData.find((p) => p.uuid === itemId)
+          : null) ||
+        (mainMountData ? mainMountData.find((p) => p.uuid === itemId) : null)
+      : null;
+  const handleModal = () => {
+    if (!jwtDecodingData) {
+      setAllertMessage("로그인 하셔야 댓글쓰기 가능합니다. 로그인 하시겠어요?");
+      showAlertMessage();
+      setConfirmAction(() => {
+        hideAlert();
+        navigate("/signUp");
+      });
+    }
+  };
 
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [commentText, setCommentText] = useState("");
-  const [commentLoading, setCommentLoading] = useState(false);
-  const [recommendation, setRecommendation] = useState(0);
-  const [totalLikes, setTotalLikes] = useState(0);
-  const [hasLiked, setHasLiked] = useState(false);
-  // console.log(userLiked, "ture인가 false인가?"); // 값이 있으니 true
-
-  /**
-   * @fetchAllCommentView => 상세페이지 마운트 되었을때 작동할 함수 모든 댓글을 보여줌.
-   * @setCommentLoading =>로딩이 완료 유무 상태변경함수
-   */
+  //* 댓글 불러오기
   const fetchAllCommentView = async () => {
-    setCommentLoading(true);
+    // setCommentLoading(true);
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/viewcomments/${itemId}`
+        `${process.env.REACT_APP_API_URL}/api/viewComments/${itemId}`,
+        {
+          method: "GET",
+          headers: {
+            "content-Type": "application/json",
+          },
+        }
       );
       const data = await response.json();
-      console.log(data);
+      console.group("My Group");
+      console.log(data, "내가쓴댓글");
+      console.groupEnd();
+      console.table(data);
+
       setComments(data);
     } catch (error) {
+      console.error(error);
       console.log("댓글 불러오기 실패");
     }
   };
-  // console.log(jwtToken?.["token"]);
   //* 댓글 제출시 실행될 함수
   const handleCommentSubmit = async (event) => {
     if (event != undefined) {
@@ -57,9 +85,10 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
         `${process.env.REACT_APP_API_URL}/api/addcomment`,
         {
           method: "POST",
+
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${jwtToken?.["token"]}`,
+            Authorization: `${jwtDecodingData?.["token"]}`,
           },
           body: JSON.stringify({ text: commentText, postuuid: itemId }),
         }
@@ -68,19 +97,29 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
         throw new Error("Network response was not ok.");
       }
       const data = await response.json();
-      console.log(data.userInfo);
+      console.log(data, "댓글추가시 오는 데이터");
+
       setCommentText("");
       setComments((prevComments) => [
         ...prevComments,
-        { username: data.userInfo, text: commentText },
+        { userNickName: data.userNickName, text: commentText },
       ]); //* prevComments는 현재 댓글 , ...prevCommnets는 현재댓글을 그대로 복사, 오른쪽 객체는 복사한 댓글에 추가하고 싶은 값
     } catch (error) {
       console.log(error);
       console.error("Error fetching data:", error);
     }
   };
-  //* 추천을 눌렀을때 실행되는 함수
+  //* 추천 눌렀을때 실행되는 함수
   const handleLike = async () => {
+    if (!jwtDecodingData) {
+      setAllertMessage("로그인 하셔야 좋아요  가능합니다. 로그인 하시겠어요?");
+      showAlertMessage();
+      setConfirmAction(() => {
+        hideAlert();
+        navigate("/signUp");
+      });
+    }
+
     try {
       const response = await fetch(
         `${process.env.REACT_APP_API_URL}/api/like`,
@@ -88,7 +127,7 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
           method: "POST",
           headers: {
             "content-Type": "application/json",
-            Authorization: `Bearer ${jwtToken?.["token"]}`,
+            Authorization: `${jwtDecodingData?.["token"]}`,
           },
           body: JSON.stringify({ postuuid: itemId }),
         }
@@ -96,59 +135,86 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
       if (response.ok) {
         setTotalLikes(totalLikes + 1);
       } else {
-        // throw new Error("서버가 이상하다. 추천 로직을 검사하라");
+        throw new Error("서버가 이상하다. 추천 로직을 검사하라");
       }
     } catch (error) {
       console.error("추천 에러가 발생했따리", "error");
     }
   };
-  //* 마운트시 가져올 추천수 함수
-  const bringdLikes = async () => {
+  //* 내가 좋아요를 했는지 알려주는 함수(로그인을 해야 작동)
+  const fetchBringdLikes = async () => {
     try {
       const response = await fetch(
         `${process.env.REACT_APP_API_URL}/api/viewLikes/${itemId}`,
         {
           method: "GET",
           headers: {
-            "content-Type": "application/json",
-            Authorization: `Bearer ${jwtToken?.["token"]}`,
+            Authorization: `${jwtDecodingData?.["token"]}`,
           },
         }
       );
-      if (!response.ok) {
-        throw new Error("추천수 조회 잘못 보냈다!");
+      if (response.ok) {
+        const data = await response.json();
+
+        setHasLiked(data.userLiked > 0);
+      } else {
+        throw new Error("문제가있다.");
       }
-      const data = await response.json();
-      console.log(data); // total 값, user값 같이 온다.
-      setTotalLikes(data.totalLikes.count);
-      setHasLiked(data.userLiked.count > 0);
     } catch (error) {
       console.log("좋아요 불러오기 실패");
     }
   };
+  //* 좋아요 개수를 가져오는 함수
+  const viewTotalLikes = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/totalViewLikes/${itemId}`
+      );
+      if (!response.ok) {
+        console.log("좋아요를 가져오는데에 에러가 발생했습니다.");
+      }
+      const data = await response.json();
+      setTotalLikes(data.totalLikes);
+    } catch (error) {
+      throw new Error("좋아요를 몇개 했는지 불러오는데 실패했습니다.");
+    }
+  };
   //* detail 페이지 진입시 실행
   useEffect(() => {
-    fetchAllCommentView();
-    bringdLikes();
+    fetchAllCommentView(); // 댓글 불러오기
+    fetchBringdLikes(); //내가 좋아요 했는지 확인
+    viewTotalLikes();
   }, []);
 
   return (
     <div className="detailPage">
       {post ? (
         <div className="detailPageContents">
-          <h1>{post.title}</h1>
-          {post.photos.map((photo, index) => (
-            <img key={index} src={photo} alt={`Photo ${index}`} />
-          ))}
+          <div className="detailPage-headLine">
+            <h1>제목:{post.title}</h1>
+            <h2>작성자:{post.userNickName}</h2>
+          </div>
+          <div className="detailPage-renderImage">
+            {post.photos.map((photo, index) => (
+              <img key={index} src={photo} alt={`Photo ${index}`} />
+            ))}
+          </div>
         </div>
       ) : (
         <p>게시물을 찾을 수 없습니다.</p>
       )}
+      <div className="recommendationBox">
+        <h3>추천수: {totalLikes}</h3>
+        <button onClick={handleLike} disabled={hasLiked}>
+          {hasLiked ? "좋아요됌" : "좋아요"}
+        </button>
+      </div>
       <div className="commentBox">
         <ul>
           {comments.map((comment, index) => (
             <li key={index}>
-              <strong>{comment.username}:</strong> {comment.text}
+              <strong>{comment.userNickName}:</strong>{" "}
+              {comment.text ? comment.text : "댓글이 없습니다."}
             </li>
           ))}
         </ul>
@@ -156,17 +222,16 @@ const DetailComponent: React.FC<DetailProps> = ({ myArray, jwtToken }) => {
           <input
             type="text"
             value={commentText} // 현재 텍스트값과 상태의 동기화
-            onChange={(e) => setCommentText(e.target.value)} // 이벤트핸들러의.이벤트가 발생한 요소 즉 인풋 . 인풋필드의 현재값
-            placeholder="댓글을 작성 하세요.."
+            onChange={(e) => setCommentText(e.target.value)} // 이벤트핸들러의.이벤트가 발생한 요소 즉 인풋 .
+            placeholder={
+              jwtDecodingData !== null
+                ? "댓글을 작성 하실수 있습니다."
+                : "로그인 시 댓글작성 가능합니다."
+            }
+            onFocus={handleModal}
           ></input>
           <button type="submit">제출</button>
         </form>
-      </div>
-      <div className="recommendationBox">
-        <h3>추천수: {totalLikes}</h3>
-        <button onClick={handleLike} disabled={hasLiked}>
-          {hasLiked ? "추천됨" : "추천"}
-        </button>
       </div>
     </div>
   );

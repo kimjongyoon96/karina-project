@@ -28,7 +28,7 @@ module.exports = {
         use: ["style-loader", "css-loader"],
       },
       {
-        test: /\.(png|jpg|gif|svg)$/,
+        test: /\.(png|jpg|gif|svg|jpe?g)$/,
         type: "asset/resource",
       },
     ],
@@ -45,11 +45,11 @@ module.exports = {
     new webpack.DefinePlugin({
       "process.env": JSON.stringify(dotenv.parsed),
     }),
-    //* 번들링된 html 태그 중복생성 방지
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, "src", "public", "index.html"),
-      filename: "index.html",
-    }),
+    // * 번들링된 html 태그 중복생성 방지
+    // new HtmlWebpackPlugin({
+    //   template: path.join(__dirname, "src", "public", "index.html"),
+    //   filename: "index.html",
+    // }),
   ],
   performance: {
     hints: false,
@@ -65,6 +65,7 @@ module.exports = {
     static: {
       directory: path.join(__dirname, "src", "public"),
     },
+
     compress: true,
     port: 3001,
     host: "0.0.0.0",
