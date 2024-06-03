@@ -9,7 +9,8 @@
     "start": "node dist/server/server.js",
     "server": "nodemon --watch server --exec ts-node server/server.ts",
     "compile": "tsc",
-    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js --dataSource ORM/datasource.ts"
+    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js --dataSource ORM/datasource.ts",
+    "migrate": "ts-node ./node_modules/typeorm/cli.js migration:run"
   },
   "repository": {
     "type": "git",
