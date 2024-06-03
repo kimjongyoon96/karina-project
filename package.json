@@ -5,10 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --config webpack.config.js ",
-    "start": "webpack-dev-server",
+    "build": "tsc",
+    "start": "node dist/server/server.js",
     "server": "nodemon --watch server --exec ts-node server/server.ts",
-    "compile": "tsc"
+    "compile": "tsc",
+    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js --dataSource ORM/datasource.ts"
   },
   "repository": {
     "type": "git",
