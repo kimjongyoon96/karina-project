@@ -1,6 +1,5 @@
 import express from "express";
 import ormConnection from "../ORM";
-import { verifyToken } from "./jwt";
 import exchangeCodeForAccessToken from "./oauth";
 import { userInfoData } from "../ORM/entity/userInfoEntity";
 import jwt from "jsonwebtoken";
