@@ -3,7 +3,6 @@ import path from "path";
 import dotenv from "dotenv";
 import axios from "axios";
 import express, { Request, Response } from "express";
-import qs from "querystring";
 import { userInfoData } from "../ORM/entity/userInfoEntity";
 import ormConnection from "../ORM";
 import jwt from "jsonwebtoken";
