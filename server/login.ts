@@ -6,7 +6,7 @@ dotenv.config({ path: path.resolve(__dirname, "../.env") });
 import { ormConnection } from "../ORM";
 import { getRepository } from "typeorm";
 import { nonSocialUserInfoData } from "../ORM/entity/nonSocialUserInfoEntity";
-import { hashPassWord, verifyPassword } from "../src/services/userPwHash";
+import { hashPassWord, verifyPassword } from "./service/userPwHash";
 import jwt from "jsonwebtoken";
 import { userInfoData } from "../ORM/entity/userInfoEntity";
 const router = express.Router();

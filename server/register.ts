@@ -10,7 +10,7 @@ import { nonSocialUserInfoData } from "../ORM/entity/nonSocialUserInfoEntity";
 import { userInfoData } from "../ORM/entity/userInfoEntity";
 import jwt from "jsonwebtoken";
 
-import { hashPassWord } from "../src/services/userPwHash";
+import { hashPassWord } from "./service/userPwHash";
 const router = express.Router();
 
 router.post("/api/userRegister", async (req: any, res) => {

@@ -5,7 +5,6 @@ import { userLike } from "./entity/userLikeEntity";
 import { userInfoData } from "./entity/userInfoEntity";
 import { userComment } from "./entity/userCommentsEntity";
 import { nonSocialUserInfoData } from "./entity/nonSocialUserInfoEntity";
-import { CustomLogger } from "./entity/customLogger";
 export const ormConnection = new DataSource({
   type: "postgres", // 사용하는 데이터베이스 타입
   host: "db",
@@ -22,7 +21,8 @@ export const ormConnection = new DataSource({
   ],
   synchronize: false, // 개발할때만 사용, 배포시 마이그레이션
   // logging: true,
-  logger: new CustomLogger(),
+  logging: false,
+  migrations: ["dist/migration/*.js"],
 });
 
 ormConnection

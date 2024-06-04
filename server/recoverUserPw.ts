@@ -5,8 +5,8 @@ dotenv.config({ path: path.resolve(__dirname, "../.env") });
 import { ormConnection } from "../ORM";
 import { getRepository } from "typeorm";
 import { userInfoData } from "../ORM/entity/userInfoEntity";
-import { hashPassWord, verifyPassword } from "../src/services/userPwHash";
-import generateNumber from "../src/services/generateRandom";
+import { hashPassWord, verifyPassword } from "./service/userPwHash";
+import generateNumber from "./service/generateRandom";
 import eamilsend from "./emailSend";
 
 const router = express.Router();

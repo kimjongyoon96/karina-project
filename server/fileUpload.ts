@@ -1,10 +1,9 @@
+import dotenv from "dotenv";
+import path from "path";
 import express from "express";
 import { S3 } from "@aws-sdk/client-s3";
 import multerS3 from "multer-s3";
-import dotenv from "dotenv";
-import path from "path";
 import multer from "multer";
-dotenv.config({ path: path.resolve(__dirname, "../.env") });
 import { ormConnection } from "../ORM";
 import { verifyToken } from "./jwt";
 
@@ -12,8 +11,19 @@ import { userPost } from "../ORM/entity/userPostEntity";
 import { userLike } from "../ORM/entity/userLikeEntity";
 import { userInfoData } from "../ORM/entity/userInfoEntity";
 import { userComment } from "../ORM/entity/userCommentsEntity";
+const envPath = path.resolve(__dirname, "../../.env"); // dist/server/server.js에서 ../../.env로 설정
+console.log("Loading .env from:", envPath); // 디버깅용 로그 추가
+dotenv.config({ path: envPath });
+
+console.log("Loading .env from:", envPath); // 디버깅용 로그 추가
+dotenv.config({ path: envPath });
 
 const router = express.Router();
+
+console.log("AWS_ACCESS_KEY_ID:", process.env.AWS_ACCESS_KEY_ID);
+console.log("AWS_SECRET_ACCESS_KEY:", process.env.AWS_SECRET_ACCESS_KEY);
+console.log("AWS_REGION:", process.env.AWS_REGION);
+
 const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
 const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
 const region = process.env.AWS_REGION;
