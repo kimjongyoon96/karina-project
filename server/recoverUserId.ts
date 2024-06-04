@@ -7,7 +7,7 @@ import eamilsend from "./emailSend";
 import { ormConnection } from "../ORM";
 import { getRepository } from "typeorm";
 import { userInfoData } from "../ORM/entity/userInfoEntity";
-import { hashPassWord, verifyPassword } from "../src/services/userPwHash";
+import { hashPassWord, verifyPassword } from "./service/userPwHash";
 import jwt from "jsonwebtoken";
 
 const router = express.Router();
