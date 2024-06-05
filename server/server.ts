@@ -8,12 +8,9 @@ import multerS3 from "multer-s3";
 import dotenv from "dotenv";
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 import jwt from "jsonwebtoken";
-import exchangeCodeForAccessToken from "./oauth";
-import getUserInfo from "./userinfo";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 // import researchResultRouter from "./researchResultGet";
-import { verifyToken } from "./jwt";
 import registerApi from "./register";
 import loginCheckApi from "./login";
 import recoverUserId from "./recoverUserId";
@@ -101,9 +98,15 @@ app.post("/auth/clearCookie", (req, res) => {
 });
 
 //* 모든 요청에 대한 HTML 반환
-app.use(express.static(path.join(__dirname, "..", "dist")));
+// app.use(express.static(path.join(__dirname, "..", "dist")));
+// app.get("/*", function (req, res) {
+//   res.sendFile(path.join(__dirname, "..", "dist", "index.html"));
+// });
+
+app.use(express.static(path.join(__dirname, "../src"))); // 올바른 경로 설정
+
 app.get("/*", function (req, res) {
-  res.sendFile(path.join(__dirname, "..", "dist", "index.html"));
+  res.sendFile(path.join(__dirname, "../src", "index.html")); // 올바른 경로 설정
 });
 
 const PORT = 4000;

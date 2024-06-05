@@ -1,10 +1,10 @@
 // src/components/Header.tsx
 import React, { useState } from "react";
-import pageLogo from "../../assets/photo/pagelogo.png";
+import pageLogo from "../../assets/resource/pagelogo.png";
 import "./header.css";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../JustAnd/GlobalState";
-import LoadingModalViewComponent from "../customComponent/loadingComponent/loadindComponent";
+
 const Header: React.FC = () => {
   const Navigate = useNavigate();
   const { setAllertMessage, showAlertMessage, setConfirmAction, hideAlert } =

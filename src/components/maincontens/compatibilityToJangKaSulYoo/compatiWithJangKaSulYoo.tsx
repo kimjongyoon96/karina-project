@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "./compatibility.css";
-import jangSelected from "../../../assets/photo/jangSelected.gif";
-import karinaSelected from "../../../assets/photo/karinaSelected.gif";
-import sulSelected from "../../../assets/photo/sulSelected.gif";
-import yunaSelected from "../../../assets/photo/yunaSelected.gif";
+import jangSelected from "../../../assets/resource/jangSelected.gif";
+import karinaSelected from "../../../assets/resource/karinaSelected.gif";
+import sulSelected from "../../../assets/resource/sulSelected.gif";
+import yunaSelected from "../../../assets/resource/yunaSelected.gif";
 import useAuthStore from "../../../JustAnd/GlobalState";
 interface typeModule {
   inputName: string;
@@ -27,7 +27,6 @@ const CompatiWithJangKaSuYoo: React.FC = () => {
   const [saveData, setSaveData] = useState<typeModule | null>(null);
   const [bringImage, setBringImage] = useState("");
   const [isInputSaved, setIsInputSaved] = useState(false);
-
   console.log(saveData, "모든 최종적인 값들입니다.");
   const { collaboResult, setCollaboResult } = useAuthStore(
     (state) => state.collaboResultData

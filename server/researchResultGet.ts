@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import path from "path";
 import dotenv from "dotenv";
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
-import { ormConnection } from "../ORM";
+import ormConnection from "../ORM";
 import { getRepository } from "typeorm";
 import { userPost } from "../ORM/entity/userPostEntity";
 const router = express.Router();

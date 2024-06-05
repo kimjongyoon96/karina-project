@@ -1,25 +1,26 @@
+# 베이스 이미지로 Node.js를 사용합니다.
+FROM node:14
 
-
-# Use an official Node.js runtime as a parent image
-FROM node:latest
-
-# Set the working directory
+# 앱 디렉토리를 설정합니다.
 WORKDIR /app
 
-# Copy the package.json and package-lock.json files
+# 패키지 매니저의 패키지 리스트를 복사합니다.
 COPY package*.json ./
 
-# Install dependencies
+# 의존성을 설치합니다.
 RUN npm install
 
-# Copy the rest of the application code
+# 소스 파일을 복사합니다.
 COPY . .
 
-# Build the application
-RUN npm run compile
+# TypeScript를 컴파일합니다.
+RUN npm run build:server
 
-# Expose the port the app runs on
-EXPOSE 4000
+# 웹팩을 통해 빌드합니다.
+RUN npm run build
 
-# Command to run the app
+# 마이그레이션을 실행합니다.
+RUN npm run migration:run
+
+# 애플리케이션을 시작합니다.
 CMD ["npm", "start"]

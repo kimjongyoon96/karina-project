@@ -7,9 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
     "start": "node dist/server/server.js",
-    "compile": "tsc",
+    "build:server": "tsc --project tsconfig.backEnd.json",
     "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js",
-    "migration:create": "npm run typeorm migration:create ./migrations/$npm_config_name",
+    "migration:create": "npm run typeorm migration:create ./migration/$npm_config_name",
     "migration:run": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run -d ./ORM/index.ts"
   },
   "repository": {
@@ -61,7 +61,7 @@
     "@ffmpeg/ffmpeg": "^0.12.10",
     "aws-sdk": "^2.1623.0",
     "axios": "^1.6.8",
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
     "browser-image-compression": "^2.0.2",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -84,6 +84,7 @@
     "react-cookie": "^7.0.2",
     "react-dom": "^18.2.0",
     "react-google-recaptcha": "^3.1.0",
+    "react-image-compressor": "^1.0.1",
     "react-router-dom": "^6.20.1",
     "reflect-metadata": "^0.2.1",
     "sequelize": "^6.37.1",

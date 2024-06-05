@@ -4,7 +4,7 @@ import "./signUp.css";
 import { AuthContextType } from "../../types/contentType";
 import { useNavigate } from "react-router-dom";
 import { encrypt, decrypt } from "../../services/cryptoForState";
-import googleBtn from "../../assets/photo/web_neutral_sq_ctn@1x.png";
+import googleBtn from "../../assets/resource/web_neutral_sq_ctn@1x.png";
 const SignUp: React.FC = () => {
   const navigate = useNavigate();
 
