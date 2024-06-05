@@ -5,13 +5,14 @@ import { userLike } from "./entity/userLikeEntity";
 import { userInfoData } from "./entity/userInfoEntity";
 import { userComment } from "./entity/userCommentsEntity";
 import { nonSocialUserInfoData } from "./entity/nonSocialUserInfoEntity";
-export const ormConnection = new DataSource({
+
+const ormConnection = new DataSource({
   type: "postgres", // 사용하는 데이터베이스 타입
-  host: "db",
+  host: process.env.DB_HOST,
   port: 5432,
-  username: `${process.env.TYPE_ORM_USERNAME}`,
-  password: `${process.env.TYPE_ORM_PASSWORD}`,
-  database: "postgres",
+  username: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
   entities: [
     userPost,
     userLike,

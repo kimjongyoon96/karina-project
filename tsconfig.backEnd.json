@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist",
+    "target": "es2022",
+    "module": "commonjs",
+    "strict": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": "./",
+    "rootDir": "./",
+    "noImplicitAny": false,
+    "strictNullChecks": true,
+    "emitDecoratorMetadata": true, // 이 옵션을 추가
+    "experimentalDecorators": true // 이 옵션을 추가
+  },
+  "include": ["server", "ORM", "migration"],
+  "exclude": ["node_modules", "src"]
+}

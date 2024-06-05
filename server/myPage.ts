@@ -3,7 +3,7 @@ import cors from "cors";
 import path from "path";
 import dotenv from "dotenv";
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
-import { ormConnection } from "../ORM";
+import ormConnection from "../ORM";
 import { getRepository } from "typeorm";
 import { nonSocialUserInfoData } from "../ORM/entity/nonSocialUserInfoEntity";
 import { userPost } from "../ORM/entity/userPostEntity";
@@ -78,7 +78,6 @@ const getMyCommnets = async (req, res) => {
     if (!commnets || commnets.length === 0) {
       return res.status(404).json({ message: "댓글이 없습니다." });
     }
-    console.log(total, commnets);
     return res.status(200).json({ total, commnets });
   } catch (error) {
     console.error(error, "댓글 로직에 문제가 있습니다.");

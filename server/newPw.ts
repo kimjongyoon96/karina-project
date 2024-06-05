@@ -3,7 +3,7 @@ import path from "path";
 import dotenv from "dotenv";
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 import { hashPassWord } from "./service/userPwHash";
-import { ormConnection } from "../ORM";
+import ormConnection from "../ORM";
 import { getRepository } from "typeorm";
 import { nonSocialUserInfoData } from "../ORM/entity/nonSocialUserInfoEntity";
 import { userInfoData } from "../ORM/entity/userInfoEntity";
