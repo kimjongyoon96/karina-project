@@ -19,8 +19,8 @@ RUN npm run build:server
 # 웹팩을 통해 빌드합니다.
 RUN npm run build
 
-# 마이그레이션을 실행합니다.
-RUN npm run migration:run
+
+
 
 # 애플리케이션을 시작합니다.
 CMD ["npm", "start"]

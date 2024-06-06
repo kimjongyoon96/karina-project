@@ -5,7 +5,7 @@ import { userLike } from "./entity/userLikeEntity";
 import { userInfoData } from "./entity/userInfoEntity";
 import { userComment } from "./entity/userCommentsEntity";
 import { nonSocialUserInfoData } from "./entity/nonSocialUserInfoEntity";
-
+import path from "path";
 const ormConnection = new DataSource({
   type: "postgres", // 사용하는 데이터베이스 타입
   host: process.env.DB_HOST,
@@ -13,17 +13,18 @@ const ormConnection = new DataSource({
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  entities: [
-    userPost,
-    userLike,
-    userInfoData,
-    userComment,
-    nonSocialUserInfoData,
-  ],
+  entities: [__dirname + "/entity/*.ts"],
+  // entities: [
+  //   userPost,
+  //   userLike,
+  //   userInfoData,
+  //   userComment,
+  //   nonSocialUserInfoData,
+  // ],
   synchronize: false, // 개발할때만 사용, 배포시 마이그레이션
-  // logging: true,
+
   logging: false,
-  migrations: ["dist/migration/*.js"],
+  migrations: [__dirname + "/migrations/*.ts"],
 });
 
 ormConnection

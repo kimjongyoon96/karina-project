@@ -49,6 +49,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.join(__dirname, "src", "public", "index.html"),
       filename: "index.html",
+      inject: "body",
     }),
   ],
   performance: {

@@ -103,10 +103,10 @@ app.post("/auth/clearCookie", (req, res) => {
 //   res.sendFile(path.join(__dirname, "..", "dist", "index.html"));
 // });
 
-app.use(express.static(path.join(__dirname, "../src"))); // 올바른 경로 설정
+app.use(express.static(path.join(__dirname, "..")));
 
 app.get("/*", function (req, res) {
-  res.sendFile(path.join(__dirname, "../src", "index.html")); // 올바른 경로 설정
+  res.sendFile(path.join(__dirname, "..", "index.html")); // 올바른 경로 설정
 });
 
 const PORT = 4000;
