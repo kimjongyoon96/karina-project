@@ -9,8 +9,8 @@
     "start": "node dist/server/server.js",
     "build:server": "tsc --project tsconfig.backEnd.json",
     "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js",
-    "migration:create": "npm run typeorm migration:create ./migration/$npm_config_name",
-    "migration:run": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run -d ./ORM/index.ts"
+    "migration:generate": "npx ts-node ./node_modules/typeorm/cli.js migration:generate -d ./ORM/index.ts ./ORM/migrations/CreateMigration",
+    "migration:run": "npx ts-node ./node_modules/typeorm/cli.js migration:run -d ./ORM/index.ts"
   },
   "repository": {
     "type": "git",
