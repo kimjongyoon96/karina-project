@@ -1,0 +1,49 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const jwt_1 = require("../jwt");
+const userInfoEntity_1 = require("../..//ORM/entity/userInfoEntity");
+const ORM_1 = __importDefault(require("../..//ORM"));
+const router = express_1.default.Router();
+router.patch("/api/usersPatch", jwt_1.verifyToken, async (req, res) => {
+    const { userEmail, identifier, loginType } = req.user;
+    const updatedData = req.body;
+    console.log("body에 싫을거:", updatedData);
+    const filteredData = Object.entries(updatedData)
+        .filter(([key, value]) => value !== null)
+        .reduce((acc, [key, value]) => {
+        acc[key] = value;
+        return acc;
+    }, {});
+    console.log(filteredData);
+    try {
+        const userRepository = ORM_1.default.getRepository(userInfoEntity_1.userInfoData);
+        const user = await userRepository.findOne({
+            where: loginType === "nonSocial"
+                ? {
+                    userId: identifier,
+                    useremail: userEmail,
+                }
+                : { username: identifier, useremail: userEmail },
+        });
+        if (!user) {
+            return res
+                .status(404)
+                .json({ error: "찾아야 하는 사용자가 존재하지 않습니다." });
+        }
+        const updateSuccess = await userRepository.update(user.id, filteredData);
+        if (updateSuccess) {
+            res.status(200).json({ message: "업데이트에 성공했습니다." });
+        }
+    }
+    catch (error) {
+        console.error("개인정보 수정하는데에 에러가 발생했습니다.");
+        return res
+            .status(500)
+            .json({ message: "개인정보 수정 라우터 에러입니다." });
+    }
+});
+exports.default = router;
