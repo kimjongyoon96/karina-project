@@ -103,6 +103,10 @@ app.post("/auth/clearCookie", (req, res) => {
 //   res.sendFile(path.join(__dirname, "..", "dist", "index.html"));
 // });
 
+app.get("/health", async (req, res) => {
+  res.status(200).send("https 연결되었다.");
+});
+
 app.use(express.static(path.join(__dirname, ".."))); //* css를 포함한 정적파일 위치
 
 app.get("/*", function (req, res) {
