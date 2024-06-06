@@ -103,10 +103,10 @@ app.post("/auth/clearCookie", (req, res) => {
 //   res.sendFile(path.join(__dirname, "..", "dist", "index.html"));
 // });
 
-app.use(express.static(path.join(__dirname, "..")));
+app.use(express.static(path.join(__dirname, ".."))); //* css를 포함한 정적파일 위치
 
 app.get("/*", function (req, res) {
-  res.sendFile(path.join(__dirname, "..", "index.html")); // 올바른 경로 설정
+  res.sendFile(path.join(__dirname, "..", "index.html")); //* 번들링된 자바스크립트 태그가 존재하는 정적 파일 서빙 위치
 });
 
 const PORT = 4000;
