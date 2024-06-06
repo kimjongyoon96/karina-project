@@ -13,7 +13,11 @@ RUN npm install
 # 소스 파일을 복사합니다.
 COPY . .
 
+# TypeScript를 컴파일합니다.
+RUN npm run build:server
 
+# 웹팩을 통해 빌드합니다.
+RUN npm run build
 
 
 
