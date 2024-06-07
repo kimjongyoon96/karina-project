@@ -44,7 +44,7 @@ const FetchAndNavigate: React.FC = () => {
           }
         );
 
-        if (tokenResponse.status === 401) {
+        if (tokenResponse.status === 404) {
           const clearResponse = await fetch(
             `${process.env.REACT_APP_API_URL}/auth/clearCookie`,
             {
