@@ -1,6 +1,6 @@
 import express from "express";
 import { userComment } from "../ORM/entity/userCommentsEntity";
-import ormConnection from "../ORM";
+import ormConnection from "../ORM/index";
 const router = express.Router();
 
 router.get("/api/viewComments/:postuuid", async (req: any, res) => {

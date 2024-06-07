@@ -4,7 +4,7 @@ import express from "express";
 import { S3 } from "@aws-sdk/client-s3";
 import multerS3 from "multer-s3";
 import multer from "multer";
-import ormConnection from "../ORM";
+import ormConnection from "../ORM/index";
 import { verifyToken } from "./jwt";
 
 import { userPost } from "../ORM/entity/userPostEntity";

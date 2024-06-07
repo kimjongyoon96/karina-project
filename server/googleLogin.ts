@@ -1,5 +1,5 @@
 import express from "express";
-import ormConnection from "../ORM";
+import ormConnection from "../ORM/index";
 import exchangeCodeForAccessToken from "./oauth";
 import { userInfoData } from "../ORM/entity/userInfoEntity";
 import jwt from "jsonwebtoken";

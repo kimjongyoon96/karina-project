@@ -1,5 +1,5 @@
 import express from "express";
-import ormConnection from "../ORM";
+import ormConnection from "../ORM/index";
 import { verifyToken } from "./jwt";
 import { userInfoData } from "../ORM/entity/userInfoEntity";
 import { userComment } from "../ORM/entity/userCommentsEntity";

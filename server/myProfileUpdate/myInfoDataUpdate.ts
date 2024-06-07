@@ -1,6 +1,6 @@
 import express from "express";
 import { verifyToken } from "../jwt";
-import ormConnection from "../../ORM";
+import ormConnection from "../../ORM/index";
 import { userInfoData } from "../../ORM/entity/userInfoEntity";
 const router = express.Router();
 

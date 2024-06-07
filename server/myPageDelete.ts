@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
-import ormConnection from "../ORM";
+import ormConnection from "../ORM/index";
 import { getRepository } from "typeorm";
 import { userPost } from "../ORM/entity/userPostEntity";
 import { userInfoData } from "../ORM/entity/userInfoEntity";

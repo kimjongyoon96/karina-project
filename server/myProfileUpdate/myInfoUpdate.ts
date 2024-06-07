@@ -2,7 +2,7 @@ import express from "express";
 import { verifyToken } from "../jwt";
 
 import { userInfoData } from "../..//ORM/entity/userInfoEntity";
-import ormConnection from "../..//ORM";
+import ormConnection from "../..//ORM/index";
 
 const router = express.Router();
 

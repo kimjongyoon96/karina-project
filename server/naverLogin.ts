@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import axios from "axios";
 import express, { Request, Response } from "express";
 import { userInfoData } from "../ORM/entity/userInfoEntity";
-import ormConnection from "../ORM";
+import ormConnection from "../ORM/index";
 import jwt from "jsonwebtoken";
 
 dotenv.config({ path: path.resolve(__dirname, "../.env") });

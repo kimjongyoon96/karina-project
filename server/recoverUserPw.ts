@@ -2,7 +2,7 @@ import express from "express";
 import path from "path";
 import dotenv from "dotenv";
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
-import ormConnection from "../ORM";
+import ormConnection from "../ORM/index";
 import { getRepository } from "typeorm";
 import { userInfoData } from "../ORM/entity/userInfoEntity";
 import { hashPassWord, verifyPassword } from "./service/userPwHash";
