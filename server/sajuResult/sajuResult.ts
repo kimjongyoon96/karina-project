@@ -3,7 +3,7 @@ import express from "express";
 import AWS from "aws-sdk";
 import dotenv from "dotenv";
 import path from "path";
-dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
 const router = express.Router();
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,

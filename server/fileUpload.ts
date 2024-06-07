@@ -8,9 +8,7 @@ import ormConnection from "../ORM";
 import { verifyToken } from "./jwt";
 
 import { userPost } from "../ORM/entity/userPostEntity";
-import { userLike } from "../ORM/entity/userLikeEntity";
 import { userInfoData } from "../ORM/entity/userInfoEntity";
-import { userComment } from "../ORM/entity/userCommentsEntity";
 const envPath = path.resolve(__dirname, "../../.env"); // dist/server/server.js에서 ../../.env로 설정
 console.log("Loading .env from:", envPath); // 디버깅용 로그 추가
 dotenv.config({ path: envPath });

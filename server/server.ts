@@ -43,7 +43,7 @@ const app = express();
 //* cors 에러방지 미들웨어
 app.use(
   cors({
-    origin: "http://localhost:3001",
+    origin: "*",
     credentials: true,
     methods: ["GET", "POST", "OPTIONS", "DELETE", "PATCH"],
   })

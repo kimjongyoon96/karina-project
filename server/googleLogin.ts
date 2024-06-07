@@ -100,7 +100,7 @@ router.get("/auth/google/redirect", async (req: any, res) => {
     }
     //* 닉네임 있는 경우 바로 토큰 발급
     res.cookie("token", token, { httpOnly: true, secure: false });
-    return res.redirect(`${process.env.REACT_APP_API_URL}`); // 클라이언트 페이지로 리디렉션
+    return res.redirect(`${process.env.REACT_APP_API_URL}`);
   } catch (error) {
     console.error("Error handling OAuth callback:", error);
     res.status(500).send("구글 로그인 문제가 있습니다");
