@@ -7,12 +7,14 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
+      - ~/.aws:/root/.aws
     working_dir: /app
     command: /bin/sh -c "npm install && npx nodemon --exec ts-node ./server/server.ts"
     depends_on:
       - db
     environment:
       - NODE_ENV=development
+      - AWS_SDK_LOAD_CONFIG=1
 
   webpack-dev-server:
     image: node
@@ -21,10 +23,12 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
+      - ~/.aws:/root/.aws
     working_dir: /app
     command: /bin/sh -c "npm install && npm start"
     environment:
       - NODE_ENV=development
+      - AWS_SDK_LOAD_CONFIG=1
   db:
     image: postgres
     environment:

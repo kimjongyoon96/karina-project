@@ -24,7 +24,7 @@ const FetchAndNavigate: React.FC = () => {
             credentials: "include",
           }
         );
-
+        //* 200번대가 아닐때 처리
         if (!response.ok) {
           console.log("auth/cookie로 요청한 데이터 가져오는데 실패했습니다.");
           return;
@@ -44,7 +44,7 @@ const FetchAndNavigate: React.FC = () => {
           }
         );
 
-        if (tokenResponse.status === 401) {
+        if (tokenResponse.status === 404) {
           const clearResponse = await fetch(
             `${process.env.REACT_APP_API_URL}/auth/clearCookie`,
             {
@@ -75,8 +75,8 @@ const FetchAndNavigate: React.FC = () => {
     setAllertMessage,
     showAlertMessage,
     setConfirmAction,
-    navigate,
     hideAlert,
+    navigate,
   ]);
 
   return null; // 이 컴포넌트는 UI를 렌더링하지 않음

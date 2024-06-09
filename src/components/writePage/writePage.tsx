@@ -29,6 +29,7 @@ const WritePage: React.FC = () => {
   const { jwtDecodingData } = useAuthStore((state) => state.jwtGlobal);
   const [errors, setErrors] = useState<Errors>({});
   const [isValiable, setIsValiable] = useState(true);
+  const [isSumnailExgist, setIsSumnailExgist] = useState(false);
   console.log(compressedImages, "여기에 blob 객체가 나와야돼!!");
   const validateForm = () => {
     const newErrors: Errors = {};
@@ -41,6 +42,7 @@ const WritePage: React.FC = () => {
   const handleRemove = () => {
     setIsValiable(false);
   };
+  //* 섬네일 사진 압축 함수
   const handlePhotoSumnailChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -65,12 +67,15 @@ const WritePage: React.FC = () => {
         // 압축된 파일을 나중에 서버로 전송할 수 있도록 저장
         setCompressedPhotoSumnail(compressedFile);
         console.log(compressedFile, "이게 압축된파일");
+        if (compressedFile) {
+          setIsSumnailExgist(true);
+        }
       } catch (error) {
         console.error("압축 중 에러 발생:", error);
       }
     }
   };
-  // 사진 파일 압축 함수
+  // 본문 사진 압축 함수
   const handlePhotosChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -107,7 +112,7 @@ const WritePage: React.FC = () => {
     }
   };
 
-  //* 핸들함수 작동 => addToArray 함수 작동 => 카테고리에 맞는
+  //* 핸들함수 작동
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formErrors = validateForm();
@@ -197,8 +202,8 @@ const WritePage: React.FC = () => {
           className="photo-thumbnail-input"
           onChange={handlePhotoSumnailChange}
         />
-        <div className="photos-Thumnail-preview">
-          {isValiable && (
+        {isValiable && isSumnailExgist && (
+          <div className="photos-Thumnail-preview">
             <div className="thumbnail-container">
               <img
                 src={photoSumnail}
@@ -206,11 +211,11 @@ const WritePage: React.FC = () => {
                 alt="thumbnail"
               />
               <button className="close-button" onClick={handleRemove}>
-                X
+                x
               </button>
             </div>
-          )}
-        </div>
+          </div>
+        )}
         <input
           type="file"
           className="photos-input"
