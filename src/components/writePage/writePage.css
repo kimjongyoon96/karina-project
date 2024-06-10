@@ -84,7 +84,10 @@
   position: relative; /* 상대적인 위치를 사용하여 자식 요소를 기준으로 위치 지정 */
   display: inline-block;
 }
-
+.thumbnail-container {
+  position: relative;
+  display: inline-block;
+}
 .thumbnail-image {
   display: block;
   max-width: 100%;

@@ -100,6 +100,7 @@ const WritePage: React.FC = () => {
           ...prevCompressedImages,
           ...compressedFiles,
         ]);
+        setIsSumnailExgist(true);
         if (photos.length + newFileUrls.length > 6) {
           alert("최대 6개의 사진만 선택할 수 있습니다.");
           setPhotos((prevPhotos) =>
@@ -223,16 +224,21 @@ const WritePage: React.FC = () => {
           onChange={handlePhotosChange}
         />
         {/* 사용자가 선택한 사진들을 보여주는 부분 */}
-        <div className="photos-preview">
-          {photos.map((photoUrl, index) => (
-            <img
-              key={index}
-              src={photoUrl}
-              alt={`선택한 사진 ${index + 1}`}
-              className="photo-thumbnail"
-            />
-          ))}
-        </div>
+        {isValiable && isSumnailExgist && (
+          <div className="photos-preview">
+            {photos.map((photoUrl, index) => (
+              <img
+                key={index}
+                src={photoUrl}
+                alt={`선택한 사진 ${index + 1}`}
+                className="photo-thumbnail"
+              />
+            ))}
+            <button className="close-button" onClick={handleRemove}>
+              x
+            </button>
+          </div>
+        )}
         <button type="submit" className="submit-button">
           등록
         </button>

@@ -1,0 +1,8 @@
+.user-info-header {
+  display: flex;
+}
+
+.user-info-delete-btn {
+  background-color: red;
+  opacity: 50;
+}

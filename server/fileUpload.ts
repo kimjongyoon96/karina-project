@@ -7,25 +7,23 @@ import multer from "multer";
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 import { ormConnection } from "../ORM";
 import { verifyToken } from "./jwt";
-
+import {
+  S3Client,
+  ListObjectsV2Command,
+  GetObjectCommand,
+} from "@aws-sdk/client-s3";
+import { fromIni } from "@aws-sdk/credential-providers";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { userPost } from "../ORM/entity/userPostEntity";
 import { userLike } from "../ORM/entity/userLikeEntity";
 import { userInfoData } from "../ORM/entity/userInfoEntity";
 import { userComment } from "../ORM/entity/userCommentsEntity";
 
 const router = express.Router();
-const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
-const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
-const region = process.env.AWS_REGION;
-if (!accessKeyId || !secretAccessKey || !region) {
-  throw new Error("키값이 존재하지 않습니다.");
-}
-const s3 = new S3({
-  credentials: {
-    accessKeyId,
-    secretAccessKey,
-  },
-  region,
+
+const s3 = new S3Client({
+  region: "ap-northeast-2" || "us-east-1",
+  credentials: fromIni({ profile: "kimjongyoons96" }),
 });
 // s3, 사진 게시물 업로드용
 const upload = multer({

@@ -1,5 +1,5 @@
 // src/components/Header.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import pageLogo from "../../assets/photo/pagelogo.png";
 import "./header.css";
 import { useNavigate } from "react-router-dom";
@@ -10,9 +10,8 @@ const Header: React.FC = () => {
   const { setAllertMessage, showAlertMessage, setConfirmAction, hideAlert } =
     useAuthStore((state) => state.alertState);
   const { jwtDecodingData } = useAuthStore((state) => state.jwtGlobal);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
-
+  const [userIdentity, setUserIdentity] = useState("");
+  console.log(userIdentity);
   const fetchData = async () => {
     try {
       const response = await fetch(
@@ -39,7 +38,29 @@ const Header: React.FC = () => {
       console.error("로그아웃 비동기 에러:", error);
     }
   };
-
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_API_URL}/api/usersData`,
+          {
+            headers: {
+              authorization: jwtDecodingData?.["token"],
+            },
+          }
+        );
+        if (!response.ok) {
+          console.log("헤더에 내정보 가져오기 실패");
+        }
+        const data = await response.json();
+        console.log(data, "헤더 유저데이터");
+        setUserIdentity(data.identifier);
+      } catch (error) {
+        console.error("내정보 가져오는데 에러");
+      }
+    };
+    fetchData();
+  }, []);
   const gotoPage = () => {
     if (jwtDecodingData) {
       Navigate("/myPage");
@@ -68,6 +89,7 @@ const Header: React.FC = () => {
       >
         마이페이지
       </button>
+
       <img
         className="logo"
         onClick={() => {

@@ -46,4 +46,8 @@ export interface AuthStated {
     numberData: number | string | null | undefined;
     setNumberData: (number: number | string | undefined) => void;
   };
+  UserDeleteRight: {
+    deleteBollean: boolean;
+    setDeleteBollean: (bool: boolean) => void;
+  };
 }

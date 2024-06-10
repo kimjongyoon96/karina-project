@@ -4,19 +4,14 @@ import dotenv from "dotenv";
 import path from "path";
 import {
   S3Client,
-  ListBucketsCommand,
   ListObjectsV2Command,
+  GetObjectCommand,
 } from "@aws-sdk/client-s3";
 import { fromIni } from "@aws-sdk/credential-providers";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 const router = express.Router();
-// const credentials = new AWS.fromInoi({
-//   profile: "kimjongyoons96",
-// });
-// AWS.config.credentials = credentials;
-// console.log(credentials);
-// AWS.config.update({ region: "ap-northeast-2" || "us-east-1" });
-// const S3 = new AWS.S3();
+
 //* 특정 폴더의 파일 목록을 가져오는 함수
 const s3Client = new S3Client({
   region: "ap-northeast-2" || "us-east-1",
@@ -40,34 +35,32 @@ const listFilesInFolder = async (folder) => {
 
   try {
     const data = await s3Client.send(command);
-
     if (data.Contents) {
-      return data.Contents.map((item) => ({
-        key: item.Key,
-        URL: `https://${bucketName}.s3.amazonaws.com/${item.Key}`,
-      }));
+      const fileDetails = await Promise.all(
+        data.Contents.map(async (item) => {
+          const signedUrl = await getSignedUrl(
+            s3Client,
+            new GetObjectCommand({
+              Bucket: bucketName,
+              Key: item.Key,
+            }),
+            { expiresIn: 3600 }
+          ); // URL 유효기간(초)
+
+          return {
+            key: item.Key,
+            URL: signedUrl,
+          };
+        })
+      );
+      return fileDetails;
     }
-    return;
+    console.log("data인디", data);
+    return [];
   } catch (error) {
-    throw new Error("에러가발생");
+    throw new Error("에러가 발생했습니다: " + error.message);
   }
 };
-
-// // 특정 파일을 가져오는 함수
-// const getFile = async (key) => {
-//   const params = {
-//     Bucket: bucketName,
-//     Key: key,
-//   };
-
-//   try {
-//     const data = await s3Client.send(new ListBucketsCommand({}));
-//     return { Body: data.Buckets };
-//   } catch (error) {
-//     console.error(`Error fetching file ${key}:`, error);
-//     throw error;
-//   }
-// };
 
 router.get("/api/sajuRenderImage", async (req: any, res) => {
   //*type:약간호감 , targetName:장원영
@@ -109,20 +102,16 @@ router.get("/api/sajuRenderImage", async (req: any, res) => {
       (key) => key?.includes(nameInCludes)
     );
     console.log(targetFileKey, "정확한 명칭이 나와야한다."); // 문자열이 출력이 된다.
-    const filterData = filekeysArray.map(
+    const filterData = await filekeysArray.map(
       (innerArray) =>
         innerArray?.filter((item) => item.key?.includes(nameInCludes))
     );
     console.log(filterData);
-    // const file = await getFile(targetFileKey);
-    // const processedFile = {
-    //   contentType: file.ContentType,
-    //   data: file.Body?.toString("base64"),
-    // };
 
-    // console.log(processedFile);
-    // return res.status(200).json(processedFile);
-    return res.status(200);
+    const filterFile = filterData.flat().map((itme) => itme?.URL);
+    console.log(filterFile);
+
+    return res.status(200).json(filterFile);
   } catch (error) {
     res.status(500).json({ message: "궁합 결과 렌더링 서버 에러입니다." });
   }

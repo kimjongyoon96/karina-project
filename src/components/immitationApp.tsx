@@ -8,6 +8,7 @@ const FetchAndNavigate: React.FC = () => {
   const { jwtDecodingData, setJwtDecodingData } = useAuthStore(
     (state) => state.jwtGlobal
   );
+  const { deleteBollean } = useAuthStore((state) => state.UserDeleteRight);
   console.log(
     jwtDecodingData,
     "모듈화한 useEffect 로직에서 전역으로 선언한 jwtDecond"
@@ -44,7 +45,7 @@ const FetchAndNavigate: React.FC = () => {
           }
         );
 
-        if (tokenResponse.status === 404) {
+        if (tokenResponse.status === 404 || deleteBollean === true) {
           const clearResponse = await fetch(
             `${process.env.REACT_APP_API_URL}/auth/clearCookie`,
             {
@@ -77,6 +78,7 @@ const FetchAndNavigate: React.FC = () => {
     setConfirmAction,
     hideAlert,
     navigate,
+    deleteBollean,
   ]);
 
   return null; // 이 컴포넌트는 UI를 렌더링하지 않음

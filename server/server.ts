@@ -41,7 +41,7 @@ import viewComments from "./viewComments";
 import viewLikes from "./viewLikes";
 import googleLogin from "./googleLogin";
 import viewTotalLikes from "./viewTotalLikes";
-
+import userInfoDelete from "./userDelete";
 const app = express();
 //* cors 에러방지 미들웨어
 app.use(
@@ -93,6 +93,7 @@ app.use(viewComments); // 쓴 댓글 보기
 app.use(viewLikes); // 좋아요 한 숫자 보기 로직
 app.use(googleLogin);
 app.use(viewTotalLikes); //* 논 로그인 유저 좋아요 로직 보여주기
+app.use(userInfoDelete); // 회원탈퇴 처리하는 라우터
 
 //* 쿠키 http 통신에 의해서 삭제하는 로직
 app.post("/auth/clearCookie", (req, res) => {

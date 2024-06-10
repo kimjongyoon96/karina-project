@@ -34,7 +34,9 @@ export class userPost {
   userNickName: string;
   //* 소셜로그인 엔티티와 연결을 상징
   //* socialUser 필드는 userInfoData 엔티티의 인스턴스이다.
-  @ManyToOne(() => userInfoData, (user) => user.socialPosts)
+  @ManyToOne(() => userInfoData, (user) => user.socialPosts, {
+    onDelete: "CASCADE",
+  })
   socialUser: userInfoData;
 
   // 비소셜 로그인 사용자와의 관계 설정

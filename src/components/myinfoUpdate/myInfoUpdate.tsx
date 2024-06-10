@@ -12,6 +12,7 @@ interface userData {
 }
 
 const MyInfoUpdate: React.FC = () => {
+  const navigate = useNavigate();
   const { jwtDecodingData } = useAuthStore((state) => state.jwtGlobal);
   const [userData, setUserData] = useState<userData | null>(null);
   const [isUpdate, setIsUpdate] = useState(false);
@@ -32,7 +33,12 @@ const MyInfoUpdate: React.FC = () => {
     userPassWord: false,
     userId: false,
   });
-
+  const { setAllertMessage, showAlertMessage, setConfirmAction, hideAlert } =
+    useAuthStore((state) => state.alertState);
+  const { deleteBollean, setDeleteBollean } = useAuthStore(
+    (state) => state.UserDeleteRight
+  );
+  console.log("회원탈퇴를 누르면 true", deleteBollean);
   useEffect(() => {
     if (jwtDecodingData) {
       console.log("마이페이지 수정에서의 JWT값", jwtDecodingData?.["token"]);
@@ -130,12 +136,56 @@ const MyInfoUpdate: React.FC = () => {
       console.error("업데이트 유저에 에러가 발생했습니다.", error);
     }
   };
-
+  const handleDeleteAllert = () => {
+    setAllertMessage(
+      "탈퇴하시면 회원님의 모든 게시물과 댓글이 삭제됩니다.삭제하시겠어요?"
+    );
+    showAlertMessage();
+    setConfirmAction(() => {
+      hideAlert();
+      handleDeleteUser();
+    });
+  };
+  const handleDeleteUser = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/deleteUserInfo`,
+        {
+          method: "DELETE",
+          headers: {
+            authorization: `${jwtDecodingData?.["token"]}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        console.error("유저 정보 삭제하는데 실패");
+      }
+      const data = await response.json();
+      if (data.status === 200) {
+        setDeleteBollean(true);
+        navigate("/");
+      }
+      console.log(data);
+    } catch (error) {
+      throw new Error("유저 삭제하는데 실패했습니다.");
+    }
+  };
   return (
     <main className="user-info-update-box">
-      <h1>내 정보 수정하기</h1>
+      <div className="user-info-header">
+        <h1>내 정보 수정하기</h1>
+        <button
+          className="user-info-delete-btn"
+          onClick={() => {
+            handleDeleteAllert();
+          }}
+        >
+          회원탈퇴
+        </button>
+      </div>
+
       <div className="social-user-update-box">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleDeleteAllert}>
           {desabled && (
             <>
               <div className="input-group">

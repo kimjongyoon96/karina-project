@@ -124,6 +124,17 @@ const useAuthStore = create<AuthStated>((set) => ({
         },
       })),
   },
+
+  UserDeleteRight: {
+    deleteBollean: false,
+    setDeleteBollean: (bool) =>
+      set((state) => ({
+        UserDeleteRight: {
+          ...state.UserDeleteRight,
+          deleteBollean: bool,
+        },
+      })),
+  },
 }));
 
 export default useAuthStore;
