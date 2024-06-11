@@ -1,5 +1,4 @@
 import express from "express";
-import { S3 } from "@aws-sdk/client-s3";
 import multerS3 from "multer-s3";
 import dotenv from "dotenv";
 import path from "path";
@@ -7,11 +6,7 @@ import multer from "multer";
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 import ormConnection from "../ORM/index";
 import { verifyToken } from "./jwt";
-import {
-  S3Client,
-  ListObjectsV2Command,
-  GetObjectCommand,
-} from "@aws-sdk/client-s3";
+import { S3Client } from "@aws-sdk/client-s3";
 import { fromIni } from "@aws-sdk/credential-providers";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { userpost } from "../ORM/entity/userPostEntity";

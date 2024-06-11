@@ -7,7 +7,7 @@ services:
       - .:/app
 
     working_dir: /app
-    command: /bin/sh -c "npm run clean&&npm install &&npm run build && npm run migration:generate&&npm run build:server && npm run migration:run  && npm run start"
+    command: /bin/sh -c "npm run clean&&npm install &&npm run build && npm run migration:generate&&npm run build:server && npm run migration:run:prod  && npm run start"
     environment:
       - NODE_ENV=development
       - DB_HOST=db
