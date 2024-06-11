@@ -3,14 +3,13 @@ import cors from "cors";
 import path from "path";
 import dotenv from "dotenv";
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
-import { ormConnection } from "../ORM";
-import { userPost } from "../ORM/entity/userPostEntity";
+import ormConnection from "../ORM/index";
 import { getRepository } from "typeorm";
 import { nonSocialUserInfoData } from "../ORM/entity/nonSocialUserInfoEntity";
-import { userInfoData } from "../ORM/entity/userInfoEntity";
+import { userinfodata } from "../ORM/entity/userInfoEntity";
 import jwt from "jsonwebtoken";
 
-import { hashPassWord } from "../src/services/userPwHash";
+import { hashPassWord } from "./service/userPwHash";
 const router = express.Router();
 
 router.post("/api/userRegister", async (req: any, res) => {
@@ -21,7 +20,7 @@ router.post("/api/userRegister", async (req: any, res) => {
     console.log(useremail, "이멜값을보자.");
 
     //* 데이터베이스에 연결
-    const userRepository = await ormConnection.getRepository(userInfoData);
+    const userRepository = await ormConnection.getRepository(userinfodata);
     //* 모든 조건이 일치할때만 사용자가 있다고 판단
     const existingUser = await userRepository.findOne({
       where: {

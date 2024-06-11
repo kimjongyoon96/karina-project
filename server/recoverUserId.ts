@@ -4,10 +4,10 @@ import path from "path";
 import dotenv from "dotenv";
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 import eamilsend from "./emailSend";
-import { ormConnection } from "../ORM";
+import ormConnection from "../ORM/index";
 import { getRepository } from "typeorm";
-import { userInfoData } from "../ORM/entity/userInfoEntity";
-import { hashPassWord, verifyPassword } from "../src/services/userPwHash";
+import { userinfodata } from "../ORM/entity/userInfoEntity";
+import { hashPassWord, verifyPassword } from "./service/userPwHash";
 import jwt from "jsonwebtoken";
 
 const router = express.Router();
@@ -16,7 +16,7 @@ router.post("/api/recoverId", async (req, res) => {
   try {
     console.log(req.body, "클라이언트가 서버로 보낸 회원정보찾기");
     const { inputEmail } = req.body;
-    const userRepository = ormConnection.getRepository(userInfoData);
+    const userRepository = ormConnection.getRepository(userinfodata);
     const existUser = await userRepository.findOne({
       where: {
         useremail: inputEmail,

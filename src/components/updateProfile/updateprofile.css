@@ -40,7 +40,13 @@
   align-items: center;
   width: 100%;
 }
-
+.profile-back-button {
+  margin-left: auto;
+}
+.profile-back-button > button {
+  border-radius: 30px;
+  background-color: #00ff2243;
+}
 .profile-update__input {
   width: 80%;
   padding: 10px;
@@ -51,7 +57,7 @@
 
 .profile-update__button {
   padding: 10px 20px;
-  background-color: #00ff22;
+  background-color: #00ff2243;
   color: white;
   border: none;
   border-radius: 5px;
@@ -75,6 +81,9 @@
   margin-bottom: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
+}
+.profile-back-button {
+  justify-content: end;
 }
 
 .profile-update__verification-button {

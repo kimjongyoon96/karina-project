@@ -9,7 +9,7 @@ import {
 } from "@aws-sdk/client-s3";
 import { fromIni } from "@aws-sdk/credential-providers";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
 const router = express.Router();
 
 //* 특정 폴더의 파일 목록을 가져오는 함수

@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
-import { userPost } from "./userPostEntity";
+import { userpost } from "./userPostEntity";
 
 @Entity()
 export class nonSocialUserInfoData {
@@ -18,6 +18,6 @@ export class nonSocialUserInfoData {
   @Column({ type: "varchar", length: 255, unique: true, nullable: true })
   useremail: string;
 
-  @OneToMany(() => userPost, (post) => post.nonSocialUser)
-  nonSocialPosts: userPost[];
+  @OneToMany(() => userpost, (post) => post.nonSocialUser)
+  nonSocialPosts: userpost[];
 }

@@ -1,6 +1,7 @@
 .render-comatibility-box {
   display: flex;
   flex-direction: column;
+  justify-content: center;
 }
 
 .render-comatibility-box h1 {

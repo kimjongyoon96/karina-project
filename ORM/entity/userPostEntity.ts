@@ -5,13 +5,13 @@ import {
   ManyToOne,
   OneToMany,
 } from "typeorm";
-import { userInfoData } from "./userInfoEntity"; // User 엔티티를 불러오는 가정입니다.
+import { userinfodata } from "./userInfoEntity"; // User 엔티티를 불러오는 가정입니다.
 import { nonSocialUserInfoData } from "./nonSocialUserInfoEntity";
 import { userComment } from "./userCommentsEntity";
 import { userLike } from "./userLikeEntity";
 //* @primaryGeneratoedColumn => 프라이머리 키
 @Entity()
-export class userPost {
+export class userpost {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -34,10 +34,10 @@ export class userPost {
   userNickName: string;
   //* 소셜로그인 엔티티와 연결을 상징
   //* socialUser 필드는 userInfoData 엔티티의 인스턴스이다.
-  @ManyToOne(() => userInfoData, (user) => user.socialPosts, {
+  @ManyToOne(() => userinfodata, (user) => user.socialPosts, {
     onDelete: "CASCADE",
   })
-  socialUser: userInfoData;
+  socialUser: userinfodata;
 
   // 비소셜 로그인 사용자와의 관계 설정
   @ManyToOne(() => nonSocialUserInfoData, (user) => user.nonSocialPosts)

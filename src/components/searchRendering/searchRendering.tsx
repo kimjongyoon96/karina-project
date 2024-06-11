@@ -70,6 +70,7 @@ const SearchRendering: React.FC = () => {
 
   return (
     <main className="mainContents">
+      <h2 className="renderData">{researchInputData}:검색결과입니다.</h2>
       {items.length > 0 &&
         items.slice(0, 12).map((item, index) => (
           <li

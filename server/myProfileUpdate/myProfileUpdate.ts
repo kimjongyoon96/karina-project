@@ -1,6 +1,6 @@
 import express from "express";
-import { userInfoData } from "../..//ORM/entity/userInfoEntity";
-import ormConnection from "../..//ORM";
+import { userinfodata } from "../..//ORM/entity/userInfoEntity";
+import ormConnection from "../..//ORM/index";
 import eamilsend from ".././emailSend";
 import { verifyToken } from "../jwt";
 const router = express.Router();
@@ -25,7 +25,7 @@ router.post("/api/emailForAuth", verifyToken, async (req: any, res) => {
 
   const randomNumber = randomNumberFunction();
   try {
-    const userRepository = ormConnection.getRepository(userInfoData); //* 이메일을 보내기 위해서 유저를 찾습니다.
+    const userRepository = ormConnection.getRepository(userinfodata); //* 이메일을 보내기 위해서 유저를 찾습니다.
     const findUser = userRepository.findOne({
       where:
         loginType === "nonSocial"

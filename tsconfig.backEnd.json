@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist",
+    "target": "es2022",
+    "module": "commonjs",
+    "strict": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": "./",
+    "rootDir": "./",
+    "noImplicitAny": false,
+    "strictNullChecks": true,
+    "emitDecoratorMetadata": true, // 이 옵션을 추가
+    "experimentalDecorators": true // 이 옵션을 추가
+  },
+  "include": ["server", "ORM", "ORM/migrations/**/*.ts"],
+  "exclude": ["node_modules", "src"]
+}
+
+//   //* 배포 할떄 쓰는 ts , 배포할때 ts-node를 버리고 컴파일을 해야한다.
+//   //* 포함되는 대상은 server폴더, ORM 폴더, 제너레이트로 생성된 마이그레이션 파일
+//   //* 제외대상은 클라이언트 로직 -> 번들링으로 해결

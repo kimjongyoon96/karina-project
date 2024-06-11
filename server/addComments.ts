@@ -1,7 +1,7 @@
 import express from "express";
-import ormConnection from "../ORM";
+import ormConnection from "../ORM/index";
 import { verifyToken } from "./jwt";
-import { userInfoData } from "../ORM/entity/userInfoEntity";
+import { userinfodata } from "../ORM/entity/userInfoEntity";
 import { userComment } from "../ORM/entity/userCommentsEntity";
 const router = express.Router();
 
@@ -13,7 +13,7 @@ router.post("/api/addcomment", verifyToken, async (req: any, res) => {
     const { identifier, userEmail, loginType } = req.user;
 
     //* 유저인포 엔티티에 접근
-    const userInfoRepository = ormConnection.getRepository(userInfoData);
+    const userInfoRepository = ormConnection.getRepository(userinfodata);
     //* jwt에서 추출한 user 이름과 동일한 엔티티가 존재하는지 찾음
     const userInfoDetail = await userInfoRepository.findOne({
       where:

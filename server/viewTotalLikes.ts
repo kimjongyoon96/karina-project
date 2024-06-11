@@ -1,5 +1,5 @@
 import express from "express";
-import ormConnection from "../ORM";
+import ormConnection from "../ORM/index";
 import { userLike } from "../ORM/entity/userLikeEntity";
 
 const router = express.Router();

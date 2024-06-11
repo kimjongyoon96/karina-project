@@ -2,11 +2,11 @@ import express from "express";
 import path from "path";
 import dotenv from "dotenv";
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
-import { ormConnection } from "../ORM";
+import ormConnection from "../ORM/index";
 import { getRepository } from "typeorm";
-import { userInfoData } from "../ORM/entity/userInfoEntity";
-import { hashPassWord, verifyPassword } from "../src/services/userPwHash";
-import generateNumber from "../src/services/generateRandom";
+import { userinfodata } from "../ORM/entity/userInfoEntity";
+import { hashPassWord, verifyPassword } from "./service/userPwHash";
+import generateNumber from "./service/generateRandom";
 import eamilsend from "./emailSend";
 
 const router = express.Router();
@@ -17,7 +17,7 @@ router.post("/api/recoverPw", async (req: any, res) => {
     //1. 인풋 값 받는다.
     const { inputUserEmail, inputUserId } = req.body;
 
-    const userRepository = ormConnection.getRepository(userInfoData);
+    const userRepository = ormConnection.getRepository(userinfodata);
     const existUser = await userRepository.findOne({
       where: {
         userId: inputUserId,

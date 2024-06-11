@@ -47,7 +47,7 @@ const RenderCompatibilityWithJksy: React.FC = () => {
       <h1>궁합 결과</h1>
       <h2>
         {showConfetti && <Confetti />}
-        {userNamed}님과 {targetName}의 궁합은
+        {userNamed}과 {targetName}의 궁합은
         {compatibility}입니다.
       </h2>
       <div>{images && <img src={fileImage} alt="sajuRenderImage" />}</div>

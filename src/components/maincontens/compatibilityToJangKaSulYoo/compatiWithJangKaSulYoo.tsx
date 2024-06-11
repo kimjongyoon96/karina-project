@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "./compatibility.css";
-import jangSelected from "../../../assets/photo/jangSelected.gif";
-import karinaSelected from "../../../assets/photo/karinaSelected.gif";
-import sulSelected from "../../../assets/photo/sulSelected.gif";
-import yunaSelected from "../../../assets/photo/yunaSelected.gif";
+import jangSelected from "../../../assets/resource/jangSelected.gif";
+import karinaSelected from "../../../assets/resource/karinaSelected.gif";
+import sulSelected from "../../../assets/resource/sulSelected.gif";
+import yunaSelected from "../../../assets/resource/yunaSelected.gif";
 import useAuthStore from "../../../JustAnd/GlobalState";
 interface typeModule {
   inputName: string;
@@ -176,7 +176,9 @@ const CompatiWithJangKaSuYoo: React.FC = () => {
             </select>
           </section>
         </div>
-        <section className="right-gif-box">{renderImage()}</section>
+        <div className="section-gif">
+          <section className="right-gif-box">{renderImage()}</section>
+        </div>
       </div>
       <button className="submit-button" onClick={fetchForCollabo}>
         궁합보기

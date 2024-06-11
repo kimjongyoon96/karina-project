@@ -1,10 +1,9 @@
 // src/components/Header.tsx
 import React, { useState, useEffect } from "react";
-import pageLogo from "../../assets/photo/pagelogo.png";
+import pageLogo from "../../assets/resource/pagelogo.png";
 import "./header.css";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../JustAnd/GlobalState";
-import LoadingModalViewComponent from "../customComponent/loadingComponent/loadindComponent";
 const Header: React.FC = () => {
   const Navigate = useNavigate();
   const { setAllertMessage, showAlertMessage, setConfirmAction, hideAlert } =
@@ -54,7 +53,6 @@ const Header: React.FC = () => {
         }
         const data = await response.json();
         console.log(data, "헤더 유저데이터");
-        setUserIdentity(data.identifier);
       } catch (error) {
         console.error("내정보 가져오는데 에러");
       }

@@ -50,15 +50,16 @@ const SeachBar: React.FC = () => {
   //* 검색결과 렌더링 Usenavigate
   return (
     <div className="searchwrap">
-      <div className="lefttitle">검색</div>
-      <input
-        className="seachbox"
-        value={tempInput} // input 태그의 value를 상태와 연결
-        onChange={handleChange} // 입력 시 handleChange 함수 호출
-        onKeyPress={handleKeyPress}
-      ></input>
-      <button className="search-button" onClick={handleSearch}></button>
-
+      <div className="lefttitle">
+        검색
+        <input
+          className="seachbox"
+          value={tempInput} // input 태그의 value를 상태와 연결
+          onChange={handleChange} // 입력 시 handleChange 함수 호출
+          onKeyPress={handleKeyPress}
+        ></input>
+        <button className="search-button" onClick={handleSearch}></button>
+      </div>
       <button className="write-button" onClick={goToSecondMain}>
         글쓰기
       </button>

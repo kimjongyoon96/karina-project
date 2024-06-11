@@ -50,3 +50,13 @@
 .sparkle:hover::before {
   left: 125%;
 }
+
+@media (max-width: 768px) {
+  .menubar-container {
+    grid-gap: 5px;
+  }
+
+  .menubar-container > ul {
+    padding: 5px;
+  }
+}

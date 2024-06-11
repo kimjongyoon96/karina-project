@@ -1,34 +1,23 @@
-version: "3.8"
 services:
   app:
-    image: node
+    build: .
     ports:
       - "4000:4000"
     volumes:
       - .:/app
-      - /app/node_modules
-      - ~/.aws:/root/.aws
+
     working_dir: /app
-    command: /bin/sh -c "./entrypoint.sh app"
+    command: /bin/sh -c "npm run clean&&npm install &&npm run build && npm run migration:generate&&npm run build:server && npm run migration:run  && npm run start"
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=kimjongyoon
+      - DB_PASSWORD=dkrlaos1
+      - DB_NAME=postgres
     depends_on:
       - db
-    environment:
-      - NODE_ENV=development
-      - AWS_SDK_LOAD_CONFIG=1
 
-  webpack-dev-server:
-    image: node
-    ports:
-      - "3001:3001"
-    volumes:
-      - .:/app
-      - /app/node_modules
-      - ~/.aws:/root/.aws
-    working_dir: /app
-    command: /bin/sh -c "./entrypoint.sh webpack-dev-server"
-    environment:
-      - NODE_ENV=development
-      - AWS_SDK_LOAD_CONFIG=1
   db:
     image: postgres
     environment:

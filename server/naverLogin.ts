@@ -4,8 +4,8 @@ import dotenv from "dotenv";
 import axios from "axios";
 import express, { Request, Response } from "express";
 import qs from "querystring";
-import { userInfoData } from "../ORM/entity/userInfoEntity";
-import ormConnection from "../ORM";
+import { userinfodata } from "../ORM/entity/userInfoEntity";
+import ormConnection from "../ORM/index";
 import jwt from "jsonwebtoken";
 
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
@@ -54,14 +54,14 @@ router.get("/callback", async (req, res) => {
     const { email, nickname, name } = userInfo.response;
     const loginType = "NAVER";
     //* 소셜로그인 엔티티 불러오기
-    const naverUserExist = await ormConnection.getRepository(userInfoData);
+    const naverUserExist = await ormConnection.getRepository(userinfodata);
     //* 소셜로그인 엔티티에 정보 찾기(이메일과 이름으로)
     let user = await naverUserExist.findOne({
       where: { useremail: email },
     });
     if (!user) {
       //* DB에 회원이 없는경우 DB에 회원 저장
-      const newUser = new userInfoData();
+      const newUser = new userinfodata();
       newUser.username = name;
       newUser.useremail = email;
       newUser.userNickName = nickname;
@@ -85,7 +85,7 @@ router.get("/callback", async (req, res) => {
     console.log(tokenForJwt, "네이버 로그인시 발행되는 JWT 토큰입니다.");
     res.cookie("token", tokenForJwt, { httpOnly: true, secure: false });
 
-    return res.redirect(`${process.env.CLIENT_API_URL}`);
+    return res.redirect(`${process.env.REACT_APP_API_URL}`);
   } catch (error) {
     console.error(
       "네이버 인증 오류:",

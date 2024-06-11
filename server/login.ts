@@ -3,12 +3,12 @@ import cors from "cors";
 import path from "path";
 import dotenv from "dotenv";
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
-import { ormConnection } from "../ORM";
+import ormConnection from "../ORM/index";
 import { getRepository } from "typeorm";
 import { nonSocialUserInfoData } from "../ORM/entity/nonSocialUserInfoEntity";
-import { hashPassWord, verifyPassword } from "../src/services/userPwHash";
+import { hashPassWord, verifyPassword } from "./service/userPwHash";
 import jwt from "jsonwebtoken";
-import { userInfoData } from "../ORM/entity/userInfoEntity";
+import { userinfodata } from "../ORM/entity/userInfoEntity";
 const router = express.Router();
 const secretKey = process.env.JWT_SECRET_KEY;
 
@@ -17,7 +17,7 @@ router.post("/api/loginCheck", async (req: any, res) => {
     console.log(req.body, "로그인 클라이언트에서 보낸 바디");
     const { inputId, inputPw } = req.body;
     const loginType = "nonSocial";
-    const userRepository = await ormConnection.getRepository(userInfoData);
+    const userRepository = await ormConnection.getRepository(userinfodata);
     const existUser = await userRepository.findOne({
       where: {
         userId: inputId,

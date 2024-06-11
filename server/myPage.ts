@@ -3,15 +3,14 @@ import cors from "cors";
 import path from "path";
 import dotenv from "dotenv";
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
-import { ormConnection } from "../ORM";
+import ormConnection from "../ORM/index";
 import { getRepository } from "typeorm";
 import { nonSocialUserInfoData } from "../ORM/entity/nonSocialUserInfoEntity";
-import { userPost } from "../ORM/entity/userPostEntity";
-import { userInfoData } from "../ORM/entity/userInfoEntity";
+import { userpost } from "../ORM/entity/userPostEntity";
+import { userinfodata } from "../ORM/entity/userInfoEntity";
 import { userComment } from "../ORM/entity/userCommentsEntity";
 import { userLike } from "../ORM/entity/userLikeEntity";
 import { verifyToken } from "./jwt";
-
 const router = express.Router();
 //* req.query 로직 처리 함수
 const helperParmas = (query) => {
@@ -26,7 +25,7 @@ const getmyWirte = async (req, res) => {
   const { loginType, userEmail, identifier } = req.user;
   const { page, limit, offset } = helperParmas(req.query);
   try {
-    const userInfo = ormConnection.getRepository(userInfoData);
+    const userInfo = ormConnection.getRepository(userinfodata);
     const userExsist = await userInfo.findOne({
       where:
         loginType === "nonSocial"
@@ -38,7 +37,7 @@ const getmyWirte = async (req, res) => {
         .status(404)
         .json({ message: "아무런 게시글도 존재하지 않습니다." });
     }
-    const postRepository = ormConnection.getRepository(userPost);
+    const postRepository = ormConnection.getRepository(userpost);
     // const whereCondition =loginType==="nonSocial"?{userId:identifier}:{username:identifier}
     const [posts, total] = await postRepository.findAndCount({
       where: { socialUser: userExsist },

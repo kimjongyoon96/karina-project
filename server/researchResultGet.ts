@@ -2,9 +2,9 @@ import express, { Request, Response } from "express";
 import path from "path";
 import dotenv from "dotenv";
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
-import { ormConnection } from "../ORM";
+import ormConnection from "../ORM/index";
 import { getRepository } from "typeorm";
-import { userPost } from "../ORM/entity/userPostEntity";
+import { userpost } from "../ORM/entity/userPostEntity";
 const router = express.Router();
 
 router.get("/api/research", async (req: any, res: Response) => {
@@ -19,7 +19,7 @@ router.get("/api/research", async (req: any, res: Response) => {
     }
 
     //* 엔티티 연결
-    const researchRnderThing = ormConnection.getRepository(userPost);
+    const researchRnderThing = ormConnection.getRepository(userpost);
 
     const take = limit ? parseInt(limit, 10) : 10; // 한 페이지에 보여질 항목의 수
     console.log(take, "테이크다운");

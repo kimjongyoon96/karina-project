@@ -1,8 +1,8 @@
 import express from "express";
-import ormConnection from "../ORM";
+import ormConnection from "../ORM/index";
 import { verifyToken } from "./jwt";
 import exchangeCodeForAccessToken from "./oauth";
-import { userInfoData } from "../ORM/entity/userInfoEntity";
+import { userinfodata } from "../ORM/entity/userInfoEntity";
 import jwt from "jsonwebtoken";
 import getUserInfo from "./userinfo";
 
@@ -62,7 +62,7 @@ router.get("/auth/google/redirect", async (req: any, res) => {
     // 여기까지는 동일한 적용(회원유무 상관없이)0
 
     // 로그인 하는 인간이 DB에 있는지 확인 로직
-    const useregist = await ormConnection.getRepository(userInfoData);
+    const useregist = await ormConnection.getRepository(userinfodata);
 
     let user = await useregist.findOne({
       where: { useremail: userEmail, loginType: loginType },
@@ -70,7 +70,7 @@ router.get("/auth/google/redirect", async (req: any, res) => {
 
     if (!user) {
       // DB에 사용자가 없으면 새로 추가
-      const User = new userInfoData();
+      const User = new userinfodata();
       User.username = userName;
       User.useremail = userEmail;
       User.loginType = loginType;
@@ -97,11 +97,11 @@ router.get("/auth/google/redirect", async (req: any, res) => {
     console.log(user?.userNickName, "유저닉네임이 있는가?");
     if (!user?.userNickName || user.userNickName === "defaultNickName") {
       res.cookie("token", token, { httpOnly: true, secure: false });
-      return res.redirect(`${process.env.CLIENT_API_URL}/addNickName`); //닉네임 없으면 닉네임 추가 컴포넌트로 리다이렉트
+      return res.redirect(`${process.env.REACT_APP_API_URL}/addNickName`); //닉네임 없으면 닉네임 추가 컴포넌트로 리다이렉트
     }
     //* 닉네임 있는 경우 바로 토큰 발급
     res.cookie("token", token, { httpOnly: true, secure: false });
-    return res.redirect(`${process.env.CLIENT_API_URL}`); // 클라이언트 페이지로 리디렉션
+    return res.redirect(`${process.env.REACT_APP_API_URL}`); // 클라이언트 페이지로 리디렉션
   } catch (error) {
     console.error("Error handling OAuth callback:", error);
     res.status(500).send("구글 로그인 문제가 있습니다");

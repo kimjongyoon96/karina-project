@@ -11,7 +11,12 @@
 .mypage-header {
   display: flex;
 }
-
+.mypage-navigation-myinfo > p:hover {
+  background-color: #e0e0e0;
+}
+.mypage-container > ul:hover {
+  background-color: #e0e0e0;
+}
 .mypage-container {
   display: flex;
   justify-content: space-between;

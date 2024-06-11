@@ -1,8 +1,8 @@
 import express from "express";
 import { verifyToken } from "../jwt";
 
-import { userInfoData } from "../..//ORM/entity/userInfoEntity";
-import ormConnection from "../..//ORM";
+import { userinfodata } from "../..//ORM/entity/userInfoEntity";
+import ormConnection from "../..//ORM/index";
 
 const router = express.Router();
 
@@ -18,7 +18,7 @@ router.patch("/api/usersPatch", verifyToken, async (req: any, res) => {
     }, {});
   console.log(filteredData);
   try {
-    const userRepository = ormConnection.getRepository(userInfoData);
+    const userRepository = ormConnection.getRepository(userinfodata);
     const user = await userRepository.findOne({
       where:
         loginType === "nonSocial"

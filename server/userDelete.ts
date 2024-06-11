@@ -1,7 +1,7 @@
 import express from "express";
 import { verifyToken } from "./jwt";
-import ormConnection from "../ORM";
-import { userInfoData } from "../ORM/entity/userInfoEntity";
+import ormConnection from "../ORM/index";
+import { userinfodata } from "../ORM/entity/userInfoEntity";
 import { getRepository } from "typeorm";
 const router = express.Router();
 
@@ -9,7 +9,7 @@ router.delete("/api/deleteUserInfo", verifyToken, async (req: any, res) => {
   const { identifier, loginType, userEmail } = req.user;
   console.log(identifier, loginType, userEmail);
   try {
-    const usergist = ormConnection.getRepository(userInfoData);
+    const usergist = ormConnection.getRepository(userinfodata);
     const user = await usergist.findOne({
       where:
         loginType === "nonSocial"

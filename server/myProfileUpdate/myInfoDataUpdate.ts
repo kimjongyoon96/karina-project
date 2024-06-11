@@ -1,7 +1,7 @@
 import express from "express";
 import { verifyToken } from "../jwt";
-import ormConnection from "../../ORM";
-import { userInfoData } from "../../ORM/entity/userInfoEntity";
+import ormConnection from "../../ORM/index";
+import { userinfodata } from "../../ORM/entity/userInfoEntity";
 const router = express.Router();
 
 router.post("/api/usersInfo", verifyToken, async (req: any, res) => {
@@ -9,7 +9,7 @@ router.post("/api/usersInfo", verifyToken, async (req: any, res) => {
   console.log("api/usersInfo의 값:", identifier, userEmail, loginType);
 
   try {
-    const isUserExgist = ormConnection.getRepository(userInfoData);
+    const isUserExgist = ormConnection.getRepository(userinfodata);
     if (!isUserExgist) {
       return res
         .status(404)

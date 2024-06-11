@@ -31,3 +31,25 @@
   background-color: #3e8e41;
   transform: translateY(0);
 }
+
+@media (max-width: 768px) {
+  .number-container {
+    bottom: 0;
+  }
+  .page-button {
+    border: none;
+    color: white;
+    padding: 8px 12px;
+    text-decoration: none;
+    justify-content: space-between;
+    font-size: 12px;
+    margin: 10px 2px;
+    cursor: pointer;
+
+    bottom: 0;
+    transition:
+      background-color 0.3s,
+      transform 0.2s;
+    border-radius: 8px;
+  }
+}

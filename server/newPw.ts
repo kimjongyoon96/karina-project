@@ -2,11 +2,11 @@ import express from "express";
 import path from "path";
 import dotenv from "dotenv";
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
-import { hashPassWord } from "../src/services/userPwHash";
-import { ormConnection } from "../ORM";
+import { hashPassWord } from "./service/userPwHash";
+import ormConnection from "../ORM/index";
 import { getRepository } from "typeorm";
 import { nonSocialUserInfoData } from "../ORM/entity/nonSocialUserInfoEntity";
-import { userInfoData } from "../ORM/entity/userInfoEntity";
+import { userinfodata } from "../ORM/entity/userInfoEntity";
 const router = express.Router();
 router.post("/api/changePw", async (req: any, res) => {
   try {
@@ -19,7 +19,7 @@ router.post("/api/changePw", async (req: any, res) => {
     // }
     const hashPw = await hashPassWord(usernewPw); // 해싱한 새로운 유저 비밀번호
     console.log("test1");
-    const userRepository = ormConnection.getRepository(userInfoData);
+    const userRepository = ormConnection.getRepository(userinfodata);
 
     const existUser = await userRepository.findOne({
       where: {

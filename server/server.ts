@@ -1,19 +1,12 @@
 import express, { Request, Response } from "express";
-import multer from "multer";
 import cors from "cors";
 import session from "express-session";
 import path from "path";
-import { S3 } from "@aws-sdk/client-s3";
-import multerS3 from "multer-s3";
 import dotenv from "dotenv";
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
-import jwt from "jsonwebtoken";
-import exchangeCodeForAccessToken from "./oauth";
-import getUserInfo from "./userinfo";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 // import researchResultRouter from "./researchResultGet";
-import { verifyToken } from "./jwt";
 import registerApi from "./register";
 import loginCheckApi from "./login";
 import recoverUserId from "./recoverUserId";
@@ -62,7 +55,7 @@ const sessionMiddleware = session({
   secret: `${process.env.SESSION_KEY}`,
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false }, //* HTTPS를 사용하지 않는 경우 false로 설정
+  cookie: { secure: true }, //* HTTPS를 사용하지 않는 경우 false로 설정
 });
 
 app.use(registerApi); // 회원가입 라우터
@@ -102,9 +95,9 @@ app.post("/auth/clearCookie", (req, res) => {
 });
 
 //* 모든 요청에 대한 HTML 반환
-// app.use(express.static(path.join(__dirname, "..", "dist")));
+app.use(express.static(path.join(__dirname, ".."))); //* 기준은 컴파일 이후로 기준
 app.get("/*", function (req, res) {
-  res.sendFile(path.join(__dirname, "..", "dist", "index.html"));
+  res.sendFile(path.join(__dirname, "..", "index.html")); //* 기준은 컴파일 이후
 });
 
 const PORT = 4000;

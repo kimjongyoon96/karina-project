@@ -2,11 +2,9 @@ import express from "express";
 import path from "path";
 import dotenv from "dotenv";
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
-import { ormConnection } from "../ORM";
-import { userPost } from "../ORM/entity/userPostEntity";
+import ormConnection from "../ORM/index";
 import { getRepository } from "typeorm";
-import { nonSocialUserInfoData } from "../ORM/entity/nonSocialUserInfoEntity";
-import { userInfoData } from "../ORM/entity/userInfoEntity";
+import { userinfodata } from "../ORM/entity/userInfoEntity";
 import { verifyToken } from "./jwt";
 
 const router = express();
@@ -23,7 +21,7 @@ router.post("/api/addNickName", verifyToken, async (req: any, res) => {
         .json({ message: "닉네임과 유저인포가 존재하지 않습니다." });
     }
     //* 유저인포 데이타를 불러옴니다
-    const userentity = await ormConnection.getRepository(userInfoData);
+    const userentity = await ormConnection.getRepository(userinfodata);
 
     const User = await userentity.findOne({
       where:

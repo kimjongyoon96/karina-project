@@ -17,6 +17,7 @@ const UpdateProfile: React.FC = () => {
   const { jwtDecodingData, setJwtDecodingData } = useAuthStore(
     (state) => state.jwtGlobal
   );
+  const [isback, setIsBakc] = useState(false);
   const navigate = useNavigate();
   console.log(inputEmail);
   useEffect(() => {
@@ -82,9 +83,15 @@ const UpdateProfile: React.FC = () => {
       console.log("숫자가 일치하지 않습니다!");
     }
   };
+  const handleBack = () => {
+    navigate("/myPage");
+  };
   return (
     <main className="profile-update">
       <div className="profile-update__box">
+        <div className="profile-back-button">
+          <button onClick={handleBack}>뒤로가기</button>
+        </div>
         <h1 className="profile-update__title">
           내정보 수정위해 가입했던 이메일을 입력하세요
         </h1>

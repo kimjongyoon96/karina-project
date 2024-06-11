@@ -168,7 +168,9 @@ const MyPage: React.FC<AuthContextType> = () => {
           <h2>안녕하세요 {userinfoData}님</h2>
         </div>
         <div className="mypage-navigation-myinfo">
-          <p onClick={handleNavigateMyInfo}>내정보 수정하기</p>
+          <p style={{ color: "red" }} onClick={handleNavigateMyInfo}>
+            내정보 수정하기
+          </p>
         </div>
       </section>
       <section className="mypage-select-uitag">
@@ -181,76 +183,78 @@ const MyPage: React.FC<AuthContextType> = () => {
       </section>
       <section className="mypage-selected-render">
         <div className="mypage-render-box-myWrite">
-          {activeSection === "myWriteUl" && bringWrites
-            ? bringWrites.posts?.slice(0, 8).map((post) => (
-                <div className="post-container" key={post.id}>
-                  <div className="post-header">
-                    <h2>제목:{post.title}</h2>
-                    <h2>카테고리:{post.menubar}</h2>
-                  </div>
-                  <div className="post-body">
-                    <img src={post.photosumnail} />
+          {activeSection === "myWriteUl"
+            ? bringWrites
+              ? bringWrites.posts?.slice(0, 8).map((post) => (
+                  <div className="post-container" key={post.id}>
+                    <div className="post-header">
+                      <h2>제목:{post.title}</h2>
+                      <h2>카테고리:{post.menubar}</h2>
+                    </div>
+                    <div className="post-body">
+                      <img src={post.photosumnail} />
 
+                      <button
+                        className="delete-btn-myWrite"
+                        onClick={() => handleDeleteType()}
+                      >
+                        삭제
+                      </button>
+                    </div>
+                    {isModalOpen && (
+                      <WarningDeleteModal
+                        message="이 댓글을 삭제하겟습니까?"
+                        onConfirm={() => handleModalConfirm("myWrite", post.id)}
+                        onCancel={handleModalCancle}
+                      />
+                    )}
+                  </div>
+                ))
+              : "어떠한 게시글도 없다."
+            : null}
+        </div>
+
+        <div className="mypage-render-box-myComments">
+          {activeSection === "myCommentsUl"
+            ? bringCommnets?.commnets && bringCommnets.commnets.length > 0
+              ? bringCommnets.commnets.slice(0, 8).map((comment) => (
+                  <div key={comment.commentid}>
+                    <h2>{comment.text}</h2>
+                    <h2>{comment.userNickName}</h2>
+                    <h3>{comment.commentid}</h3>
                     <button
-                      className="delete-btn-myWrite"
+                      className="delete-btn-myComments"
                       onClick={() => handleDeleteType()}
                     >
                       삭제
                     </button>
+                    {isModalOpen && (
+                      <WarningDeleteModal
+                        message="이 댓글을 삭제하겠습니까?"
+                        onConfirm={() =>
+                          handleModalConfirm("myComments", comment.commentid)
+                        }
+                        onCancel={handleModalCancle}
+                      />
+                    )}
                   </div>
-                  {isModalOpen && (
-                    <WarningDeleteModal
-                      message="이 댓글을 삭제하겟습니까?"
-                      onConfirm={() => handleModalConfirm("myWrite", post.id)}
-                      onCancel={handleModalCancle}
-                    />
-                  )}
-                </div>
-              ))
-            : "어떠한 게시글도 없다."}
-        </div>
-
-        <div className="mypage-render-box-myComments">
-          {activeSection === "myCommentsUl" &&
-          bringCommnets?.commnets &&
-          bringCommnets.commnets.length > 0
-            ? bringCommnets.commnets.slice(0, 8).map((comment) => (
-                <div>
-                  <h2>{comment.text}</h2>
-                  <h2>{comment.userNickName}</h2>
-                  <h3>{comment.commentid}</h3>
-                  <button
-                    className="delete-btn-myComments"
-                    onClick={() => handleDeleteType()}
-                  >
-                    삭제
-                  </button>
-                  {isModalOpen && (
-                    <WarningDeleteModal
-                      message="이 댓글을 삭제하겟습니까?"
-                      onConfirm={() =>
-                        handleModalConfirm("myComments", comment.commentid)
-                      }
-                      onCancel={handleModalCancle}
-                    />
-                  )}
-                </div>
-              ))
-            : "어떠한 댓글도 없습니다."}
+                ))
+              : "어떠한 댓글도 없습니다."
+            : null}
         </div>
 
         <div className="mypage-render-box-myLikes">
-          {activeSection === "myLikesUl" &&
-          bringLikes?.likes &&
-          bringLikes.likes.length > 0
-            ? bringLikes.likes.slice(0, 8).map((like) => (
-                <div key={like.likeid}>
-                  <h2>{like.username}</h2>
-                  <div>{like.postid}</div>
-                  <div>{like.creationdate}</div>
-                </div>
-              ))
-            : "어떠한 좋아요도 안했다."}
+          {activeSection === "myLikesUl"
+            ? bringLikes?.likes && bringLikes.likes.length > 0
+              ? bringLikes.likes.slice(0, 8).map((like) => (
+                  <div key={like.likeid}>
+                    <h2>{like.username}</h2>
+                    <div>{like.postid}</div>
+                    <div>{like.creationdate}</div>
+                  </div>
+                ))
+              : "어떠한 좋아요도 안했다."
+            : null}
         </div>
       </section>
     </main>

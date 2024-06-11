@@ -4,10 +4,10 @@ import dotenv from "dotenv";
 import cors from "cors";
 
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
-import { ormConnection } from "../ORM";
+import ormConnection from "../ORM/index";
 import { getRepository } from "typeorm";
-import { userPost } from "../ORM/entity/userPostEntity";
-import { userInfoData } from "../ORM/entity/userInfoEntity";
+import { userpost } from "../ORM/entity/userPostEntity";
+import { userinfodata } from "../ORM/entity/userInfoEntity";
 import { userComment } from "../ORM/entity/userCommentsEntity";
 import { userLike } from "../ORM/entity/userLikeEntity";
 import { verifyToken } from "./jwt";
@@ -24,7 +24,7 @@ router.delete("/api/deleteMyPage", verifyToken, async (req: any, res) => {
   try {
     if (selected === "myWrite") {
       console.log("내게시물삭제");
-      const myRepository = ormConnection.getRepository(userInfoData);
+      const myRepository = ormConnection.getRepository(userinfodata);
       const findMe = await myRepository.findOne({
         where:
           loginType === "nonSocial"
@@ -36,7 +36,7 @@ router.delete("/api/deleteMyPage", verifyToken, async (req: any, res) => {
           .status(404)
           .json({ message: "게시물 하기 위한 유저 정보가 없습니다." });
       }
-      const postRepository = ormConnection.getRepository(userPost);
+      const postRepository = ormConnection.getRepository(userpost);
       const findPost = await postRepository.findOne({
         where: { id: infoSelected },
       });
@@ -48,7 +48,7 @@ router.delete("/api/deleteMyPage", verifyToken, async (req: any, res) => {
 
       res.status(200).json({ message: "나의 게시물 삭제가 완료되었습니다." });
     } else if (selected === "myComments") {
-      const myRepository = ormConnection.getRepository(userInfoData);
+      const myRepository = ormConnection.getRepository(userinfodata);
       const findMe = myRepository.findOne({
         where:
           loginType === "nonSocial"

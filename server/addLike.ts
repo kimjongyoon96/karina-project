@@ -1,7 +1,7 @@
 import express from "express";
 import { verifyToken } from "./jwt";
-import ormConnection from "../ORM";
-import { userInfoData } from "../ORM/entity/userInfoEntity";
+import ormConnection from "../ORM/index";
+import { userinfodata } from "../ORM/entity/userInfoEntity";
 import { userLike } from "../ORM/entity/userLikeEntity";
 const router = express.Router();
 
@@ -12,8 +12,9 @@ router.post("/api/like", verifyToken, async (req: any, res) => {
 
     console.log(postuuid, "포스트유유아이디");
     console.log(identifier, "좋아요 할때 아이디 혹은 유저이름값");
+    console.log(loginType, "유저의 로그인 타입");
 
-    const findUserInfo = ormConnection.getRepository(userInfoData);
+    const findUserInfo = ormConnection.getRepository(userinfodata);
     const userInfoMatch = await findUserInfo.findOne({
       where:
         loginType === "nonSocial"
@@ -30,8 +31,8 @@ router.post("/api/like", verifyToken, async (req: any, res) => {
     UserLike.postid = postuuid;
 
     if (loginType === "nonSocial") {
-      UserLike.userId = identifier; // non소셜 로그인 아이디 문자열
-      console.log("nonSocial 로그인:", UserLike.userId);
+      UserLike.userLoginId = identifier; // non소셜 로그인 아이디 문자열
+      console.log("nonSocial 로그인:", UserLike.userLoginId);
     } else {
       UserLike.username = identifier; // 소셜 로그인
       console.log("socialLogin:", UserLike.username);

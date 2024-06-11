@@ -75,7 +75,7 @@ const MainContents: React.FC = () => {
   //* 초기 렌더링 상태를 menubar가 undefined라 가정, 즉 아무것도 눌러지지 않았을때 초기데이터
   const itemsToRender =
     menubar === undefined ? mainMountData : mainContentsData;
-
+  console.log("렌더링할 데이터:", itemsToRender);
   return (
     <main className="mainContents">
       {collabo ? (
@@ -96,6 +96,10 @@ const MainContents: React.FC = () => {
                 <img className="mainThumbNail" src={item.photosumnail} />
                 <h1>제목: {item.title}</h1>
                 <h2>글쓴이: {item.userNickName}</h2>
+                <h3>
+                  좋아요수:
+                  {item.likeCount?.likeid !== null ? item.likeCount.likeid : 0}
+                </h3>
               </li>
             ))
           ) : (

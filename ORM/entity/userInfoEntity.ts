@@ -1,10 +1,10 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
-import { userPost } from "./userPostEntity";
+import { userpost } from "./userPostEntity";
 import { userComment } from "./userCommentsEntity";
 import { userLike } from "./userLikeEntity";
 //* unique:true => 중복을 허용하지 않겠다.
 @Entity()
-export class userInfoData {
+export class userinfodata {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -27,8 +27,8 @@ export class userInfoData {
   loginType: string;
   //* 게시물 엔티티와 연결
   //* socialPosts 필드는 userPost 엔티티의 배열이다.
-  @OneToMany(() => userPost, (post) => post.socialUser, { cascade: true })
-  socialPosts: userPost[];
+  @OneToMany(() => userpost, (post) => post.socialUser, { cascade: true })
+  socialPosts: userpost[];
   //*댓글 엔티티와 연결
   @OneToMany(() => userComment, (comment) => comment.user)
   comments: userComment[];

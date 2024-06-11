@@ -3,11 +3,11 @@ import cors from "cors";
 import path from "path";
 import dotenv from "dotenv";
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
-import { ormConnection } from "../ORM";
-import { userPost } from "../ORM/entity/userPostEntity";
+import ormConnection from "../ORM/index";
+import { userpost } from "../ORM/entity/userPostEntity";
 import { getRepository } from "typeorm";
 import { nonSocialUserInfoData } from "../ORM/entity/nonSocialUserInfoEntity";
-import { userInfoData } from "../ORM/entity/userInfoEntity";
+import { userinfodata } from "../ORM/entity/userInfoEntity";
 import jwt from "jsonwebtoken";
 import { userLike } from "../ORM/entity/userLikeEntity";
 
@@ -30,24 +30,28 @@ router.get("/api/karina", async (req: any, res) => {
     const skip = page ? (parseInt(page, 10) - 1) * take : 0;
 
     // TypeORM을 사용하여 데이터 조회
-    const userPostRepository = ormConnection.getRepository(userPost);
+    const userPostRepository = ormConnection.getRepository(userpost);
     const posts = await userPostRepository.find({
       where: whereConditions,
       take,
       skip,
     });
-    // const posts = await userPostRepository
-    //   .createQueryBuilder("post")
-    //   .leftJoinAndSelect("post.socialUser", "socialUser")
-    //   .leftJoinAndSelect("post.comments", "comments")
-    //   .loadRelationCountAndMap("post.likeCount", "post.like")
-    //   .where(whereConditions)
-    //   .take(take)
-    //   .skip(skip)
-    //   .getMany();
 
+    const userLikeRepository = ormConnection.getRepository(userLike);
+    const postsMap = await Promise.all(
+      posts.map(async (post) => {
+        const likeCount = await userLikeRepository.findOne({
+          where: { postid: post.uuid },
+        });
+        return {
+          ...post,
+          likeCount,
+        };
+      })
+    );
+    console.log("map돌린거:", postsMap);
     console.log("쿼리빌더 적용 데이터", posts);
-    return res.status(200).json(posts);
+    return res.status(200).json(postsMap);
   } catch (err) {
     console.error(err);
     res.status(500).send("게시물을 가져오는데 실패했습니다.");
