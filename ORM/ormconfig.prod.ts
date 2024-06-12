@@ -9,13 +9,20 @@ import { CustomLogger } from "./entity/customLogger";
 import path from "path";
 const ormConnection = new DataSource({
   type: "postgres", // 사용하는 데이터베이스 타입
-  host: process.env.DB_HOST,
+  host: process.env.DB_HOST || "db",
   port: 5432,
-  username: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  username: process.env.DB_USER || "kimjongyoon",
+  password: process.env.DB_PASSWORD || "dkrlaos1",
+  database: process.env.DB_NAME || "karina",
   //   entities: [__dirname + "/entity/*.js"],
-  entities: [__dirname + "/../**/*.entity.{js,ts}"],
+  // entities: [__dirname + "/../**/*.entity.{js,ts}"],
+  entities: [
+    userpost,
+    userLike,
+    userinfodata,
+    userComment,
+    nonSocialUserInfoData,
+  ],
   synchronize: false, //* 개발 단계에서만 사용
 
   migrations: [__dirname + "/migrations/*.js"],

@@ -1,0 +1,29 @@
+.mainContents {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4개의 열 */
+  grid-template-rows: repeat(4, 1fr); /* 4개의 행 */
+  grid-gap: 50px; /* 그리드 사이의 간격 */
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+}
+
+.content {
+  width: 100%;
+  height: 100%;
+  border: 1px solid #ddd; /* 테두리 */
+  color: black; /* 텍스트 색상 */
+  border-radius: 5px; /* 모서리 둥글게 */
+  list-style: none; /* li 요소의 기본 스타일 제거 */
+  padding: 10px; /* 내부 여백 */
+}
+
+.mainThumbNail {
+  width: 100%;
+  height: auto; /* 이미지 비율 유지 */
+  border-radius: 5px; /* 이미지 모서리 둥글게 */
+}
+
+.content:hover {
+  background-color: #e0e0e0;
+}
