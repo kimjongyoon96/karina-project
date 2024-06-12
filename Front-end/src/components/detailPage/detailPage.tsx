@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import "./detailPage.css";
 import useAuthStore from "../../JustAnd/GlobalState";
 import { useNavigate } from "react-router-dom";
-import { it } from "node:test";
 
 type Comment = {
   userNickName: string;

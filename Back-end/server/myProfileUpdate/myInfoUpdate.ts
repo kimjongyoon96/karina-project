@@ -1,6 +1,5 @@
 import express from "express";
 import { verifyToken } from "../jwt";
-
 import { userinfodata } from "../../../ORM/entity/userInfoEntity";
 import ormConnection from "../../../ORM/index";
 

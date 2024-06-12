@@ -13,7 +13,7 @@ const ormConnection = new DataSource({
   port: 5432,
   username: process.env.DB_USER || "kimjongyoon",
   password: process.env.DB_PASSWORD || "dkrlaos1",
-  database: process.env.DB_NAME || "karina",
+  database: process.env.DB_NAME || "postgres",
   //   entities: [__dirname + "/entity/*.js"],
   // entities: [__dirname + "/../**/*.entity.{js,ts}"],
   entities: [
@@ -32,6 +32,10 @@ ormConnection
   .initialize()
   .then(() => {
     console.log("orm 이 정상적으로 initalize 되었다");
+    console.log(
+      "연결된 엔티티:",
+      ormConnection.entityMetadatas.map((data) => data.name)
+    );
   })
   .catch((error) =>
     console.error("orm이 비정상적으로 에러가 발생했다:", error)

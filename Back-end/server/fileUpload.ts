@@ -6,10 +6,11 @@ import multer from "multer";
 dotenv.config({
   path: path.resolve(
     __dirname,
-    process.env.NODE_ENV === "production" ? "../../.env" : "../.env"
+    process.env.NODE_ENV === "production" ? "../../../.env" : "../../.env"
   ),
 });
 import ormConnection from "../../ORM/index";
+
 import { verifyToken } from "./jwt";
 import { S3Client } from "@aws-sdk/client-s3";
 import { fromIni } from "@aws-sdk/credential-providers";

@@ -7,9 +7,9 @@ fi
 
 # Start the appropriate service based on the argument
 if [ "$1" = "app" ]; then
-  npx nodemon --exec ts-node ./server/server.ts
+  npx nodemon --exec ts-node ./Back-end/server/server.ts
 elif [ "$1" = "webpack-dev-server" ]; then
-  npm run start
+  npm run start:dev:front
 else
   echo "Unknown service: $1"
   exit 1

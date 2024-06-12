@@ -101,9 +101,9 @@ app.post("/auth/clearCookie", (req, res) => {
 });
 
 //* 모든 요청에 대한 HTML 반환
-app.use(express.static(path.join(__dirname, ".."))); //* 기준은 컴파일 이후로 기준
+app.use(express.static(path.join(__dirname, "..", ".."))); //* 기준은 컴파일 이후로 기준
 app.get("/*", function (req, res) {
-  res.sendFile(path.join(__dirname, "..", "index.html")); //* 기준은 컴파일 이후
+  res.sendFile(path.join(__dirname, "..", "..", "index.html")); //* 기준은 컴파일 이후
 });
 
 const PORT = 4000;

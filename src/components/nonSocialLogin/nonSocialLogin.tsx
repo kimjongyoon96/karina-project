@@ -115,7 +115,7 @@ const NonSocialLogin: React.FC = () => {
         } else if (response.ok) {
           const data = await response.json();
           console.log(data, "서버로부터 받은 회원가입 데이터");
-          return navigate("/");
+          return navigate("/signUp");
         } else {
           throw new Error(`예상치 못한 상태 코드 ${response.status}`);
         }
