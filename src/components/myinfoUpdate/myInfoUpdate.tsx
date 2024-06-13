@@ -170,6 +170,7 @@ const MyInfoUpdate: React.FC = () => {
       throw new Error("유저 삭제하는데 실패했습니다.");
     }
   };
+  //* desebled ===ture?. 소셜로그인
   return (
     <main className="user-info-update-box">
       <div className="user-info-header">
@@ -202,30 +203,34 @@ const MyInfoUpdate: React.FC = () => {
               </div>
             </>
           )}
-          <div className="input-group">
-            <h3>유저 이름</h3>
-            <input
-              type="text"
-              value={username}
-              onChange={handleInputChange(setUserName)}
-              disabled={!editableFields.username}
-            />
-            <button type="button" onClick={toggleEditable("username")}>
-              {editableFields.username ? "확인" : "수정하기"}
-            </button>
-          </div>
-          <div className="input-group">
-            <h3>이메일</h3>
-            <input
-              type="email"
-              value={useremail}
-              onChange={handleInputChange(setUserEmail)}
-              disabled={!editableFields.useremail}
-            />
-            <button type="button" onClick={toggleEditable("useremail")}>
-              {editableFields.useremail ? "확인" : "수정하기"}
-            </button>
-          </div>
+          {desabled && (
+            <div className="input-group">
+              <h3>유저 이름</h3>
+              <input
+                type="text"
+                value={username}
+                onChange={handleInputChange(setUserName)}
+                disabled={!editableFields.username}
+              />
+              <button type="button" onClick={toggleEditable("username")}>
+                {editableFields.username ? "확인" : "수정하기"}
+              </button>
+            </div>
+          )}
+          {desabled && (
+            <div className="input-group">
+              <h3>이메일</h3>
+              <input
+                type="email"
+                value={useremail}
+                onChange={handleInputChange(setUserEmail)}
+                disabled={!editableFields.useremail}
+              />
+              <button type="button" onClick={toggleEditable("useremail")}>
+                {editableFields.useremail ? "확인" : "수정하기"}
+              </button>
+            </div>
+          )}
           <div className="input-group">
             <h3>닉네임</h3>
             <input

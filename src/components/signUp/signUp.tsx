@@ -37,6 +37,9 @@ const SignUp: React.FC = () => {
   };
   const [userInputId, setUserInputId] = useState<string>("");
   const [userInputPw, setUserInputPw] = useState("");
+  const { alertMessage, showAlert, hideAlert, confirmAction } = useAuthStore(
+    (state) => state.alertState
+  );
   console.log(userInputId, userInputPw);
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

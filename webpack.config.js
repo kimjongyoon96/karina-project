@@ -49,7 +49,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.join(
         __dirname,
-        "Front-end",
+
         "src",
         "public",
         "index.html"

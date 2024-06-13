@@ -90,7 +90,7 @@ router.get("/callback", async (req, res) => {
     console.log(tokenForJwt, "네이버 로그인시 발행되는 JWT 토큰입니다.");
     res.cookie("token", tokenForJwt, { httpOnly: true, secure: false });
 
-    return res.redirect(`${process.env.REACT_APP_API_URL}`);
+    return res.redirect(`${process.env.CLIENT_API_URL}`); //* 4000으로 변경 (배포시)
   } catch (error) {
     console.error(
       "네이버 인증 오류:",

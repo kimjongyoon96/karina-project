@@ -44,7 +44,7 @@ const Header: React.FC = () => {
           `${process.env.REACT_APP_API_URL}/api/usersData`,
           {
             headers: {
-              authorization: jwtDecodingData?.["token"],
+              authorization: `${jwtDecodingData?.["token"]}`,
             },
           }
         );

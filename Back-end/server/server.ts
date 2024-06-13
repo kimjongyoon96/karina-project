@@ -41,6 +41,9 @@ import viewLikes from "./viewLikes";
 import googleLogin from "./googleLogin";
 import viewTotalLikes from "./viewTotalLikes";
 import userInfoDelete from "./userDelete";
+import postView from "./postView";
+import ormConnection from "../../ORM";
+import { userpost } from "../../ORM/entity/userPostEntity";
 const app = express();
 //* cors 에러방지 미들웨어
 app.use(
@@ -51,24 +54,24 @@ app.use(
   })
 );
 
+const sessionMiddleware = session({
+  secret: `${process.env.SESSION_KEY}||"deflat"`,
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false, maxAge: 360000 }, //* HTTPS를 사용하지 않는 경우 false로 설정
+});
+app.use(sessionMiddleware);
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json({ limit: "10mb" }));
 app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
 
-const sessionMiddleware = session({
-  secret: `${process.env.SESSION_KEY}`,
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: true }, //* HTTPS를 사용하지 않는 경우 false로 설정
-});
-
 app.use(registerApi); // 회원가입 라우터
 app.use(loginCheckApi); // 로그인 라우터
 app.use(recoverUserId); // 로그인 찾기 로직
-app.use("api//recoverUserPw", recoverUserPw); // 비밀번호 찾기 로직
-app.use("api//certifyNumber", certifyNumber); // 인증번호 검증 로직
+app.use("api/recoverUserPw", recoverUserPw); // 비밀번호 찾기 로직
+app.use("api/certifyNumber", certifyNumber); // 인증번호 검증 로직
 app.use("/api/changePw", changePw); // 비밀번호 변경 로직
 app.use(researchOutput); //* 검색결과 라우터
 app.use(naverLogin); //* 네이버 로그인 라우터
@@ -82,7 +85,6 @@ app.use(collaboration); // 사주팔자 라우터
 app.use(sajuResult); // 사주팔자 결과값
 app.use(profileUpdate); //마이프로필 업데이트 라우터
 app.use(userProfileveify); //* 마이페이지 진입시 jwt 토큰해독해서 유저정보 반환;
-app.use(sessionMiddleware);
 app.use(userInfoDataForMyPage);
 app.use(myInfoUpdate); // Patch 요청 내정보 수정 라우터
 app.use(jwtExpired); // jwtExpired 검증로직
@@ -93,6 +95,7 @@ app.use(viewLikes); // 좋아요 한 숫자 보기 로직
 app.use(googleLogin); // 구글 로그인 처리
 app.use(viewTotalLikes); //* 논 로그인 유저 좋아요 로직 보여주기
 app.use(userInfoDelete); // 회원탈퇴 처리하는 라우터
+app.use(postView); // 게시물 조회수 처리 라우터
 
 //* 쿠키 http 통신에 의해서 삭제하는 로직
 app.post("/auth/clearCookie", (req, res) => {
@@ -101,9 +104,17 @@ app.post("/auth/clearCookie", (req, res) => {
 });
 
 //* 모든 요청에 대한 HTML 반환
-app.use(express.static(path.join(__dirname, "..", ".."))); //* 기준은 컴파일 이후로 기준
+// app.use(
+//   process.env.NODE_ENV === "production"
+//     ? express.static(path.join(__dirname, "..", ".."))
+//     : express.static(path.join(__dirname, ".."))
+// ); //* 기준은 컴파일 이후로 기준
 app.get("/*", function (req, res) {
-  res.sendFile(path.join(__dirname, "..", "..", "index.html")); //* 기준은 컴파일 이후
+  res.sendFile(
+    process.env.NODE_ENV === "production"
+      ? path.join(__dirname, "..", "..", "index.html")
+      : path.join(__dirname, "..", "..", "src", "public", "index.html")
+  ); //* 기준은 컴파일 이후
 });
 
 const PORT = 4000;

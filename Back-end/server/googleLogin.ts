@@ -18,7 +18,10 @@ const secretKey = process.env.JWT_SECRET_KEY;
 const router = express.Router();
 // 사용자를 Google 로그인 페이지로 리디렉션하는 경로
 const client_id = process.env.CLIENT_ID;
-const redirect_uri = `${process.env.REACT_APP_API_URL}/auth/google/redirect`;
+const redirect_uri =
+  process.env.NODE_ENV === "production"
+    ? `${process.env.REACT_APP_API_URL}/auth/google/redirect`
+    : `${process.env.REACT_APP_API_URL}/auth/google/redirect`; //* 뭐가 되었든지 무조건 4000
 const response_type = "code";
 const scope =
   "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email";
@@ -104,11 +107,11 @@ router.get("/auth/google/redirect", async (req: any, res) => {
     console.log(user?.userNickName, "유저닉네임이 있는가?");
     if (!user?.userNickName || user.userNickName === "defaultNickName") {
       res.cookie("token", token, { httpOnly: true, secure: false });
-      return res.redirect(`${process.env.REACT_APP_API_URL}/addNickName`); //닉네임 없으면 닉네임 추가 컴포넌트로 리다이렉트
+      return res.redirect(`${process.env.CLIENT_API_URL}/addNickName`); //닉네임 없으면 닉네임 추가 컴포넌트로 리다이렉트 배포시 4000으로 변경
     }
     //* 닉네임 있는 경우 바로 토큰 발급
     res.cookie("token", token, { httpOnly: true, secure: false });
-    return res.redirect(`${process.env.REACT_APP_API_URL}`); // 클라이언트 페이지로 리디렉션
+    return res.redirect(`${process.env.CLIENT_API_URL}`); // 배포시 Port 4000으로 변경
   } catch (error) {
     console.error("Error handling OAuth callback:", error);
     res.status(500).send("구글 로그인 문제가 있습니다");

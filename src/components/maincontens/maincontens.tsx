@@ -69,8 +69,25 @@ const MainContents: React.FC = () => {
     };
     fetchData();
   }, [pageNumber]);
-  const goToSecondMain = (uuid: string): void => {
-    navigate(`/detail/${uuid}`);
+  const goToSecondMain = async (uuid: string): Promise<void> => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/postView?postuuid=${uuid}`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+      const data = await response.json();
+      console.log("조회수", data);
+      if (response.ok) {
+        navigate(`/detail/${uuid}`);
+      } else {
+        alert("에러발생");
+      }
+    } catch (error) {
+      console.error("조회수 에러입니다.");
+    }
   };
   //* 초기 렌더링 상태를 menubar가 undefined라 가정, 즉 아무것도 눌러지지 않았을때 초기데이터
   const itemsToRender =
@@ -98,7 +115,7 @@ const MainContents: React.FC = () => {
                 <h2>글쓴이: {item.userNickName}</h2>
                 <h3>
                   좋아요수:
-                  {item.likeCount?.likeid !== null ? item.likeCount.likeid : 0}
+                  {item.likeCount ? item.likeCount.likeid : 0}
                 </h3>
               </li>
             ))

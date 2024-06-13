@@ -32,6 +32,9 @@ export class userpost {
 
   @Column({ type: "varchar", length: 255, nullable: true })
   userNickName: string;
+  @Column({ type: "int", nullable: true })
+  postView: number;
+
   //* 소셜로그인 엔티티와 연결을 상징
   //* socialUser 필드는 userInfoData 엔티티의 인스턴스이다.
   @ManyToOne(() => userinfodata, (user) => user.socialPosts, {
