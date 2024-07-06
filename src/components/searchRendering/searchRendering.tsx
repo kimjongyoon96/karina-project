@@ -79,7 +79,12 @@ const SearchRendering: React.FC = () => {
             onClick={() => goToSecondMain(item.uuid)}
           >
             <img className="mainThumbNail" src={item.photosumnail} />
-            <h1>{item.title}</h1>
+            <img className="profile-pic" src={item.s3Url} alt="profile"></img>
+            <h1>제목:{item.title}</h1>
+            <h2>글쓴이: {item.userNickName}</h2>
+            <h4>댓글수:{item.commentCount}</h4>
+            <h3>조회수:{item.postView}</h3>
+            <h3>좋아요수:{item.likeCount ? item.likeCount : 0}</h3>
           </li>
         ))}
     </main>

@@ -5,14 +5,16 @@ import { MainContentsProps } from "./maincomponent";
 import useAuthStore from "../../JustAnd/GlobalState";
 import CompatiWithJangKaSuYoo from "./compatibilityToJangKaSulYoo/compatiWithJangKaSulYoo";
 import RenderCompatibilityWithJksy from "./compatibilityToJangKaSulYoo/renderCompatibility/renderCompatibility";
+import { selectedPhoto } from "../../services/renderImage";
 import { useParams } from "react-router-dom";
+import LoadingComponent from "../customComponent/loadingComponent/loadindComponent";
 const MainContents: React.FC = () => {
   const navigate = useNavigate();
   const { collabo } = useParams<{ collabo: string }>(); // 콜라보 파라미터 따로처리
   //* 메뉴바 클릭시 변경되는 상태값 collabo JsutAnd로 받아옴.
   const { collaboClick } = useAuthStore((state) => state.isCollabo);
   const { collaboResult } = useAuthStore((state) => state.collaboResultData);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isFirst, setIsFirst] = useState(false);
   const { mainContentsData, setMainContentsData } = useAuthStore(
     (state) => state.mainContentsGlobal
@@ -61,8 +63,12 @@ const MainContents: React.FC = () => {
           throw new Error(`Error: ${response.status}`);
         }
         const data = await response.json();
+        setIsLoading(true);
         console.log(data, "메뉴바 눌렀을때 변화하는 렌더링 데이터");
         setMainMountData(data);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 2000);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -95,6 +101,7 @@ const MainContents: React.FC = () => {
   console.log("렌더링할 데이터:", itemsToRender);
   return (
     <main className="mainContents">
+      <LoadingComponent isLoading={isLoading} />
       {collabo ? (
         collaboResult ? (
           <RenderCompatibilityWithJksy />
@@ -110,13 +117,26 @@ const MainContents: React.FC = () => {
                 className="content"
                 onClick={() => goToSecondMain(item.uuid)}
               >
-                <img className="mainThumbNail" src={item.photosumnail} />
-                <h1>제목: {item.title}</h1>
-                <h2>글쓴이: {item.userNickName}</h2>
-                <h3>
-                  좋아요수:
-                  {item.likeCount ? item.likeCount.likeid : 0}
-                </h3>
+                <div className="mainThumNail">
+                  <img src={item.photosumnail} />
+                </div>
+                <div className="details-container">
+                  <div className="display-block">
+                    <img
+                      className="profile-pic"
+                      src={item.s3Url}
+                      alt="Profile"
+                    />
+                    <h4 className="main-writer"> {item.userNickName}</h4>
+                  </div>
+                  <h1>제목: {item.title}</h1>
+                  <h4>댓글:{item.commentCount}</h4>
+                  <h4>
+                    좋아요수:
+                    {item.likeCount ? item.likeCount : 0}
+                  </h4>
+                  <h4>조회수:{item.postView}</h4>
+                </div>
               </li>
             ))
           ) : (

@@ -25,6 +25,7 @@ const router = express.Router();
 router.delete("/api/deleteMyPage", verifyToken, async (req: any, res) => {
   const { identifier, userEmail, loginType } = req.user;
   const { selected, infoSelected } = req.query;
+  console.log("유저가 선택한 카테고리:", req.query);
   try {
     if (selected === "myWrite") {
       console.log("내게시물삭제");

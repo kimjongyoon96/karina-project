@@ -11,6 +11,9 @@ const Header: React.FC = () => {
   const { jwtDecodingData } = useAuthStore((state) => state.jwtGlobal);
   const [userIdentity, setUserIdentity] = useState("");
   console.log(userIdentity);
+  const [deleteDecodingData, setDecodingData] = useState(false);
+  const { userRenderName } = useAuthStore((state) => state.userInfoName);
+  console.log("렌더링할 네임", userRenderName);
   const fetchData = async () => {
     try {
       const response = await fetch(
@@ -23,8 +26,9 @@ const Header: React.FC = () => {
       if (!response.ok) {
         throw new Error("로그아웃 시 토큰 없애버리기 실패");
       }
-      const data = await response.json();
-      console.log("로그아웃 눌렀을때 data:", data.status);
+      if (response.ok) {
+        setDecodingData(true);
+      }
       // if (data.message === "쿠키가 잘 삭제되었습니다.") {
       //   setAllertMessage("정말 로그아웃 하시겠어요?");
       //   showAlertMessage();
@@ -37,28 +41,30 @@ const Header: React.FC = () => {
       console.error("로그아웃 비동기 에러:", error);
     }
   };
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/api/usersData`,
-          {
-            headers: {
-              authorization: `${jwtDecodingData?.["token"]}`,
-            },
-          }
-        );
-        if (!response.ok) {
-          console.log("헤더에 내정보 가져오기 실패");
-        }
-        const data = await response.json();
-        console.log(data, "헤더 유저데이터");
-      } catch (error) {
-        console.error("내정보 가져오는데 에러");
-      }
-    };
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         `${process.env.REACT_APP_API_URL}/api/usersData`,
+  //         {
+  //           credentials: "include",
+  //           headers: {
+  //             Authorization: `${jwtDecodingData?.["token"]}`,
+  //             "Content-Type": "application/json",
+  //           },
+  //         }
+  //       );
+  //       if (!response.ok) {
+  //         console.log("헤더에 내정보 가져오기 실패");
+  //       }
+  //       const data = await response.json();
+  //       console.log(data, "헤더 유저데이터");
+  //     } catch (error) {
+  //       console.error("내정보 가져오는데 에러");
+  //     }
+  //   };
+  //   fetchData();
+  // }, [jwtDecodingData]);
   const gotoPage = () => {
     if (jwtDecodingData) {
       Navigate("/myPage");
@@ -75,54 +81,56 @@ const Header: React.FC = () => {
   };
   return (
     <header className="header">
-      {/* {isLoading && <LoadingModalViewComponent />}
-      <button className="mypage-btn" onClick={handlebing}>
-        리턴값 확인하기
-      </button> */}
-      <button
-        className="myPage-btn"
-        onClick={() => {
-          gotoPage();
-        }}
-      >
-        마이페이지
-      </button>
-
-      <img
-        className="logo"
-        onClick={() => {
-          Navigate("/");
-        }}
-        src={pageLogo}
-        alt="Page Logo"
-      />
-      {!jwtDecodingData ? (
+      <div className="left-section">
         <button
-          className="loginButton"
+          className="myPage-btn"
           onClick={() => {
-            console.log("login 버튼 누름");
-            Navigate("SignUp");
+            gotoPage();
           }}
         >
-          로그인
+          마이페이지
         </button>
-      ) : (
-        <button
-          className="logoutButton"
+        <h3 className="header-name">환영합니다. {userRenderName}님</h3>
+      </div>
+      <div className="logoAndTitle">
+        <img
+          className="logo"
           onClick={() => {
-            setAllertMessage("정말 로그아웃 하시겠어요?");
-            showAlertMessage();
-            setConfirmAction(() => {
-              fetchData();
-              hideAlert();
-              Navigate("/signUp");
-            });
+            Navigate("/");
           }}
-        >
-          로그아웃
-        </button>
-      )}
-      <h1 className="title">장카설유</h1>
+          src={pageLogo}
+          alt="Page Logo"
+        />
+        <h1 className="title">장카설유</h1>
+      </div>
+      <div className="right-section">
+        {!jwtDecodingData || deleteDecodingData ? (
+          <button
+            className="loginButton"
+            onClick={() => {
+              console.log("login 버튼 누름");
+              Navigate("SignUp");
+            }}
+          >
+            로그인
+          </button>
+        ) : (
+          <button
+            className="logoutButton"
+            onClick={() => {
+              setAllertMessage("정말 로그아웃 하시겠어요?");
+              showAlertMessage();
+              setConfirmAction(() => {
+                fetchData();
+                hideAlert();
+                Navigate("/signUp");
+              });
+            }}
+          >
+            로그아웃
+          </button>
+        )}
+      </div>
     </header>
   );
 };

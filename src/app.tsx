@@ -50,7 +50,8 @@ const App: React.FC = () => {
       !location.pathname.startsWith("/nonSocialLogin") &&
       !location.pathname.startsWith("/myPage") &&
       !location.pathname.startsWith("/UpdateProfile") &&
-      !location.pathname.startsWith("/searchRender")
+      !location.pathname.startsWith("/searchRender") &&
+      !location.pathname.startsWith("/addNickName")
     ) {
       return <SeachBar />;
     }
@@ -73,7 +74,8 @@ const App: React.FC = () => {
       !location.pathname.startsWith("/myPage") &&
       !location.pathname.startsWith("/UpdateProfile") &&
       !location.pathname.startsWith("/write") &&
-      !location.pathname.startsWith("/searchRender")
+      !location.pathname.startsWith("/searchRender") &&
+      !location.pathname.startsWith("/addNickName")
     ) {
       return <Number />;
     }

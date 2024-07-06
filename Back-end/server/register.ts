@@ -21,7 +21,8 @@ router.post("/api/userRegister", async (req: any, res) => {
   try {
     console.log(req.body, "클라이언트에서 보낸 바디");
     const loginType = "nonSocial";
-    const { userid, userpw, useremail, userNickName } = req.body;
+    const { userid, userpw, useremail, userNickName, userSelectedStar } =
+      req.body;
     console.log(useremail, "이멜값을보자.");
 
     //* 데이터베이스에 연결
@@ -52,6 +53,7 @@ router.post("/api/userRegister", async (req: any, res) => {
       userNickName: userNickName,
       userPassWord: hashpw,
       loginType: loginType,
+      selectedStar: userSelectedStar,
     });
     await userRepository.save(newUser);
     // req.session.userEmail = useremail; //* 회원가입 할때 세션에 이메일 저장

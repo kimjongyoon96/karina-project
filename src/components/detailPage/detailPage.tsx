@@ -14,6 +14,7 @@ const DetailComponent: React.FC = () => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentText, setCommentText] = useState("");
   const [totalLikes, setTotalLikes] = useState(0);
+  console.log(totalLikes, "좋아용");
   const [hasLiked, setHasLiked] = useState(false);
   const { jwtDecodingData } = useAuthStore((state) => state.jwtGlobal);
   const { setAllertMessage, showAlertMessage, setConfirmAction, hideAlert } =
@@ -183,7 +184,7 @@ const DetailComponent: React.FC = () => {
   useEffect(() => {
     fetchAllCommentView(); // 댓글 불러오기
     fetchBringdLikes(); //내가 좋아요 했는지 확인
-    viewTotalLikes();
+    viewTotalLikes(); // 전체 조회수 확인
   }, []);
 
   return (
@@ -193,6 +194,7 @@ const DetailComponent: React.FC = () => {
           <div className="detailPage-headLine">
             <h1>제목:{post.title}</h1>
             <h2>작성자:{post.userNickName}</h2>
+            <h3>조회수:{post.postView}</h3>
           </div>
           <div className="detailPage-renderImage">
             {post.photos.map((photo, index) => (

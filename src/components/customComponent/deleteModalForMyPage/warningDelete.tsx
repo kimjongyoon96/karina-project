@@ -12,7 +12,7 @@ const ModalOverlay = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0.44;
+  opacity: 0.87;
 `;
 
 const ModalContent = styled.div`

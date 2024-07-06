@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { karinaData, AuthContextType } from "../../types/contentType";
+import { writeData, AuthContextType } from "../../types/contentType";
 import "./writePage.css";
 import { v4 as uuidv4 } from "uuid";
 import imageCompression from "browser-image-compression";
@@ -121,7 +121,7 @@ const WritePage: React.FC = () => {
       setErrors(formErrors);
       return;
     }
-    const newKarinaData: karinaData = {
+    const newKarinaData: writeData = {
       uuid: myUUID,
       menubar: menubar,
       title: title,

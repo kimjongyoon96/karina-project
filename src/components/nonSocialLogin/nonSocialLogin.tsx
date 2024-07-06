@@ -24,6 +24,8 @@ const NonSocialLogin: React.FC = () => {
 
   const [inputUserEmail, setInputUserEmail] = useState("");
   const [inputUserNickName, setInputUserNickName] = useState("");
+  const [selectedOption, setSelectedStar] = useState("jangwonyoung");
+
   const navigate = useNavigate();
   //* 함수 추상화 => 추후 Type 추가해서 리팩터링
   // const handleValidation = (
@@ -104,6 +106,7 @@ const NonSocialLogin: React.FC = () => {
               userpw: inputUserPassword,
               useremail: inputUserEmail,
               userNickName: inputUserNickName,
+              userSelectedStar: selectedOption,
             }),
           }
         );
@@ -126,7 +129,10 @@ const NonSocialLogin: React.FC = () => {
       console.log("회원가입 인풋 태그 중에 유효하지 않은 것이 있습니다.");
     }
   };
-
+  const handleRadioChange = (e) => {
+    setSelectedStar(e.target.value);
+    console.log("내가 선택한 옵션", selectedOption);
+  };
   return (
     <div className="non-social-login-box">
       <h1>장카설유 회원가입 하기</h1>
@@ -165,6 +171,8 @@ const NonSocialLogin: React.FC = () => {
           </button>
           {isValidUserPw === true ? (
             <span style={{ color: "green" }}>비밀번호가 유효합니다.</span>
+          ) : isValidUserPw === false ? (
+            <span style={{ color: "red" }}>비밀번호를 다시 입력하세요.</span>
           ) : null}
         </div>
         <div className="input-group">
@@ -208,6 +216,57 @@ const NonSocialLogin: React.FC = () => {
           {isValidUserNickName === true ? (
             <span style={{ color: "green" }}>유효한 닉네임입니다.</span>
           ) : null}
+        </div>
+        <h3 className="non-social-selected-title>">최애를 선택해주세요!</h3>
+        <div className="non-social-radio-box">
+          <div className="input-group">
+            <label>
+              <input
+                type="radio"
+                name="star"
+                value="jangwonyoung"
+                checked={selectedOption === "jang"}
+                onChange={handleRadioChange}
+              />
+              장원영
+            </label>
+          </div>
+          <div className="input-group">
+            <label>
+              <input
+                type="radio"
+                name="star"
+                value="karinaqueen"
+                checked={selectedOption === "karina"}
+                onChange={handleRadioChange}
+              />
+              카리나
+            </label>
+          </div>
+          <div className="input-group">
+            <label>
+              <input
+                type="radio"
+                name="star"
+                value="sulyoonqueen"
+                checked={selectedOption === "sulyoon"}
+                onChange={handleRadioChange}
+              />
+              설윤
+            </label>
+          </div>
+          <div className="input-group">
+            <label>
+              <input
+                type="radio"
+                name="star"
+                value="yoonqueen"
+                checked={selectedOption === "yoona"}
+                onChange={handleRadioChange}
+              />
+              유나
+            </label>
+          </div>
         </div>
         <button type="submit" className="submit-btn">
           회원가입

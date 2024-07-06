@@ -50,4 +50,8 @@ export interface AuthStated {
     deleteBollean: boolean;
     setDeleteBollean: (bool: boolean) => void;
   };
+  userInfoName: {
+    userRenderName: string;
+    setUserRenderName: (name: string) => void;
+  };
 }

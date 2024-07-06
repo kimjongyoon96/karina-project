@@ -13,6 +13,7 @@ const FetchAndNavigate: React.FC = () => {
     jwtDecodingData,
     "모듈화한 useEffect 로직에서 전역으로 선언한 jwtDecond"
   );
+  const { setUserRenderName } = useAuthStore((state) => state.userInfoName);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -44,7 +45,11 @@ const FetchAndNavigate: React.FC = () => {
             },
           }
         );
-
+        if (tokenResponse.status === 200) {
+          const data = await tokenResponse.json();
+          setUserRenderName(data.userinfo.identifier);
+          console.log(data.userinfo.identifier);
+        }
         if (tokenResponse.status === 404 || deleteBollean === true) {
           const clearResponse = await fetch(
             `${process.env.REACT_APP_API_URL}/auth/clearCookie`,

@@ -6,12 +6,14 @@ import { useAsyncValue, useNavigate } from "react-router-dom";
 import useAuthStore from "../../JustAnd/GlobalState";
 const Nickname: React.FC<AuthContextType> = () => {
   const [nickName, setNickName] = useState("");
+  const [selectedStar, setSelectedStar] = useState("");
   const { jwtDecodingData, setJwtDecodingData } = useAuthStore(
     (state) => state.jwtGlobal
   );
   console.log(jwtDecodingData, "닉네임 진입햇을때의 값입니다.");
   console.log();
   console.log(nickName, "닉네임 보낼것");
+  console.log(selectedStar, "선택한 스타");
   const navigate = useNavigate();
 
   const inputNickName = async () => {
@@ -24,7 +26,10 @@ const Nickname: React.FC<AuthContextType> = () => {
             "Content-Type": "application/json",
             authorization: `${jwtDecodingData?.["token"]}`,
           },
-          body: JSON.stringify({ nickName: nickName }),
+          body: JSON.stringify({
+            nickName: nickName,
+            selectedStar: selectedStar,
+          }),
         }
       );
 
@@ -55,7 +60,23 @@ const Nickname: React.FC<AuthContextType> = () => {
         value={nickName}
         onChange={handleChange}
       ></input>
-
+      <h2>좋아하는 장카설유 선택해주세요!</h2>
+      <select
+        className="select-star"
+        value={selectedStar}
+        onChange={(e) => {
+          const newMenubar = e.target.value;
+          setSelectedStar(newMenubar);
+        }}
+      >
+        <option value="" disabled selected>
+          좋아하는 연예인을 선택해주세요!
+        </option>
+        <option value="jangwonyoung">장원영</option>
+        <option value="karinaqueen">카리나</option>
+        <option value="sulyoonqueen">설윤</option>
+        <option value="yoonaqueen">유나</option>
+      </select>
       <button className="nick-name-button" onClick={inputNickName}>
         제출
       </button>

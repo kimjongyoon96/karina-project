@@ -114,6 +114,7 @@ const useAuthStore = create<AuthStated>((set) => ({
         },
       })),
   },
+  //* 페이지네이션 위한 넘버 값(쿼리문 작성시 필요)
   pagiNationMenubar: {
     numberData: null,
     setNumberData: (number) =>
@@ -132,6 +133,16 @@ const useAuthStore = create<AuthStated>((set) => ({
         UserDeleteRight: {
           ...state.UserDeleteRight,
           deleteBollean: bool,
+        },
+      })),
+  },
+  userInfoName: {
+    userRenderName: "",
+    setUserRenderName: (name) =>
+      set((state) => ({
+        userInfoName: {
+          ...state.userInfoName,
+          userRenderName: name,
         },
       })),
   },

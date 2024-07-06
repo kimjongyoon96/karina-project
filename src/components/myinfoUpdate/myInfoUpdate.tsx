@@ -25,6 +25,7 @@ const MyInfoUpdate: React.FC = () => {
   const [userId, setUserId] = useState("");
   const [loginType, setLoginType] = useState("");
   console.log(loginType);
+
   // 필드별 편집 가능 상태 관리
   const [editableFields, setEditableFields] = useState({
     username: false,

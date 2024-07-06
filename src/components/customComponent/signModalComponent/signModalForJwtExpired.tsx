@@ -21,7 +21,7 @@ const Modal: React.FC<ModalProps> = ({ message, onClose }) => {
       }}
     >
       <p>{message}</p>
-      <button onClick={onClose}>닫기</button>
+      <button onClick={onClose}>확인</button>
     </div>
   );
 };

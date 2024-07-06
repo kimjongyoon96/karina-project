@@ -1,6 +1,6 @@
 .header {
   display: flex;
-  justify-content: center; /* 로고와 로그인 버튼 사이의 공간을 균등하게 분배 */
+  justify-content: space-between; /* 로고와 로그인 버튼 사이의 공간을 균등하게 분배 */
   align-items: center;
   background-color: white;
   padding: 10px;
@@ -12,13 +12,21 @@
   margin: 0 auto; /* 중앙 정렬 */
   border-radius: 50px;
 }
-
+.left-section {
+  display: flex;
+}
 .title {
   color: black;
   cursor: pointer;
-  position: absolute; /* 절대 위치 */
-  left: 60%; /* 부모 요소의 중앙 */
-  transform: translateX(-50%); /* 자신의 너비의 절반만큼 왼쪽으로 이동 */
+  align-self: center;
+}
+
+.logoAndTitle {
+  display: flex;
+  align-self: center;
+}
+.header-name {
+  align-items: flex-start;
 }
 .loginButton {
   background-color: #534983; /* 기본 배경색 */
@@ -114,7 +122,7 @@
 
   .title {
     font-size: 1.2em; /* 글자 크기 줄임 */
-    left: 64%; /* 부모 요소의 중앙 */
+    left: 72%; /* 부모 요소의 중앙 */
   }
 
   .loginButton,

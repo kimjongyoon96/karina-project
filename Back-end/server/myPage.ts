@@ -69,6 +69,8 @@ const getMyCommnets = async (req, res) => {
   const { page, limit, offset } = helperParmas(req.query);
   try {
     const userinfo = ormConnection.getRepository(userComment);
+    const userPostRepository = ormConnection.getRepository(userpost);
+
     const whereCondition =
       loginType === "nonSocial"
         ? { userId: identifier }
@@ -79,11 +81,26 @@ const getMyCommnets = async (req, res) => {
       skip: offset, //* 건너뛸거 skip 10은 10개 건너뛴다
       take: limit, //* limit이 10개면 10개 가져오겠다.
     });
+
+    const commentsWithPost = await Promise.all(
+      commnets.map(async (like) => {
+        const post = await userPostRepository.findOne({
+          where: {
+            uuid: like.postuuid,
+          },
+        });
+        return {
+          ...like,
+          post,
+        };
+      })
+    );
+
     if (!commnets || commnets.length === 0) {
       return res.status(404).json({ message: "댓글이 없습니다." });
     }
     console.log(total, commnets);
-    return res.status(200).json({ total, commnets });
+    return res.status(200).json({ total, commnets, commentsWithPost });
   } catch (error) {
     console.error(error, "댓글 로직에 문제가 있습니다.");
     return res.status(500).json({ message: "댓글 로직이 작동하지 않습니다." });
@@ -96,6 +113,7 @@ const getMyLikes = async (req, res) => {
     const { page, limit, offset } = helperParmas(req.query);
 
     const userLikes = ormConnection.getRepository(userLike);
+    const userPost = ormConnection.getRepository(userpost);
     const whereCondition =
       loginType === "nonSocial"
         ? { userId: identifier }
@@ -106,12 +124,26 @@ const getMyLikes = async (req, res) => {
       skip: offset,
       take: limit,
     });
+    const likesWithPost = await Promise.all(
+      likes.map(async (like) => {
+        const post = await userPost.findOne({
+          where: {
+            uuid: like.postid,
+          },
+        });
+        return {
+          ...like,
+          post,
+        };
+      })
+    );
+
     if (!likes || likes.length === 0) {
       return res
         .status(404)
         .json({ messgae: "어떠한 좋아요도 하지 않으셨습니다." });
     }
-    return res.status(200).json({ likes, total });
+    return res.status(200).json({ likes, total, likesWithPost });
   } catch (error) {
     console.error(error, "좋아요 불러오는데 에러가 발생");
     return res.status(500).json({ message: "좋아요 가 없어요" });

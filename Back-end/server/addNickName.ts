@@ -9,7 +9,7 @@ const router = express();
 //* 소셜 로그인시 닉네임 받는 라우터
 router.post("/api/addNickName", verifyToken, async (req: any, res) => {
   try {
-    const { nickName } = req.body; //* 닉네임 클라이언트 인풋태그
+    const { nickName, selectedStar } = req.body; //* 닉네임 클라이언트 인풋태그
     const { userEmail, identifier, loginType } = req.user;
 
     if (!nickName || !identifier) {
@@ -29,6 +29,7 @@ router.post("/api/addNickName", verifyToken, async (req: any, res) => {
     //* 유저가 있다면, 닉네임컬럼에 닉네임을 저장합니다.
     if (User) {
       User.userNickName = nickName;
+      User.selectedStar = selectedStar;
       await userentity.save(User);
       return res
         .status(200)
