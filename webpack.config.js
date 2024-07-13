@@ -66,18 +66,18 @@ module.exports = {
     path: path.resolve(__dirname, "dist"),
   },
   //* 개발할때만 필요한 웹팩 라이브 서버
-  devServer: {
-    hot: true,
-    historyApiFallback: true,
-    static: {
-      directory: path.join(__dirname, "src", "public"),
-    },
+  // devServer: {
+  //   hot: true,
+  //   historyApiFallback: true,
+  //   static: {
+  //     directory: path.join(__dirname, "src", "public"),
+  //   },
 
-    compress: true,
-    port: 3001,
-    host: "0.0.0.0",
-    devMiddleware: {
-      publicPath: "/",
-    },
-  },
+  //   compress: true,
+  //   port: 3001,
+  //   host: "0.0.0.0",
+  //   devMiddleware: {
+  //     publicPath: "/",
+  //   },
+  // },
 };

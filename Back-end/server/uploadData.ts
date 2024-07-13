@@ -16,7 +16,6 @@ import { listFilesInFolder } from "./service/renderImage";
 import { userLike } from "../../ORM/entity/userLikeEntity";
 import { userinfodata } from "../../ORM/entity/userInfoEntity";
 import { verifyToken } from "./jwt";
-import { findDOMNode } from "react-dom";
 import { userComment } from "../../ORM/entity/userCommentsEntity";
 
 const router = express();

@@ -103,12 +103,12 @@ app.post("/auth/clearCookie", (req, res) => {
   return res.status(200).json({ message: "쿠키가 잘 삭제되었습니다." });
 });
 
-//* 모든 요청에 대한 HTML 반환
-// app.use(
-//   process.env.NODE_ENV === "production"
-//     ? express.static(path.join(__dirname, "..", ".."))
-//     : express.static(path.join(__dirname, ".."))
-// ); //* 기준은 컴파일 이후로 기준
+// * 모든 요청에 대한 HTML 반환
+app.use(
+  process.env.NODE_ENV === "production"
+    ? express.static(path.join(__dirname, "..", ".."))
+    : express.static(path.join(__dirname, ".."))
+); //* 기준은 컴파일 이후로 기준
 app.get("/*", function (req, res) {
   res.sendFile(
     process.env.NODE_ENV === "production"

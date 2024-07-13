@@ -1,10 +1,10 @@
 import express from "express";
 import ormConnection from "../../ORM";
 import { userpost } from "../../ORM/entity/userPostEntity";
-
+import { postViewReq, PostViewRes } from "Back-end/type-for-backEnd/postView-d";
 const router = express();
 
-router.post("/api/postView", async (req: any, res) => {
+router.post("/api/postView", async (req: postViewReq, res: PostViewRes) => {
   const findUuid = req.query.postuuid;
   console.log(findUuid);
   console.log("세션이있나?", req.session);

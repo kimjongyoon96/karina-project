@@ -15,6 +15,7 @@ const IsClosure: React.FC = () => {
         }
 
         const data = await response.json();
+        setData(data);
       } catch (error) {
         console.error("에러발생");
       }

@@ -17,7 +17,10 @@ import { fromIni } from "@aws-sdk/credential-providers";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { userpost } from "../../ORM/entity/userPostEntity";
 import { userinfodata } from "../../ORM/entity/userInfoEntity";
-
+import {
+  fileUploadReq,
+  fileUploadRes,
+} from "Back-end/type-for-backEnd/fileUpload-d";
 const router = express.Router();
 
 const s3 = new S3Client({
@@ -43,38 +46,48 @@ router.post(
     { name: "photos", maxCount: 10 },
     { name: "photoSumnail", maxCount: 1 },
   ]),
-  async (req: any, res) => {
+  async (req: fileUploadReq, res: fileUploadRes) => {
     try {
-      const { userEmail, loginType, identifier } = req.user;
-      const userRepository = ormConnection.getRepository(userinfodata); //* 유저정보 가져옴
-      const user = await userRepository.findOne({
-        where:
-          loginType === "nonSocial"
-            ? { userId: identifier, useremail: userEmail }
-            : { username: identifier, useremail: userEmail },
-      });
-      if (!user) {
-        console.log("업로드 하기 위한 유저정보가 존재하지 않습니다.");
-        return res.status(404).json({ message: "사용자 찾을수가 없어" });
-      }
-      console.log(user, "조회된 사용자 정보");
-      const UserPost = new userpost();
-      UserPost.uuid = req.body.id;
-      UserPost.menubar = req.body.menubar;
-      UserPost.title = req.body.title;
-      UserPost.photosumnail = req.files["photoSumnail"][0].location;
-      UserPost.photos = req.files["photos"].map((photo) => photo.location);
-      UserPost.userNickName = user.userNickName;
-      //* 유저와 게시물 연결
-      UserPost.socialUser = user; //
-      const userPostRepository = ormConnection.getRepository(userpost);
-      await userPostRepository.save(UserPost);
-      console.log(UserPost, "업로드한것입니다.");
+      if (
+        req.user &&
+        req.user.userEmail &&
+        req.user.loginType &&
+        req.user.identifier
+      ) {
+        const { userEmail, loginType, identifier } = req.user;
 
-      res.status(200).json({
-        message: "정상적으로 게시물이 업로드 되었습니다.",
-        data: { UserPost },
-      });
+        const userRepository = ormConnection.getRepository(userinfodata); //* 유저정보 가져옴
+        const user = await userRepository.findOne({
+          where:
+            loginType === "nonSocial"
+              ? { userId: identifier, useremail: userEmail }
+              : { username: identifier, useremail: userEmail },
+        });
+        if (!user) {
+          console.log("업로드 하기 위한 유저정보가 존재하지 않습니다.");
+          return res.status(404).json({ message: "사용자 찾을수가 없어" });
+        }
+        if (req.body && req.files) {
+          console.log(user, "조회된 사용자 정보");
+          const UserPost = new userpost();
+          UserPost.uuid = req.body.id;
+          UserPost.menubar = req.body.menubar;
+          UserPost.title = req.body.title;
+          UserPost.photosumnail = req.files["photoSumnail"][0].location;
+          UserPost.photos = req.files["photos"].map((photo) => photo.location);
+          UserPost.userNickName = user.userNickName;
+          //* 유저와 게시물 연결
+          UserPost.socialUser = user; //
+          const userPostRepository = ormConnection.getRepository(userpost);
+          await userPostRepository.save(UserPost);
+          console.log(UserPost, "업로드한것입니다.");
+
+          res.status(200).json({
+            message: "정상적으로 게시물이 업로드 되었습니다.",
+            data: { UserPost },
+          });
+        }
+      }
     } catch (error) {
       console.error("Error:", error);
       res.status(500).json({ message: "업로드 에러입니다. 서버쪽 확인하세요" });

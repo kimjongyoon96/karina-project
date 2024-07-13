@@ -3,12 +3,22 @@ import { verifyToken } from "./jwt";
 import ormConnection from "../../ORM/index";
 import { userinfodata } from "../../ORM/entity/userInfoEntity";
 import { userLike } from "../../ORM/entity/userLikeEntity";
-const router = express.Router();
+import { Request } from "express";
 
-router.post("/api/like", verifyToken, async (req: any, res) => {
+const router = express.Router();
+interface User {
+  identifier: string;
+  userEmail: string;
+  loginType: string;
+}
+
+interface CustomRequest extends Request {
+  user?: User;
+}
+router.post("/api/like", verifyToken, async (req: CustomRequest, res) => {
   try {
     const { postuuid } = req.body;
-    const { identifier, userEmail, loginType } = req.user;
+    const { identifier, userEmail, loginType } = req.user as User;
 
     console.log(postuuid, "포스트유유아이디");
     console.log(identifier, "좋아요 할때 아이디 혹은 유저이름값");

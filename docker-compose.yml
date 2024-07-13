@@ -5,7 +5,7 @@ services:
       - "4000:4000"
     volumes:
       - .:/app
-
+      - ~/.aws:/root/.aws
     working_dir: /app
     command: /bin/sh -c "npm run clean&&npm install &&npm run build && npm run migration:generate&&npm run build:server && npm run migration:run:prod  && npm run start"
     environment:
@@ -15,6 +15,8 @@ services:
       - DB_USER=kimjongyoon
       - DB_PASSWORD=dkrlaos1
       - DB_NAME=postgres
+      - AWS_SDK_LOAD_CONFIG=1
+      - AWS_REGION=ap-northeast-2
     depends_on:
       - db
 
