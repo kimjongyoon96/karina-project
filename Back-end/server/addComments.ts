@@ -6,7 +6,7 @@ import { userComment } from "../../ORM/entity/userCommentsEntity";
 import {
   addCommentsRes,
   addcommentsReq,
-} from "Back-end/type-for-backEnd/addComments-d";
+} from "../type-for-backEnd/addComments-d";
 const router = express.Router();
 
 router.post(
