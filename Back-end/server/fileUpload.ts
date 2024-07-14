@@ -17,10 +17,7 @@ import { fromIni } from "@aws-sdk/credential-providers";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { userpost } from "../../ORM/entity/userPostEntity";
 import { userinfodata } from "../../ORM/entity/userInfoEntity";
-import {
-  fileUploadReq,
-  fileUploadRes,
-} from "Back-end/type-for-backEnd/fileUpload-d";
+import { fileUploadReq, fileUploadRes } from "../type-for-backEnd/fileUpload-d";
 const router = express.Router();
 
 const s3 = new S3Client({
